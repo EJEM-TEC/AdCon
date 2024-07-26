@@ -19,11 +19,6 @@ def login(request):
     template=loader.get_template("frontend/pages-login.html")
     rendered_template=template.render(context={"question":question}, request=request)
     return HttpResponse(rendered_template)
-def cadastro(request):
-    question=Question.objects.all()
-    template=loader.get_template("frontend/colaboradores.html")
-    rendered_template=template.render(context={"question":question}, request=request)
-    return HttpResponse(rendered_template)
 def transações(request):
     question=Question.objects.all()
     template=loader.get_template("frontend/historico-transacoes.html")
@@ -32,5 +27,10 @@ def transações(request):
 def colaboradores(request):
     question=Question.objects.all()
     template=loader.get_template("frontend/pages-colaboradores.html")
+    rendered_template=template.render(context={"question":question}, request=request)
+    return HttpResponse(rendered_template)
+def tributos(request):
+    question=Question.objects.all()
+    template=loader.get_template("frontend/tributos.html")
     rendered_template=template.render(context={"question":question}, request=request)
     return HttpResponse(rendered_template)

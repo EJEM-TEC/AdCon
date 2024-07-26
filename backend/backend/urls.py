@@ -26,5 +26,6 @@ urlpatterns = [
     path("index.html", views.index),
     path("exibirempresas", views.exibir_empresa),
     path("colaboradores", views.colaboradores),
-    path("historico-transacoes.html", views.transações),
+    path("historico-transacoes", views.transações),
+    path("tributos", views.tributos)
 ]
