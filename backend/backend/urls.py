@@ -26,6 +26,8 @@ urlpatterns = [
     path("index.html", views.index),
     path("exibirempresas", views.exibir_empresa),
     path("colaboradores", views.colaboradores),
-    path("historico-transacoes", views.transações),
-    path("tributos", views.tributos)
+    path("historico-transacoes.html", views.transações),
+    path("perfil", views.perfil),
+    path("tributos", views.tributos),
+    path("404", views.page_404)
 ]

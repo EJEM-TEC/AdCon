@@ -29,8 +29,18 @@ def colaboradores(request):
     template=loader.get_template("frontend/pages-colaboradores.html")
     rendered_template=template.render(context={"question":question}, request=request)
     return HttpResponse(rendered_template)
+def perfil(request):
+    question=Question.objects.all()
+    template=loader.get_template("frontend/page-perfil.html")
+    rendered_template=template.render(context={"question":question}, request=request)
+    return HttpResponse(rendered_template)
 def tributos(request):
     question=Question.objects.all()
     template=loader.get_template("frontend/tributos.html")
+    rendered_template=template.render(context={"question":question}, request=request)
+    return HttpResponse(rendered_template)
+def page_404(request):
+    question=Question.objects.all()
+    template=loader.get_template("frontend/pages-error-404.html")
     rendered_template=template.render(context={"question":question}, request=request)
     return HttpResponse(rendered_template)

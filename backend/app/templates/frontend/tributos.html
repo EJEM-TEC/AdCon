@@ -585,7 +585,7 @@
                                 <div class="col-md-8">
                                   <div class="form-group">
                                     <label for="nomeEmpresa">Tipo</label>
-                                    <select class="form-control" id="regimeApuracao">
+                                    <select class="form-control" id="regimeApuracao0">
                                       <option value="Simples Nacional">Simples Nacional</option>
                                       <option value="Lucro Real">Lucro Real</option>
                                       <option value="Lucro Presumido">Lucro Presumido</option>
@@ -732,7 +732,320 @@
                         </div>
                       </div>
                     </div>
-          
+                        <!-- Editar Tributo - Início -->
+                        <div class="modal fade" id="editarTributos" tabindex="-1" role="dialog" aria-labelledby="modalAdicionarEmpresaLabel" aria-hidden="true">
+                      <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h2 class="modal-title font-weight-bold" id="modalEditarTributo">Editar Tributo</h2>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                            <!-- Formulário para informações gerais -->
+                            <form>
+                              <div class="row">
+                                <div class="col-lg-8">
+                                  <div class="form-group">
+                                    <label for="nomeEmpresa">Nome</label>
+                                    <input type="text" class="form-control" id="nomeEmpresa1" required>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="row">
+                                <div class="col-md-8">
+                                  <div class="form-group">
+                                    <label for="nomeEmpresa">Fonte de receita</label>
+                                    <select class="form-control" id="regimeApuracao1">
+                                      <option value="Simples Nacional">Simples Nacional</option>
+                                      <option value="Lucro Real">Lucro Real</option>
+                                      <option value="Lucro Presumido">Lucro Presumido</option>
+                                      <option value="Outro">Outro</option>
+                                    </select>
+                                  </div>
+
+                                </div>
+                              </div>
+                              <hr>
+                              <h5 class="card-title">Vencimento</h5>
+                              <div class="row">
+                                <div>
+                                  <label for="inputNumber" class="col-sm-2 col-form-label">Dia</label>
+                                <div class="col-sm-10">
+                                  <input type="number" class="form-control">
+                                </div>
+                                </div>
+                                <div>
+                                  <legend>Mês</legend>
+
+                                  <div class="row">
+                                    <div class="col-sm-6">
+                                      <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="gridCheck11">
+                                        <label class="form-check-label" for="gridCheck1">
+                                          Janeiro
+                                        </label>
+                                      </div>
+
+                                      <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="gridCheck21" checked>
+                                        <label class="form-check-label" for="gridCheck2">
+                                          Fevereiro
+                                        </label>
+                                      </div>
+
+                                      <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="gridCheck31">
+                                        <label class="form-check-label" for="gridCheck3">
+                                          Março
+                                        </label>
+                                      </div>
+
+                                      <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="gridCheck41" checked>
+                                        <label class="form-check-label" for="gridCheck4">
+                                          Abril
+                                        </label>
+                                      </div>
+                                      <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="gridCheck42" checked>
+                                        <label class="form-check-label" for="gridCheck4">
+                                          Maio
+                                        </label>
+                                      </div>
+                                      <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="gridCheck43" checked>
+                                        <label class="form-check-label" for="gridCheck4">
+                                          Junho
+                                        </label>
+                                      </div>
+                                    </div>
+
+                                    <div class="col-sm-6">
+                                      <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="gridCheck51">
+                                        <label class="form-check-label" for="gridCheck5">
+                                          Julho
+                                        </label>
+                                      </div>
+
+                                      <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="gridCheck61" checked>
+                                        <label class="form-check-label" for="gridCheck6">
+                                          Agosto
+                                        </label>
+                                      </div>
+
+                                      <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="gridCheck71">
+                                        <label class="form-check-label" for="gridCheck7">
+                                          Setembro
+                                        </label>
+                                      </div>
+
+                                      <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="gridCheck81" checked>
+                                        <label class="form-check-label" for="gridCheck8">
+                                          Outubro
+                                        </label>
+                                      </div>
+                                      <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="gridCheck72">
+                                        <label class="form-check-label" for="gridCheck7">
+                                          Novembro
+                                        </label>
+                                      </div>
+                                      <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="gridCheck73">
+                                        <label class="form-check-label" for="gridCheck7">
+                                          Dezembro
+                                        </label>
+                                      </div>
+                                    </div>
+                                  </div>
+
+
+                                </div>
+                              </div><hr>
+                              <h5 class="card-title">Critérios</h5>
+                              <div class="row">
+                                <div class="col-md-8">
+                                  <div class="form-group">
+                                    <label for="nomeEmpresa">Limite Superior (R$)</label>
+                                    <input type="number" class="form-control">
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="row">
+                                <div class="col-md-8">
+                                  <div class="form-group">
+                                    <label for="nomeEmpresa">Limite Inferior (R$)</label>
+                                    <input type="number" class="form-control">
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div class="row">
+                                <div class="col-md-8">
+                                  <div class="form-group">
+                                    <label for="nomeEmpresa">Alíquota (%)</label>
+                                    <input type="number" class="form-control">
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="row">
+                                <div class="col-md-8">
+                                  <div class="form-group">
+                                    <label for="nomeEmpresa">Tipo</label>
+                                    <select class="form-control" id="regimeApuracao2">
+                                      <option value="Simples Nacional">Simples Nacional</option>
+                                      <option value="Lucro Real">Lucro Real</option>
+                                      <option value="Lucro Presumido">Lucro Presumido</option>
+                                      <option value="Outro">Outro</option>
+                                    </select>
+                                  </div>
+
+                                </div>
+                              </div><hr>
+                              <div class="row">
+                                <div class="col-lg-6">
+
+                                  <div class="card">
+                                    <div class="card-body">
+                                      <h5 class="card-title">Impostos</h5>
+
+                                      <!-- Default Table -->
+                                      <table class="table">
+                                        <thead>
+                                          <tr>
+                                            <th scope="col">Limite Inferior (R$)</th>
+                                            <th scope="col">Limite Superior (R$)</th>
+                                            <th scope="col">Alíquota (%)</th>
+                                            <th scope="col">Ações</th>
+                                          </tr>
+                                        </thead>
+                                        <tbody>
+                                          <tr>
+                                            <td>Brandon Jacob</td>
+                                            <td>Designer</td>
+                                            <td>28</td>
+                                            <td>
+                                              <a href="#"><i class="bi bi-trash-fill" style="margin-right: 17%;"></i></a>
+                                            </td>
+                                          </tr>
+                                          <tr>
+                                            <td>Bridie Kessler</td>
+                                            <td>Developer</td>
+                                            <td>35</td>
+                                            <td>
+                                              <a href="#"><i class="bi bi-trash-fill" style="margin-right: 17%;"></i></a>
+                                            </td>
+                                          </tr>
+                                          <tr>
+                                            <td>Ashleigh Langosh</td>
+                                            <td>Finance</td>
+                                            <td>45</td>
+                                            <td>
+                                              <a href="#"><i class="bi bi-trash-fill" style="margin-right: 17%;"></i></a>
+                                            </td>
+                                          </tr>
+                                          <tr>
+                                            <td>Angus Grady</td>
+                                            <td>HR</td>
+                                            <td>34</td>
+                                            <td>
+                                              <a href="#"><i class="bi bi-trash-fill" style="margin-right: 17%;"></i></a>
+                                            </td>
+                                          </tr>
+                                          <tr>
+                                            <td>Raheem Lehner</td>
+                                            <td>Dynamic Division Officer</td>
+                                            <td>47</td>
+                                            <td>
+                                              <a href="#"><i class="bi bi-trash-fill" style="margin-right: 17%;"></i></a>
+                                            </td>
+                                          </tr>
+                                        </tbody>
+                                      </table>
+                                      <!-- End Default Table Example -->
+                                    </div>
+                                  </div>
+                                </div>
+                                <div class="col-lg-6">
+
+                                  <div class="card">
+                                    <div class="card-body">
+                                      <h5 class="card-title">Dedução</h5>
+
+                                      <!-- Default Table -->
+                                      <table class="table">
+                                        <thead>
+                                          <tr>
+                                            <th scope="col">Limite Inferior (R$)</th>
+                                            <th scope="col">Limite Superior (R$)</th>
+                                            <th scope="col">Alíquota (%)</th>
+                                            <th scope="col">Ações</th>
+                                          </tr>
+                                        </thead>
+                                        <tbody>
+                                          <tr>
+                                            <td>Brandon Jacob</td>
+                                            <td>Designer</td>
+                                            <td>28</td>
+                                            <td>
+                                              <a href="#"><i class="bi bi-trash-fill" style="margin-right: 17%;"></i></a>
+                                            </td>
+                                          </tr>
+                                          <tr>
+                                            <td>Bridie Kessler</td>
+                                            <td>Developer</td>
+                                            <td>35</td>
+                                            <td>
+                                              <a href="#"><i class="bi bi-trash-fill" style="margin-right: 17%;"></i></a>
+                                            </td>
+                                          </tr>
+                                          <tr>
+                                            <td>Ashleigh Langosh</td>
+                                            <td>Finance</td>
+                                            <td>45</td>
+                                            <td>
+                                              <a href="#"><i class="bi bi-trash-fill" style="margin-right: 17%;"></i></a>
+                                            </td>
+                                          </tr>
+                                          <tr>
+                                            <td>Angus Grady</td>
+                                            <td>HR</td>
+                                            <td>34</td>
+                                            <td>
+                                              <a href="#"><i class="bi bi-trash-fill" style="margin-right: 17%;"></i></a>
+                                            </td>
+                                          </tr>
+                                          <tr>
+                                            <td>Raheem Lehner</td>
+                                            <td>Dynamic Division Officer</td>
+                                            <td>47</td>
+                                            <td>
+                                              <a href="#"><i class="bi bi-trash-fill" style="margin-right: 17%;"></i></a>
+                                            </td>
+                                          </tr>
+                                        </tbody>
+                                      </table>
+                                      <!-- End Default Table Example -->
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </form>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                            <button type="button" class="btn btn-primary" id="salvarTributo">Salvar</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- FIM - Editar Tributo -->
                     </h5>
         
                       <!-- Default Table -->
@@ -755,7 +1068,9 @@
                             <td>28</td>
                             <td>2016-05-25</td>
                             <td>
-                                <a href="#"><i class="bi bi-pencil-fill" style="margin-right: 17%; margin-left: 0%;"></i></a>
+                                <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#editarTributos">
+                                  <i class="bi bi-pencil-fill" style="margin-right: 17%; margin-left: 0%;"></i>
+                                </button>
                                 <a href="#"><i class="bi bi-trash-fill" style="margin-right: 17%;"></i></a>
                             </td>
                           </tr>
@@ -766,7 +1081,9 @@
                             <td>35</td>
                             <td>2014-12-05</td>
                             <td>
-                                <a href="#"><i class="bi bi-pencil-fill" style="margin-right: 17%; margin-left: 0%;"></i></a>
+                               <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#editarTributos">
+                                  <i class="bi bi-pencil-fill" style="margin-right: 17%; margin-left: 0%;"></i>
+                                </button>
                                 <a href="#"><i class="bi bi-trash-fill" style="margin-right: 17%;"></i></a>
                             </td>
                           </tr>
@@ -777,7 +1094,9 @@
                             <td>45</td>
                             <td>2011-08-12</td>
                             <td>
-                                <a href="#"><i class="bi bi-pencil-fill" style="margin-right: 17%; margin-left: 0%;"></i></a>
+                                <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#editarTributos">
+                                  <i class="bi bi-pencil-fill" style="margin-right: 17%; margin-left: 0%;"></i>
+                                </button>
                                 <a href="#"><i class="bi bi-trash-fill" style="margin-right: 17%;"></i></a>
                             </td>
                           </tr>
@@ -788,7 +1107,9 @@
                             <td>34</td>
                             <td>2012-06-11</td>
                             <td>
-                                <a href="#"><i class="bi bi-pencil-fill" style="margin-right: 17%; margin-left: 0%;"></i></a>
+                                <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#editarTributos">
+                                  <i class="bi bi-pencil-fill" style="margin-right: 17%; margin-left: 0%;"></i>
+                                </button>
                                 <a href="#"><i class="bi bi-trash-fill" style="margin-right: 17%;"></i></a>
                             </td>
                           </tr>
@@ -799,7 +1120,9 @@
                             <td>47</td>
                             <td>2011-04-19</td>
                             <td>
-                                <a href="#"><i class="bi bi-pencil-fill" style="margin-right: 17%; margin-left: 0%;"></i></a>
+                                 <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#editarTributos">
+                                  <i class="bi bi-pencil-fill" style="margin-right: 17%; margin-left: 0%;"></i>
+                                </button>
                                 <a href="#"><i class="bi bi-trash-fill" style="margin-right: 17%;"></i></a>
                             </td>
                           </tr>
