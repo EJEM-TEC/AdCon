@@ -36,7 +36,11 @@ def transacoes(request):
     return render(request, template_name="frontend/pages-transacoes.html")
 
 @login_required(login_url="/")
+<<<<<<< HEAD
 @has_role_decorator('administrador')
+=======
+@has_role_decorator('Administrador')
+>>>>>>> ab9dac4165167b4094eb60eab68cd5d70f57341e
 def colaboradores(request):
     if request.method == "GET":
         users = User.objects.all()
@@ -46,10 +50,19 @@ def colaboradores(request):
         email = request.POST.get('email')
         senha = request.POST.get('senha')
         grupo = request.POST.get('grupo')
+<<<<<<< HEAD
 
         user = User.objects.filter(username=username).first()
         if user:
             return HttpResponse("Já existe um usuário com esse nome")
+=======
+        print(grupo)
+
+        user = User.objects.filter(username=username).first()
+        if user:
+            #messages.error(request, "Já existe um usuário com esse nome")
+            return redirect('colaboradores')
+>>>>>>> ab9dac4165167b4094eb60eab68cd5d70f57341e
 
         # Cria o novo usuário
         user = User.objects.create_user(username=username, email=email, password=senha)
@@ -57,11 +70,21 @@ def colaboradores(request):
         # Verifica se o grupo existe, se não, cria-o
         group, created = Group.objects.get_or_create(name=grupo)
         user.groups.add(group)
+<<<<<<< HEAD
         # Salva o usuário
         user.save()
         assign_role(user, grupo)
         users = User.objects.all()
         return render(request, 'frontend/pages-colaboradores.html', {'users': users})
+=======
+
+        # Salva o usuário
+        assign_role(user, grupo)
+        user.save()
+
+        #messages.success(request, "Usuário criado com sucesso")
+        return redirect('colaboradores')
+>>>>>>> ab9dac4165167b4094eb60eab68cd5d70f57341e
 @login_required(login_url="/")
 def perfil(request):
    return render(request, template_name="frontend/pages-perfil.html")
