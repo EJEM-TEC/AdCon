@@ -26,14 +26,10 @@ SECRET_KEY = 'django-insecure-klxc5qzknwa(2f4))&+=yzz*zqug&g8-!b@sxz6gyr(_*62*e%
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-<<<<<<< HEAD
 ALLOWED_HOSTS = []
 INTERNAL_IPS = [
     "127.0.0.2",
 ]
-=======
-ALLOWED_HOSTS = ['*']
->>>>>>> ab9dac4165167b4094eb60eab68cd5d70f57341e
 
 # Application definition
 
@@ -133,8 +129,4 @@ MEDIA_URL = 'img/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 STATICFILES_DIRS = (os.path.join(BASE_DIR,'app/static'),)
 LOGOUT_REDIRECT_URL = '/'
-<<<<<<< HEAD
 ROLEPERMISSIONS_MODULE = "backend.roles"
-=======
->>>>>>> ab9dac4165167b4094eb60eab68cd5d70f57341e
-#ROLEPERMISSIONS_MODULE = "backend.roles"
