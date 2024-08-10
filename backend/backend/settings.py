@@ -28,7 +28,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 INTERNAL_IPS = [
-    "127.0.0.1",
+    "127.0.0.2",
 ]
 
 # Application definition
@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rolepermissions'
 ]
 
 MIDDLEWARE = [
@@ -127,3 +128,5 @@ MEDIA_URL = 'img/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 STATICFILES_DIRS = (os.path.join(BASE_DIR,'app/static'),)
+LOGOUT_REDIRECT_URL = '/'
+#ROLEPERMISSIONS_MODULE = "backend.roles"

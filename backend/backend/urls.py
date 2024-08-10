@@ -19,15 +19,18 @@ from django.urls import include, path
 from django.conf import settings
 from django.conf.urls.static import static
 from app import views
+from django.contrib.auth.views import LogoutView
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("", views.login),
-    path("index.html", views.index),
-    path("exibirempresas", views.exibir_empresa),
-    path("colaboradores", views.colaboradores),
-    path("historico-transacoes.html", views.transações),
-    path("perfil", views.perfil),
-    path("tributos", views.tributos),
-    path("404", views.page_404)
+    path("", views.login, name="login"),
+    path("index", views.index, name="index"),
+    path("exibirempresas", views.exibir_empresa, name="exibirempresas"),
+    path("colaboradores", views.colaboradores, name="colaboradores"),
+    path("logout", LogoutView.as_view(), name="logout"),
+    path("historico-transacoes.html", views.transacoes, name="transacoes"),
+    path("perfil", views.perfil, name="perfil"),
+    path("tributos", views.tributos, name="tributos"),
+    path("404", views.page_404, name="page_404"),
+    path('users/<int:user_id>/delete/', views.delete_user, name='delete_user'),
 ]
