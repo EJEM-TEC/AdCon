@@ -68,7 +68,7 @@ def perfil(request):
 
 @login_required(login_url="/")
 def tributos(request):
-    return render(request, template_name="frontend/pages-tributos.html")
+    return render(request, template_name="frontend/tributos.html")
 
 @login_required(login_url="/")
 def page_404(request):
