@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="en">
 {% load static %}
 <head>
@@ -10,8 +9,8 @@
   <meta content="" name="keywords">
 
   <!-- Favicons -->
-  <link href="{% static "img/favicon.png" %}" rel="icon">
-  <link href="{% static "img/apple-touch-icon.png" %}" rel="apple-touch-icon">
+  <link href="{% static "img/logo.png" %}" rel="icon">
+  <link href="{% static "img/logo.png" %}" rel="apple-touch-icon">
 
   <!-- Google Fonts -->
   <link href="https://fonts.gstatic.com" rel="preconnect">
@@ -29,18 +28,6 @@
   <!-- Template Main CSS File -->
   <link href="{% static "css/style.css" %}" rel="stylesheet">
 
-    <script>
-    function validateForm() {
-      var password = document.getElementById('inputPassword').value;
-      var confirmPassword = document.getElementById('inputConfirmPassword').value;
-      if (password !== confirmPassword) {
-        alert('As senhas não coincidem.');
-        return false;
-      }
-      return true;
-    }
-  </script>
-
   <!-- =======================================================
   * Template Name: NiceAdmin
   * Template URL: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/
@@ -52,12 +39,12 @@
 
 <body>
 
-  <!-- ======= Header ======= -->
+    <!-- ======= Header ======= -->
   <header id="header" class="header fixed-top d-flex align-items-center">
 
     <div class="d-flex align-items-center justify-content-between">
       <a href="index" class="logo d-flex align-items-center">
-        <img src="{% static "img/logo.png" %}" alt="" >
+        <img src="{% static "img/logo.png" %}" alt="">
       </a>
       <i class="bi bi-list toggle-sidebar-btn"></i>
     </div><!-- End Logo -->
@@ -78,7 +65,6 @@
           </a>
         </li><!-- End Search Icon-->
 
-        
         <li class="nav-item dropdown pe-3">
 
           <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
@@ -151,12 +137,6 @@
         </a>
       </li><!-- End Dashboard Nav -->
 
-      
-
-      
-
-      
-
       <li class="nav-heading">Pages</li>
 
       <li class="nav-item">
@@ -167,16 +147,16 @@
       </li><!-- End Profile Page Nav -->
 
       <li class="nav-item">
-        <a class="nav-link collapsed" href="pages-faq.html">
+        <a class="nav-link collapsed" href="tributos">
           <i class="bi bi-file-earmark-text-fill"></i>
           <span>Tributos</span>
         </a>
       </li><!-- End F.A.Q Page Nav -->
 
       <li class="nav-item">
-        <a class="nav-link collapsed" href="Perfiles">
+        <a class="nav-link collapsed" href="colaboradores">
           <i class="bi bi-people-fill"></i>
-          <span>Perfiles</span>
+          <span>Colaboradores</span>
         </a>
       </li><!-- End Contact Page Nav -->
 
@@ -186,115 +166,36 @@
 
   </aside><!-- End Sidebar-->
 
-  <main id="main" class="main" style="background-image: url('{% static "img/graphic-side.svg" %}'); background-repeat: no-repeat; background-size: cover" >
+  <main id="main" class="main">
 
     <div class="pagetitle">
-      <h1 style="color: white;">Dashboard</h1>
+      <h1>Dashboard</h1>
       <nav>
-        <ol class="breadcrumb" style="margin-bottom: 50px; margin-top: 50px; font-size: xx-large;">
-          <li class="breadcrumb-item" style="color: white;">Perfil de Usuário</li>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="index">Home</a></li>
+          <li class="breadcrumb-item active">Dashboard</li>
         </ol>
       </nav>
     </div><!-- End Page Title -->
 
     <section class="section dashboard">
-        <!-- Left side columns -->
-        <div class="row" style="height: 385px; margin-bottom: 0%;">
-          <!-- Div para o card de Perfil -->
-          <div class="col-lg-12">
-            <div class="card" style="width: 100%; padding-bottom: 0px;">
-              <div class="card-body">
-                <h5 class="card-title" style="font-size: xx-large;">Informações do Usuário</h5>
 
-                  <div class="modal fade" id="verticalycentered2" tabindex="-1" role="dialog" aria-labelledby="modalAdicionarEmpresaLabel" aria-hidden="true" >
-                    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
-                      <div class="modal-content">
-                        <div class="modal-header">
-                          <h2 class="modal-title font-weight-bold" id="modalAdicionarEmpresaLabel">Editar Perfil</h2>
-                        </div>
-                        <div class="modal-body">
-                          <!-- Formulário para informações gerais -->
-                          <h2>Informações Gerais</h2>
-                          <form method="post" onsubmit="return validateForm()"> {% csrf_token %}
-                            <div class="row">
-                              <div class="col-md-6 my-2">
-                                <div class="form-group">
-                                  <label for="nomePerfil">Nome</label>
-                                  <input type="text" class="form-control" name="username" id="nomePerfil" required value="{{ user.username }}">
-                                </div>
-                              </div>
-                            </div>
-                            <div class="row">  
-                              <div class="col-md-6 my-2">
-                                <div class="form-group">
-                                  <label for="emailPerfil">E-mail</label>
-                                  <input type="email" class="form-control" name="email" id="emailPerfil" required value="{{ user.email }}">
-                                </div>
-                              </div>     
-                            </div>
-                            <div class="row">
-                              <div class="col-md-6 my-2">
-                                <div class="form-group">
-                                  <label for="senhaPerfil" class="my-1">Senha</label>
-                                  <input type="password" class="form-control" name="senha" id="senhaPerfil" required>
-                                </div>
-                              </div>
-                            </div>
-                              <div class="row">
-                                  <div class="col-md-6 my-2">
-                                    <div class="form-group">
-                                      <label for="senhaPerfil" class="my-1">Confirmar Senha</label>
-                                      <input type="password" class="form-control" id="senhaPerfil" required>
-                                    </div>
-                                  </div>
-                            </div>
-                  
-                            <!-- Linha separadora -->
-                            <hr>
-                              <div class="modal-footer">
-                                  <button type="reset" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
-                                  <button type="submit" class="btn btn-primary" id="salvarEmpresa">Salvar</button>
-                              </div>
-                          </form>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                
-                <!-- Formulário do filtro -->
-                <form>
-                  <div class="row mb-3">
-                    <div class="col-sm-6">
-                      <label for="inputTextPerson" class="form-label">Nome</label>
-                      <input type="text" class="form-control" id="inputTextPerson" disabled value="{{ user.username }}">
-                    </div>
-                    <div class="col-sm-6">
-                      <label for="inputTextPerson" class="form-label">E-mail</label>
-                      <input type="email" class="form-control" id="inputTextPerson" disabled value="{{ user.email }}">
-                    </div>
-                  </div>
-                  <div class="row mb-3">
-                    <div class="col-sm-6">
-                      <label for="inputPasswordPerson" class="form-label">Cargo</label>
-                      <input type="text" class="form-control" id="inputPasswordPerson" disabled value="{{ user.groups.first.name }}">
-                    </div>
-                    <div class="col-sm-6 text-center mt-5">
-                      <button type="button" class="btn btn-primary w-full" data-bs-toggle="modal" data-bs-target="#verticalycentered2">Editar informações</button>
-                    </div>
-                  </div>
-
-                </form><!-- End Formulário do filtro -->
-                
-              </div>
-            </div>
-          </div><!-- End Div para o filtro -->
-        </div><!-- End row -->
+    <div class="card">
+        <div class="card-body">
+            <form method="post"> {% csrf_token %}
+            <h5 class="card-title">Deletando a empresa: {{ empresa.nome }}</h5>
+            <p class="card-text">Tem certeza que quer deletar essa empresa?</p>
+            <p class="card-text"><button type="submit" class="btn btn-danger">Confirmar</button></p>
+            <p class="card-text"><a href="{% url 'index' %}" class="btn btn-secondary">Cancelar</a></p>
+            </form>
+        </div>
+    </div><!-- End Card with titles, buttons, and links -->
     </section>
 
   </main><!-- End #main -->
 
   <!-- ======= Footer ======= -->
-  
+
 
   <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 

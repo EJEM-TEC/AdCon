@@ -85,7 +85,7 @@
             </li>
 
             <li>
-              <a class="dropdown-item d-flex align-items-center" href="users-profile.html">
+              <a class="dropdown-item d-flex align-items-center" href="{% url 'perfil' user_id=user.id %}">
                 <i class="bi bi-person"></i>
                 <span>My Profile</span>
               </a>
@@ -326,125 +326,116 @@
                   <div class="modal-content">
                     <div class="modal-header">
                       <h2 class="modal-title font-weight-bold" id="modalAdicionarEmpresaLabel">Adicionar Empresa</h2>
-                      <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
-                        <span aria-hidden="true">&times;</span>
-                      </button>
                     </div>
                     <div class="modal-body">
                       <!-- Formulário para informações gerais -->
                       <h2>Informações Gerais</h2>
-                      <form>
-                        <div class="row">
-                          <div class="col-md-6">
-                            <div class="form-group">
-                              <label for="nomeEmpresa">Nome da Empresa</label>
-                              <input type="text" class="form-control" id="nomeEmpresa" required>
+                      <form action="{% url 'index' %}" method="POST"> {% csrf_token %}
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="nomeEmpresa">Nome da Empresa</label>
+                                        <input type="text" class="form-control" id="nomeEmpresa" name="nome_empresa" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="atividade">Atividade</label>
+                                        <input type="text" class="form-control" id="atividade" name="atividade_empresa" required>
+                                    </div>
+                                </div>
                             </div>
-                          </div>
-                          <div class="col-md-6">
-                            <div class="form-group">
-                              <label for="atividade">Atividade</label>
-                              <input type="text" class="form-control" id="atividade" required>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="row">
-                          <div class="col-md-6">
-                            <div class="form-group">
-                              <label for="cnpj">CNPJ</label>
-                              <input type="text" class="form-control" id="cnpj" required>
-                            </div>
-                          </div>
-                          <div class="col-md-6">
-                            <div class="form-group">
-                              <label for="responsaveis">Responsáveis</label>
-                              <input type="text" class="form-control" id="responsaveis">
-                            </div>
-                          </div>
-                        </div>
-                        <div class="form-group">
-                          <label for="regimeApuracao">Regime de Apuração</label>
-                          <select class="form-control" id="regimeApuracao">
-                            <option value="Simples Nacional">Simples Nacional</option>
-                            <option value="Lucro Real">Lucro Real</option>
-                            <option value="Lucro Presumido">Lucro Presumido</option>
-                            <option value="Outro">Outro</option>
-                          </select>
-                        </div>
-              
-                        <!-- Linha separadora -->
-                        <hr>
-              
-                        <!-- Seções de Inscrição -->
-                        <div class="row">
-                          <!-- Inscrição Municipal -->
-                          <div class="col-lg-4">
-                            <h2>Inscrição Municipal</h2>
-                            <div class="form-check">
-                              <input type="checkbox" class="form-check-input" id="comCertificadoMunicipal">
-                              <label class="form-check-label" for="comCertificadoMunicipal">Com certificado digital?</label>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="responsaveis">Responsáveis</label>
+                                        <input type="text" class="form-control" id="responsaveis" name="responsaveis_empresa">
+                                    </div>
+                                </div>
                             </div>
                             <div class="form-group">
-                              <label for="ccm">CCM</label>
-                              <input type="text" class="form-control" id="ccm">
+                                <label for="regimeApuracao">Regime de Apuração</label>
+                                <select class="form-select" id="regimeApuracao" name="regime_apuracao">
+                                    <option value="Simples Nacional">Simples Nacional</option>
+                                    <option value="Lucro Real">Lucro Real</option>
+                                    <option value="Lucro Presumido">Lucro Presumido</option>
+                                    <option value="Outro">Outro</option>
+                                </select>
                             </div>
-                            <div class="form-group">
-                              <label for="loginMunicipal">Login</label>
-                              <input type="text" class="form-control" id="loginMunicipal">
+
+                            <!-- Linha separadora -->
+                            <hr>
+
+                            <!-- Seções de Inscrição -->
+                            <div class="row">
+                                <!-- Inscrição Municipal -->
+                                <div class="col-lg-4">
+                                    <h2>Inscrição Municipal</h2>
+                                    <div class="form-check">
+                                        <input type="checkbox" value="true" class="form-check-input" id="comCertificadoMunicipal" name="certificado_digital_municipal">
+                                        <label class="form-check-label" for="comCertificadoMunicipal">Com certificado digital?</label>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="ccm">CCM</label>
+                                        <input type="text" class="form-control" id="ccm" name="ccm_municipal">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="loginMunicipal">Login</label>
+                                        <input type="text" class="form-control" id="loginMunicipal" name="login_municipal">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="senhaMunicipal">Senha</label>
+                                        <input type="password" class="form-control" id="senhaMunicipal" name="senha_municipal">
+                                    </div>
+                                </div>
+
+                                <!-- Inscrição Estadual -->
+                                <div class="col-lg-4">
+                                    <h2>Inscrição Estadual</h2>
+                                    <div class="form-check">
+                                        <input type="checkbox" value="true" class="form-check-input" id="comCertificadoEstadual" name="certificado_digital_estadual">
+                                        <label class="form-check-label" for="comCertificadoEstadual">Com certificado digital?</label>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="ie">IE</label>
+                                        <input type="text" class="form-control" id="ie" name="ie_estadual">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="loginEstadual">Login</label>
+                                        <input type="text" class="form-control" id="loginEstadual" name="login_estadual">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="senhaEstadual">Senha</label>
+                                        <input type="password" class="form-control" id="senhaEstadual" name="senha_estadual">
+                                    </div>
+                                </div>
+
+                                <!-- Inscrição Federal -->
+                                <div class="col-lg-4">
+                                    <h2>Inscrição Federal</h2>
+                                    <div class="form-check">
+                                        <input type="checkbox" value="true" class="form-check-input" id="comCertificadoFederal" name="certificado_digital_federal">
+                                        <label class="form-check-label" for="comCertificadoFederal">Com certificado digital?</label>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="cnpjFederal">CNPJ</label>
+                                        <input type="text" class="form-control" id="cnpjFederal" name="cnpj_federal">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="loginFederal">Login</label>
+                                        <input type="text" class="form-control" id="loginFederal" name="login_federal">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="senhaFederal">Senha</label>
+                                        <input type="password" class="form-control" id="senhaFederal" name="senha_federal">
+                                    </div>
+                                </div>
                             </div>
-                            <div class="form-group">
-                              <label for="senhaMunicipal">Senha</label>
-                              <input type="password" class="form-control" id="senhaMunicipal">
+                            <div class="modal-footer">
+                                <button type="reset" class="btn btn-secondary" data-dismiss="modal">Resetar</button>
+                                <button type="submit" class="btn btn-primary" id="salvarEmpresa">Salvar</button>
                             </div>
-                          </div>
-              
-                          <!-- Inscrição Estadual -->
-                          <div class="col-lg-4">
-                            <h2>Inscrição Estadual</h2>
-                            <div class="form-check">
-                              <input type="checkbox" class="form-check-input" id="comCertificadoEstadual">
-                              <label class="form-check-label" for="comCertificadoEstadual">Com certificado digital?</label>
-                            </div>
-                            <div class="form-group">
-                              <label for="ie">IE</label>
-                              <input type="text" class="form-control" id="ie">
-                            </div>
-                            <div class="form-group">
-                              <label for="loginEstadual">Login</label>
-                              <input type="text" class="form-control" id="loginEstadual">
-                            </div>
-                            <div class="form-group">
-                              <label for="senhaEstadual">Senha</label>
-                              <input type="password" class="form-control" id="senhaEstadual">
-                            </div>
-                          </div>
-              
-                          <!-- Inscrição Federal -->
-                          <div class="col-lg-4">
-                            <h2>Inscrição Federal</h2>
-                            <div class="form-check">
-                              <input type="checkbox" class="form-check-input" id="comCertificadoFederal">
-                              <label class="form-check-label" for="comCertificadoFederal">Com certificado digital?</label>
-                            </div>
-                            <div class="form-group">
-                              <label for="cnpjFederal">CNPJ</label>
-                              <input type="text" class="form-control" id="cnpjFederal">
-                            </div>
-                            <div class="form-group">
-                              <label for="loginFederal">Login</label>
-                              <input type="text" class="form-control" id="loginFederal">
-                            </div>
-                            <div class="form-group">
-                              <label for="senhaFederal">Senha</label>
-                              <input type="password" class="form-control" id="senhaFederal">
-                            </div>
-                          </div>
-                        </div>
-                      </form>
-                    </div>
-                    <div class="modal-footer">
-                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
-                      <button type="button" class="btn btn-primary" id="salvarEmpresa">Salvar</button>
+                        </form>
                     </div>
                   </div>
                 </div>
@@ -460,7 +451,7 @@
                   <thead>
                     <tr>
                       <th>
-                        <b>I</b>d
+                        <b>Id</b>
                       </th>
                       <th>Empresa</th>
                       <th>CNPJ</th>
@@ -471,72 +462,20 @@
                     </tr>
                   </thead>
                   <tbody>
+                  {% for empresa in empresas %}
                     <tr>
-                      <td>1</td>
-                      <td><a href="exibirempresas">Empresa A</a></td>
-                      <td>12.345.678/0001-00</td>
-                      <td>Lucro Presumido</td>
-                      <td>Prestadora de serviço e comercio</td>
-                      <td>Responsável 1</td>
+                      <td>{{ empresa.id_empresa }}</td>
+                      <td><a href="{% url 'exibirempresas' %}">{{ empresa.nome }}</a></td>
+                      <td>{{ empresa.cnpj_federal_id }}</td>
+                      <td>{{ empresa.regime_apuracao }}</td>
+                      <td>{{ empresa.atividade }}</td>
+                      <td>{{ empresa.responsaveis }}</td>
                       <td>
-                        <a href="#"><i class="bi bi-pencil-fill" style="margin-right: 17%; margin-left: 0%;"></i></a>
-                        <a href="#"><i class="bi bi-trash-fill" style="margin-right: 17%;"></i></a>
-                        <a href="pages-empresas.html"><i class="bi bi-box-arrow-up-right"></i></a>
+                        <a href="{% url 'editar_empresa' empresa_id=empresa.id_empresa %}"><i class="bi bi-pencil-fill" style="margin-right: 17%; margin-left: 0%;"></i></a>
+                        <a href="{% url 'deletar_empresa' empresa_id=empresa.id_empresa %}"><i class="bi bi-trash-fill" style="margin-right: 17%;"></i></a>
                       </td>
                     </tr>
-                    <tr>
-                      <td>2</td>
-                      <td><a href="exibirempresas">Empresa B</a></td>
-                      <td>12.345.678/0001-00</td>
-                      <td>Lucro Presumido</td>
-                      <td>Prestadora de serviço e comercio</td>
-                      <td>Responsável 1</td>
-                      <td>
-                        <a href="#"><i class="bi bi-pencil-fill" style="margin-right: 17%; margin-left: 0%;"></i></a>
-                        <a href="#"><i class="bi bi-trash-fill" style="margin-right: 17%;"></i></a>
-                        <a href="pages-empresas.html"><i class="bi bi-box-arrow-up-right"></i></a>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>3</td>
-                      <td><a href="exibirempresas">Empresa C</a></td>
-                      <td>12.345.678/0001-00</td>
-                      <td>Lucro Presumido</td>
-                      <td>Prestadora de serviço e comercio</td>
-                      <td>Responsável 1</td>
-                      <td>
-                        <a href="#"><i class="bi bi-pencil-fill" style="margin-right: 17%; margin-left: 0%;"></i></a>
-                        <a href="#"><i class="bi bi-trash-fill" style="margin-right: 17%;"></i></a>
-                        <a href="pages-empresas.html"><i class="bi bi-box-arrow-up-right"></i></a>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>4</td>
-                      <td><a href="exibirempresas">Empresa D</a></td>
-                      <td>12.345.678/0001-00</td>
-                      <td>Lucro Presumido</td>
-                      <td>Prestadora de serviço e comercio</td>
-                      <td>Responsável 1</td>
-                      <td>
-                        <a href="#"><i class="bi bi-pencil-fill" style="margin-right: 17%; margin-left: 0%;"></i></a>
-                        <a href="#"><i class="bi bi-trash-fill" style="margin-right: 17%;"></i></a>
-                        <a href="pages-empresas.html"><i class="bi bi-box-arrow-up-right"></i></a>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>5</td>
-                      <td><a href="exibirempresas">Empresa E</a></td>
-                      <td>12.345.678/0001-00</td>
-                      <td>Lucro Presumido</td>
-                      <td>Prestadora de serviço e comercio</td>
-                      <td>Responsável 1</td>
-                      <td>
-                        <a href="#"><i class="bi bi-pencil-fill" style="margin-right: 17%; margin-left: 0%;"></i></a>
-                        <a href="#"><i class="bi bi-trash-fill" style="margin-right: 17%;"></i></a>
-                        <a href="pages-empresas.html"><i class="bi bi-box-arrow-up-right"></i></a>
-                      </td>
-                    </tr>
-                    
+                  {% endfor %}
                   </tbody>
                 </table>
                 <!-- End Table with stripped rows -->
@@ -549,10 +488,6 @@
         
 
             <!-- Customers Card -->
-            
-
-           
-            
 
           </div>
         </div><!-- End Left side columns -->
