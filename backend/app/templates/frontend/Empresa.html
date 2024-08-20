@@ -77,7 +77,7 @@
           <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
             <li class="dropdown-header">
               <h6>{{user.username}}</h6>
-              <span>Web Designer</span>
+              <span>{{ user.groups.first.name }}</span>
             </li>
             <li>
               <hr class="dropdown-divider">
@@ -92,27 +92,6 @@
             <li>
               <hr class="dropdown-divider">
             </li>
-
-            <li>
-              <a class="dropdown-item d-flex align-items-center" href="users-profile.html">
-                <i class="bi bi-gear"></i>
-                <span>Account Settings</span>
-              </a>
-            </li>
-            <li>
-              <hr class="dropdown-divider">
-            </li>
-
-            <li>
-              <a class="dropdown-item d-flex align-items-center" href="pages-faq.html">
-                <i class="bi bi-question-circle"></i>
-                <span>Need Help?</span>
-              </a>
-            </li>
-            <li>
-              <hr class="dropdown-divider">
-            </li>
-
             <li>
               <a class="dropdown-item d-flex align-items-center" href="#">
                 <i class="bi bi-box-arrow-right"></i>
@@ -144,21 +123,21 @@
       <li class="nav-heading">Pages</li>
 
       <li class="nav-item">
-        <a class="nav-link collapsed" href="index">
+        <a class="nav-link collapsed" href="{% url 'index' %}">
           <i class="bi bi-building"></i>
           <span>Empresas</span>
         </a>
       </li><!-- End Profile Page Nav -->
 
       <li class="nav-item">
-        <a class="nav-link collapsed" href="tributos">
+        <a class="nav-link collapsed" href="{% url 'tributos' %}">
           <i class="bi bi-file-earmark-text-fill"></i>
           <span>Tributos</span>
         </a>
       </li><!-- End F.A.Q Page Nav -->
 
       <li class="nav-item">
-        <a class="nav-link collapsed" href="colaboradores">
+        <a class="nav-link collapsed" href="{% url 'colaboradores' %}">
           <i class="bi bi-people-fill"></i>
           <span>Colaboradores</span>
         </a>
@@ -375,11 +354,6 @@
 
               </div>
             </div><!-- End Reports -->
-
-            
-
-            
-
           </div>
         </div><!-- End Left side columns -->
 
@@ -488,8 +462,8 @@
             </div>
   
             </h5>
-              <p>Regime de apuração: <b>Lucro presumido</b></p>
-              <p>Atividade: <b>Prestadora de serviço e comercio</b></p>
+              <p>Regime de apuração: <b>{{ empresa.regime_apuracao }}</b></p>
+              <p>Atividade: <b>{{ empresa.atividade }}</b></p>
               <p>Transações: <b><a href="historico-transacoes.html">Ver historico de transações</a></b></p><br><hr style="margin-top: 8%; margin-bottom: 7%;"><br>
               <div class="accordion" id="accordionExample">
                 <div class="accordion-item">
@@ -501,11 +475,11 @@
                   <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
                     <div class="accordion-body" style="background-color: aliceblue;">
                       <p style="padding: 10px;">Cadastro de Contribuintes Mobiliários (CCM):</p>
-                      <b style="padding: 10px; border: 1px; border-color: black; border-style: solid; border-radius: 10px; width: 100%; background-color: white;">1512521521</b>
+                      <b style="padding: 10px; border: 1px; border-color: black; border-style: solid; border-radius: 10px; width: 100%; background-color: white;">{{ empresa.ccm_municipal.ccm }}</b>
                       <p style="padding: 10px;">Login:</p>
-                      <b style="padding: 10px; border: 1px; border-color: black; border-style: solid; border-radius: 10px; width: 100%; background-color: white;">{Login}</b>
+                      <b style="padding: 10px; border: 1px; border-color: black; border-style: solid; border-radius: 10px; width: 100%; background-color: white;">{{ Ccm.login_municipal }}</b>
                       <p style="padding: 10px;">Senha: </p>
-                      <b style="padding: 10px; border: 1px; border-color: black; border-style: solid; border-radius: 10px; width: 100%; background-color: white;">{Senha}</b>
+                      <b style="padding: 10px; border: 1px; border-color: black; border-style: solid; border-radius: 10px; width: 100%; background-color: white;">{{ Ccm.senha_municipal }}</b>
                     </div>
                   </div>
                 </div>
@@ -518,11 +492,11 @@
                   <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
                     <div class="accordion-body" style="background-color: aliceblue;">
                       <p style="padding: 10px;">IE:</p>
-                      <b style="padding: 10px; border: 1px; border-color: black; border-style: solid; border-radius: 10px; width: 100%; background-color: white;">1512521521</b>
+                      <b style="padding: 10px; border: 1px; border-color: black; border-style: solid; border-radius: 10px; width: 100%; background-color: white;">{{ empresa.ie_estadual.ie }}</b>
                       <p style="padding: 10px;">Login:</p>
-                      <b style="padding: 10px; border: 1px; border-color: black; border-style: solid; border-radius: 10px; width: 100%; background-color: white;">{Login}</b>
+                      <b style="padding: 10px; border: 1px; border-color: black; border-style: solid; border-radius: 10px; width: 100%; background-color: white;">{{ Ie.login_estadual }}</b>
                       <p style="padding: 10px;">Senha: </p>
-                      <b style="padding: 10px; border: 1px; border-color: black; border-style: solid; border-radius: 10px; width: 100%; background-color: white;">{Senha}</b>
+                      <b style="padding: 10px; border: 1px; border-color: black; border-style: solid; border-radius: 10px; width: 100%; background-color: white;">{{ Ie.senha_estadual }}</b>
                     </div>
                   </div>
                 </div>
@@ -535,11 +509,11 @@
                   <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
                     <div class="accordion-body" style="background-color: aliceblue;">
                       <p style="padding: 10px;">CNPJ:</p>
-                      <b style="padding: 10px; border: 1px; border-color: black; border-style: solid; border-radius: 10px; width: 100%; background-color: white;">1512521521</b>
+                      <b style="padding: 10px; border: 1px; border-color: black; border-style: solid; border-radius: 10px; width: 100%; background-color: white;">{{ empresa.cnpj_federal.cnpj }}</b>
                       <p style="padding: 10px;">Login:</p>
-                      <b style="padding: 10px; border: 1px; border-color: black; border-style: solid; border-radius: 10px; width: 100%; background-color: white;">{Login}</b>
+                      <b style="padding: 10px; border: 1px; border-color: black; border-style: solid; border-radius: 10px; width: 100%; background-color: white;">{{ Cnpj.login_federal }}</b>
                       <p style="padding: 10px;">Senha: </p>
-                      <b style="padding: 10px; border: 1px; border-color: black; border-style: solid; border-radius: 10px; width: 100%; background-color: white;">{Senha}</b>
+                      <b style="padding: 10px; border: 1px; border-color: black; border-style: solid; border-radius: 10px; width: 100%; background-color: white;">{{ Cnpj.senha_federal }}</b>
                     </div>
                   </div>
                 </div>
@@ -608,6 +582,7 @@
                     </tr>
                   </thead>
                   <tbody>
+
                     <tr>
                       <th scope="row"><a href="#">#2457</a></th>
                       <td>Brandon Jacob</td>

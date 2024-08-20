@@ -80,7 +80,7 @@
           <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
             <li class="dropdown-header">
               <h6>{{user.username}}</h6>
-              <span>Web Designer</span>
+              <span>{{ user.groups.first.name }}</span>
             </li>
             <li>
               <hr class="dropdown-divider">
@@ -95,27 +95,6 @@
             <li>
               <hr class="dropdown-divider">
             </li>
-
-            <li>
-              <a class="dropdown-item d-flex align-items-center" href="users-profile.html">
-                <i class="bi bi-gear"></i>
-                <span>Account Settings</span>
-              </a>
-            </li>
-            <li>
-              <hr class="dropdown-divider">
-            </li>
-
-            <li>
-              <a class="dropdown-item d-flex align-items-center" href="pages-faq.html">
-                <i class="bi bi-question-circle"></i>
-                <span>Need Help?</span>
-              </a>
-            </li>
-            <li>
-              <hr class="dropdown-divider">
-            </li>
-
             <li>
               <a class="dropdown-item d-flex align-items-center" href="#">
                 <i class="bi bi-box-arrow-right"></i>
@@ -286,33 +265,28 @@
                         <div class="modal-content">
                           <div class="modal-header">
                             <h2 class="modal-title font-weight-bold" id="modalAdicionarEmpresaLabel">Adicionar tributos</h2>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
-                              <span aria-hidden="true">&times;</span>
-                            </button>
                           </div>
                           <div class="modal-body">
                             <!-- Formulário para informações gerais -->
-                            <form>
-                              <div class="row">
+                            <form method="POST"> {% csrf_token %}
+                              <div class="row my-3">
                                 <div class="col-lg-8">
                                   <div class="form-group">
                                     <label for="nomeEmpresa">Nome</label>
-                                    <input type="text" class="form-control" id="nomeEmpresa" required>
+                                    <input type="text" class="form-control" id="nomeEmpresa" name="nome" required>
                                   </div>
                                 </div>
                               </div>
                               <div class="row">
                                 <div class="col-md-8">
                                   <div class="form-group">
-                                    <label for="nomeEmpresa">Fonte de receita</label>
-                                    <select class="form-control" id="regimeApuracao">
-                                      <option value="Simples Nacional">Simples Nacional</option>
-                                      <option value="Lucro Real">Lucro Real</option>
-                                      <option value="Lucro Presumido">Lucro Presumido</option>
-                                      <option value="Outro">Outro</option>
+                                    <label for="regimeApuracao">Fonte de receita</label>
+                                    <select class="form-control" id="regimeApuracao" name="fonte_receita" required>
+                                      {% for fonte_receita in fontes_receita %}
+                                      <option value="{{ fonte_receita.id_fonte_receita }}">{{ fonte_receita.nome }}</option>
+                                      {% endfor %}
                                     </select>
                                   </div>
-                                  
                                 </div>
                               </div>
                               <hr>
@@ -321,99 +295,40 @@
                                 <div>
                                   <label for="inputNumber" class="col-sm-2 col-form-label">Dia</label>
                                 <div class="col-sm-10">
-                                  <input type="number" class="form-control">
+                                  <input type="number" class="form-control" name="dia" required>
                                 </div>
                                 </div>
-                                <div>
-                                  <legend>Mês</legend>
-                                  
-                                  <div class="row">
-                                    <div class="col-sm-6">
-                                      <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="gridCheck1">
-                                        <label class="form-check-label" for="gridCheck1">
-                                          Janeiro
-                                        </label>
-                                      </div>
-                                  
-                                      <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="gridCheck2" checked>
-                                        <label class="form-check-label" for="gridCheck2">
-                                          Fevereiro
-                                        </label>
-                                      </div>
-                                  
-                                      <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="gridCheck3">
-                                        <label class="form-check-label" for="gridCheck3">
-                                          Março
-                                        </label>
-                                      </div>
-                                  
-                                      <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="gridCheck4" checked>
-                                        <label class="form-check-label" for="gridCheck4">
-                                          Abril
-                                        </label>
-                                      </div>
-                                      <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="gridCheck4" checked>
-                                        <label class="form-check-label" for="gridCheck4">
-                                          Maio
-                                        </label>
-                                      </div>
-                                      <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="gridCheck4" checked>
-                                        <label class="form-check-label" for="gridCheck4">
-                                          Junho
-                                        </label>
-                                      </div>
-                                    </div>
-                                  
-                                    <div class="col-sm-6">
-                                      <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="gridCheck5">
-                                        <label class="form-check-label" for="gridCheck5">
-                                          Julho
-                                        </label>
-                                      </div>
-                                  
-                                      <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="gridCheck6" checked>
-                                        <label class="form-check-label" for="gridCheck6">
-                                          Agosto
-                                        </label>
-                                      </div>
-                                  
-                                      <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="gridCheck7">
-                                        <label class="form-check-label" for="gridCheck7">
-                                          Setembro
-                                        </label>
-                                      </div>
-                                  
-                                      <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="gridCheck8" checked>
-                                        <label class="form-check-label" for="gridCheck8">
-                                          Outubro
-                                        </label>
-                                      </div>
-                                      <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="gridCheck7">
-                                        <label class="form-check-label" for="gridCheck7">
-                                          Novembro
-                                        </label>
-                                      </div>
-                                      <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="gridCheck7">
-                                        <label class="form-check-label" for="gridCheck7">
-                                          Dezembro
-                                        </label>
-                                      </div>
-                                    </div>
+                                  <div class="form-group my-3">
+                                    <label for="nomeEmpresa">Período do vencimento</label>
+                                    <select class="form-control" id="regimeApuracao" name="periodo_pagamento" required>
+                                      <option value="mensal">Mensal</option>
+                                      <option value="trimestral">Trimestral</option>
+                                      <option value="anual">Anual</option>
+                                    </select>
                                   </div>
-                                  
-                                
+                                <div>
+                                   <div class="row">
+                                    <div class="col-md-8">
+                                      <div class="form-group">
+                                        <label for="nomeEmpresa">Mês</label>
+                                        <select class="form-control" id="regimeApuracao1" name="mes">
+                                          <option value=1>Janeiro</option>
+                                          <option value=2>Fevereiro</option>
+                                          <option value=3>Março</option>
+                                          <option value=4>Abril</option>
+                                            <option value=5>Maio</option>
+                                          <option value=6>Junho</option>
+                                          <option value=7>Julho</option>
+                                          <option value=8>Agosto</option>
+                                            <option value=9>Setembro</option>
+                                          <option value=10>Outubro</option>
+                                          <option value=11>Novembro</option>
+                                          <option value=12>Dezembro</option>
+                                        </select>
+                                      </div>
+
+                                    </div>
+                              </div>
                                 </div>
                               </div><hr>
                               <h5 class="card-title">Critérios</h5>
@@ -421,7 +336,7 @@
                                 <div class="col-md-8">
                                   <div class="form-group">
                                     <label for="nomeEmpresa">Limite Superior (R$)</label>
-                                    <input type="number" class="form-control">
+                                    <input type="number" class="form-control" name="limite_superior">
                                   </div>
                                 </div>
                               </div>
@@ -429,7 +344,7 @@
                                 <div class="col-md-8">
                                   <div class="form-group">
                                     <label for="nomeEmpresa">Limite Inferior (R$)</label>
-                                    <input type="number" class="form-control">
+                                    <input type="number" class="form-control" name="limite_inferior">
                                   </div>
                                 </div>
                               </div>
@@ -438,7 +353,7 @@
                                 <div class="col-md-8">
                                   <div class="form-group">
                                     <label for="nomeEmpresa">Alíquota (%)</label>
-                                    <input type="number" class="form-control">
+                                    <input type="number" class="form-control" name="aliquota">
                                   </div>
                                 </div>
                               </div>
@@ -446,149 +361,19 @@
                                 <div class="col-md-8">
                                   <div class="form-group">
                                     <label for="nomeEmpresa">Tipo</label>
-                                    <select class="form-control" id="regimeApuracao0">
-                                      <option value="Simples Nacional">Simples Nacional</option>
-                                      <option value="Lucro Real">Lucro Real</option>
-                                      <option value="Lucro Presumido">Lucro Presumido</option>
-                                      <option value="Outro">Outro</option>
+                                    <select class="form-control" id="regimeApuracao0" name="deducao_imposto">
+                                      <option value="deducao">Dedução</option>
+                                      <option value="imposto">Imposto</option>
                                     </select>
                                   </div>
                                   
                                 </div>
                               </div><hr>
-                              <div class="row">
-                                <div class="col-lg-6">
-                        
-                                  <div class="card">
-                                    <div class="card-body">
-                                      <h5 class="card-title">Impostos</h5>
-                        
-                                      <!-- Default Table -->
-                                      <table class="table">
-                                        <thead>
-                                          <tr>
-                                            <th scope="col">Limite Inferior (R$)</th>
-                                            <th scope="col">Limite Superior (R$)</th>
-                                            <th scope="col">Alíquota (%)</th>
-                                            <th scope="col">Ações</th>
-                                          </tr>
-                                        </thead>
-                                        <tbody>
-                                          <tr>
-                                            <td>Brandon Jacob</td>
-                                            <td>Designer</td>
-                                            <td>28</td>
-                                            <td>
-                                              <a href="#"><i class="bi bi-trash-fill" style="margin-right: 17%;"></i></a>
-                                            </td>
-                                          </tr>
-                                          <tr>
-                                            <td>Bridie Kessler</td>
-                                            <td>Developer</td>
-                                            <td>35</td>
-                                            <td>
-                                              <a href="#"><i class="bi bi-trash-fill" style="margin-right: 17%;"></i></a>
-                                            </td>
-                                          </tr>
-                                          <tr>
-                                            <td>Ashleigh Langosh</td>
-                                            <td>Finance</td>
-                                            <td>45</td>
-                                            <td>
-                                              <a href="#"><i class="bi bi-trash-fill" style="margin-right: 17%;"></i></a>
-                                            </td>
-                                          </tr>
-                                          <tr>
-                                            <td>Angus Grady</td>
-                                            <td>HR</td>
-                                            <td>34</td>
-                                            <td>
-                                              <a href="#"><i class="bi bi-trash-fill" style="margin-right: 17%;"></i></a>
-                                            </td>
-                                          </tr>
-                                          <tr>
-                                            <td>Raheem Lehner</td>
-                                            <td>Dynamic Division Officer</td>
-                                            <td>47</td>
-                                            <td>
-                                              <a href="#"><i class="bi bi-trash-fill" style="margin-right: 17%;"></i></a>
-                                            </td>
-                                          </tr>
-                                        </tbody>
-                                      </table>
-                                      <!-- End Default Table Example -->
-                                    </div>
-                                  </div>
+                                <div class="modal-footer">
+                                 <button type="reset" class="btn btn-secondary" data-dismiss="modal">Resetar</button>
+                                 <button type="submit" class="btn btn-primary" id="salvarEmpresa">Salvar</button>
                                 </div>
-                                <div class="col-lg-6">
-                        
-                                  <div class="card">
-                                    <div class="card-body">
-                                      <h5 class="card-title">Dedução</h5>
-                        
-                                      <!-- Default Table -->
-                                      <table class="table">
-                                        <thead>
-                                          <tr>
-                                            <th scope="col">Limite Inferior (R$)</th>
-                                            <th scope="col">Limite Superior (R$)</th>
-                                            <th scope="col">Alíquota (%)</th>
-                                            <th scope="col">Ações</th>
-                                          </tr>
-                                        </thead>
-                                        <tbody>
-                                          <tr>
-                                            <td>Brandon Jacob</td>
-                                            <td>Designer</td>
-                                            <td>28</td>
-                                            <td>
-                                              <a href="#"><i class="bi bi-trash-fill" style="margin-right: 17%;"></i></a>
-                                            </td>
-                                          </tr>
-                                          <tr>
-                                            <td>Bridie Kessler</td>
-                                            <td>Developer</td>
-                                            <td>35</td>
-                                            <td>
-                                              <a href="#"><i class="bi bi-trash-fill" style="margin-right: 17%;"></i></a>
-                                            </td>
-                                          </tr>
-                                          <tr>
-                                            <td>Ashleigh Langosh</td>
-                                            <td>Finance</td>
-                                            <td>45</td>
-                                            <td>
-                                              <a href="#"><i class="bi bi-trash-fill" style="margin-right: 17%;"></i></a>
-                                            </td>
-                                          </tr>
-                                          <tr>
-                                            <td>Angus Grady</td>
-                                            <td>HR</td>
-                                            <td>34</td>
-                                            <td>
-                                              <a href="#"><i class="bi bi-trash-fill" style="margin-right: 17%;"></i></a>
-                                            </td>
-                                          </tr>
-                                          <tr>
-                                            <td>Raheem Lehner</td>
-                                            <td>Dynamic Division Officer</td>
-                                            <td>47</td>
-                                            <td>
-                                              <a href="#"><i class="bi bi-trash-fill" style="margin-right: 17%;"></i></a>
-                                            </td>
-                                          </tr>
-                                        </tbody>
-                                      </table>
-                                      <!-- End Default Table Example -->
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
                             </form>
-                          </div>
-                          <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
-                            <button type="button" class="btn btn-primary" id="salvarEmpresa">Salvar</button>
                           </div>
                         </div>
                       </div>
@@ -641,91 +426,27 @@
                                   <legend>Mês</legend>
 
                                   <div class="row">
-                                    <div class="col-sm-6">
-                                      <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="gridCheck11">
-                                        <label class="form-check-label" for="gridCheck1">
-                                          Janeiro
-                                        </label>
+                                    <div class="col-md-8">
+                                      <div class="form-group">
+                                        <label for="nomeEmpresa">Mês</label>
+                                        <select class="form-control" id="regimeApuracao1">
+                                          <option value=1>Janeiro</option>
+                                          <option value=2>Fevereiro</option>
+                                          <option value=3>Março</option>
+                                          <option value=4>Abril</option>
+                                            <option value=5>Maio</option>
+                                          <option value=6>Junho</option>
+                                          <option value=7>Julho</option>
+                                          <option value=8>Agosto</option>
+                                            <option value=9>Setembro</option>
+                                          <option value=10>Outubro</option>
+                                          <option value=11>Novembro</option>
+                                          <option value=12>Dezembro</option>
+                                        </select>
                                       </div>
 
-                                      <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="gridCheck21" checked>
-                                        <label class="form-check-label" for="gridCheck2">
-                                          Fevereiro
-                                        </label>
-                                      </div>
-
-                                      <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="gridCheck31">
-                                        <label class="form-check-label" for="gridCheck3">
-                                          Março
-                                        </label>
-                                      </div>
-
-                                      <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="gridCheck41" checked>
-                                        <label class="form-check-label" for="gridCheck4">
-                                          Abril
-                                        </label>
-                                      </div>
-                                      <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="gridCheck42" checked>
-                                        <label class="form-check-label" for="gridCheck4">
-                                          Maio
-                                        </label>
-                                      </div>
-                                      <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="gridCheck43" checked>
-                                        <label class="form-check-label" for="gridCheck4">
-                                          Junho
-                                        </label>
-                                      </div>
                                     </div>
-
-                                    <div class="col-sm-6">
-                                      <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="gridCheck51">
-                                        <label class="form-check-label" for="gridCheck5">
-                                          Julho
-                                        </label>
-                                      </div>
-
-                                      <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="gridCheck61" checked>
-                                        <label class="form-check-label" for="gridCheck6">
-                                          Agosto
-                                        </label>
-                                      </div>
-
-                                      <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="gridCheck71">
-                                        <label class="form-check-label" for="gridCheck7">
-                                          Setembro
-                                        </label>
-                                      </div>
-
-                                      <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="gridCheck81" checked>
-                                        <label class="form-check-label" for="gridCheck8">
-                                          Outubro
-                                        </label>
-                                      </div>
-                                      <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="gridCheck72">
-                                        <label class="form-check-label" for="gridCheck7">
-                                          Novembro
-                                        </label>
-                                      </div>
-                                      <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="gridCheck73">
-                                        <label class="form-check-label" for="gridCheck7">
-                                          Dezembro
-                                        </label>
-                                      </div>
-                                    </div>
-                                  </div>
-
+                              </div>
 
                                 </div>
                               </div><hr>
@@ -915,7 +636,7 @@
                           <tr>
                             <th scope="col">ID</th>
                             <th scope="col">Nome</th>
-                            <th scope="col">Imposto (%)</th>
+                            <th scope="col">Aliquota (%)</th>
                             <th scope="col">Dedução (%)</th>
                             <th scope="col">Data de vencimento</th>
                             <th scope="col">Ações</th>
@@ -1036,9 +757,6 @@
                 </div>
               </div>
             </div>
-  
-            
-
             </div>
         </div><!-- End Recent Activity -->
 

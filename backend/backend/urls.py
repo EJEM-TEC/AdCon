@@ -25,7 +25,7 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("", views.login, name="login"),
     path("index", views.index, name="index"),
-    path("exibirempresas", views.exibir_empresa, name="exibirempresas"),
+    path("exibirempresa/<int:empresa_id>", views.exibir_empresa, name="exibirempresas"),
     path('empresas/<int:empresa_id>/update/', views.update_empresa, name="editar_empresa"),
     path('empresas/<int:empresa_id>/delete/', views.delete_empresa, name="deletar_empresa"),
     path("colaboradores", views.colaboradores, name="colaboradores"),
@@ -33,7 +33,9 @@ urlpatterns = [
     path("historico-transacoes.html", views.transacoes, name="transacoes"),
     path("perfil/<int:user_id>", views.update_perfil, name="perfil"),
     path("tributos", views.tributos, name="tributos"),
+    path("tributos/<int:tributo_id>/delete", views.excluir_tributo, name="delete_tributo"),
     path("404", views.page_404, name="page_404"),
     path('users/<int:user_id>/delete/', views.delete_user, name='delete_user'),
     path('users/<int:user_id>/update/', views.update_user, name='update_user'),
+
 ]

@@ -13,12 +13,32 @@ from rolepermissions.decorators import has_role_decorator
 from django.views.generic.edit import DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
-from .models import Empresa, Federal, Estadual, Municipal, Tributo, Receita, Vencimento, Criterios
+from .models import Empresa, Federal, Estadual, Municipal, Tributo, FonteReceita, Vencimento, Criterios, EmpresaFonteReceita, EmpresaTributo, CriterioAliquotas
 
 
 @login_required(login_url="/")
-def exibir_empresa(request):
-    return render(request, template_name="frontend/Empresa.html")
+def exibir_empresa(request, empresa_id):
+    empresa = get_object_or_404(Empresa, id_empresa=empresa_id)
+
+    cnpj = empresa.cnpj_federal.cnpj
+    ie = empresa.ie_estadual.ie
+    ccm = empresa.ccm_municipal.ccm
+
+    print(ccm)  # Retorna o valor do ccm
+    print(cnpj)  # Retorna o valor do cnpj
+    print(ie)  # Retorna o valor do ie
+
+    # Recuperando as instâncias relacionadas
+    Cnpj = get_object_or_404(Federal, cnpj=cnpj)
+    Ie = get_object_or_404(Estadual, ie=ie)
+    Ccm = get_object_or_404(Municipal, ccm=ccm)
+    return render(request, template_name="frontend/Empresa.html", context={
+        "empresa":  empresa,
+        "tributos": tributos,
+        "Ccm": Ccm,
+        "Ie": Ie,
+        "Cnpj": Cnpj,
+    })
 
 
 def login(request):
@@ -78,11 +98,6 @@ def perfil(request):
 
 
 @login_required(login_url="/")
-def tributos(request):
-    return render(request, template_name="frontend/tributos.html")
-
-
-@login_required(login_url="/")
 def page_404(request):
     return render(request, template_name="frontend/pages-404.html")
 
@@ -139,30 +154,6 @@ def index(request):
     if request.method == 'POST':
         try:
             # Criação das entidades
-            criterios = Criterios.objects.create(
-                deducao_imposto='',
-                limite_superior=0,
-                limite_inferior=0,
-                aliquota=0
-            )
-
-            vencimento = Vencimento.objects.create(
-                dia=None,
-                periodo_pagamento='',
-                mes=None
-            )
-
-            receita = Receita.objects.create(
-                nome=''
-            )
-
-            tributo = Tributo.objects.create(
-                nome='',
-                id_fonte_receita_receita=receita,
-                id_data_vencimento_vencimento=vencimento,
-                id_aliquotas_Criterios=criterios
-            )
-
             federal = Federal.objects.create(
                 cnpj=request.POST.get('cnpj_federal'),
                 login_federal=request.POST.get('login_federal'),
@@ -192,7 +183,6 @@ def index(request):
                 cnpj_federal=federal,
                 ie_estadual=estadual,
                 ccm_municipal=municipal,
-                id_tributo_tributo=tributo
             )
 
             print("A empresa e as entidades relacionadas foram cadastradas com sucesso")
@@ -270,8 +260,25 @@ def delete_empresa(request, empresa_id):
     print("Função delete_empresa foi chamada.")
     empresa = get_object_or_404(Empresa, id_empresa=empresa_id)
 
+    # Acessando os valores diretamente dos campos
+    cnpj = empresa.cnpj_federal.cnpj
+    ie = empresa.ie_estadual.ie
+    ccm = empresa.ccm_municipal.ccm
+
+    print(ccm)  # Retorna o valor do ccm
+    print(cnpj)  # Retorna o valor do cnpj
+    print(ie)  # Retorna o valor do ie
+
+    # Recuperando as instâncias relacionadas
+    Cnpj = get_object_or_404(Federal, cnpj=cnpj)
+    Ie = get_object_or_404(Estadual, ie=ie)
+    Ccm = get_object_or_404(Municipal, ccm=ccm)
+
     if request.method == 'POST':
         empresa.delete()
+        Cnpj.delete()
+        Ie.delete()
+        Ccm.delete()
         return redirect('index')
 
     return render(request, 'frontend/excluir_empresa.html', {'empresa': empresa})
@@ -302,3 +309,70 @@ def update_perfil(request, user_id):
             print("Ocorreu o IntegrityError")
 
     return render(request, 'frontend/page-perfil.html', {'user': user})
+
+@login_required(login_url='/')
+def tributos(request):
+    tributos = Tributo.objects.all()
+
+    if request.method == 'POST':
+        # Coletando dados do formulário manualmente
+        nome_tributo = request.POST.get('nome')
+        fonte_receita_id = request.POST.get('fonte_receita')
+        dia_vencimento = request.POST.get('dia')
+        periodo_pagamento = request.POST.get('periodo_pagamento')
+        mes_vencimento = request.POST.get('mes')
+        deducao_imposto = request.POST.get('deducao_imposto')
+        limite_superior = request.POST.get('limite_superior')
+        limite_inferior = request.POST.get('limite_inferior')
+        aliquota = request.POST.get('aliquota')
+
+
+        # Criando Vencimento
+        vencimento = Vencimento.objects.create(
+            dia=dia_vencimento,
+            periodo_pagamento=periodo_pagamento,
+            mes=mes_vencimento
+        )
+
+        # Criando Criterios
+        criterios = Criterios.objects.create(
+            deducao_imposto=deducao_imposto,
+            limite_superior=limite_superior,
+            limite_inferior=limite_inferior,
+            aliquota=aliquota
+        )
+
+        # Criando Tributo
+        fonte_receita = FonteReceita.objects.get(id_fonte_receita=fonte_receita_id)
+        tributo = Tributo.objects.create(
+            nome=nome_tributo,
+            id_data_vencimento_vencimento_id=vencimento.id_data_vencimento,
+            id_fonte_receita_fonte_receita_id=fonte_receita.id_fonte_receita,
+        )
+
+        # Criando CriterioAliquotas
+        CriterioAliquotas.objects.create(
+            id_aliquotas_criterios_id=criterios.id_aliquotas,
+            id_tributo_tributo_id=tributo.id_tributo
+        )
+
+        return redirect('tributos')  # Redirecione para uma página de sucesso
+
+    fontes_receitas = FonteReceita.objects.all()
+    return render(request, 'frontend/tributos.html',
+                  {
+                      "fontes_receita": fontes_receitas,
+                      "tributos": tributos
+                  })
+
+@login_required(login_url='/')
+def excluir_tributo(request, tributo_id):
+    context = {}
+    tributo = get_object_or_404(Tributo, id=tributo_id)
+    context['object'] = tributo
+    if request.method == 'POST':
+        tributo.delete()
+        return redirect('tributos')
+    return render(request, 'frontend/excluir_tributo.html', context);
+
+
