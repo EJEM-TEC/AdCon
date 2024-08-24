@@ -13,7 +13,8 @@ from rolepermissions.decorators import has_role_decorator
 from django.views.generic.edit import DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
-from .models import Empresa, Federal, Estadual, Municipal, Tributo, FonteReceita, Vencimento, Criterios, EmpresaFonteReceita, EmpresaTributo, CriterioAliquotas
+from .models import Empresa, Federal, Estadual, Municipal, Tributo, FonteReceita, Vencimento, Criterios, \
+    EmpresaFonteReceita, EmpresaTributo, CriterioAliquotas, EmpresaTransacoes, Transacoes
 
 
 @login_required(login_url="/")
@@ -535,3 +536,68 @@ def deletar_fontes_receitas(request, fonte_receita_id):
         return redirect('fontes_receitas')
 
     return render(request, 'frontend/excluir_fonte_receita.html', {'fonte_receita': fonte_receita})
+
+@login_required(login_url='/')
+def transacoes(request, empresa_id):
+    empresa = get_object_or_404(Empresa, id_empresa=empresa_id)
+
+    if request.method == 'POST':
+        data = request.POST.get('data')
+        fonte_receita = request.POST.get('fonte_receita')
+        valor = request.POST.get('valor')
+
+        # Criando um novo critério
+        nova_transacao = Transacoes.objects.create(
+            data=data,
+            fonte_receita=fonte_receita,
+            transacao=valor,
+        )
+
+        # Relacionando o critério ao tributo
+        EmpresaTransacoes.objects.create(
+            id_transacoes_transacoes=nova_transacao,  # Passando a instância de Criterios
+            id_empresa_empresa=empresa  # Passando a instância de Tributo
+        )
+
+        return redirect('transacoes', empresa_id=empresa.empresa_id)
+
+    # Obtendo todos os CriterioAliquotas relacionados ao tributo
+    empresa_transacoes = EmpresaTransacoes.objects.filter(id_empresa_empresa=empresa).select_related(
+        'id_transacoes_transacoes')
+
+    # Extraindo todos os critérios relacionados aos CriterioAliquotas
+    transacoes = [et.id_transacoes_transacoes for et in empresa_transacoes]
+
+    fontes_receitas = FonteReceita.objects.filter(empresafontereceita__id_empresa_empresa=empresa)
+
+
+    return render(request, 'frontend/historico-transacoes.html', {'transacoes': transacoes,
+                                                                  'fontes_receitas': fontes_receitas,
+                                                                  'empresa': empresa} )
+
+@login_required(login_url='/')
+def deletar_transacao(request, empresa_id, transacao_id):
+    # Obtendo o tributo pelo id_tributo fornecido
+    empresa = get_object_or_404(Empresa, id_empresa=empresa_id)
+
+    # Obtendo o critério pelo id_aliquotas fornecido
+    transacao = get_object_or_404(Transacoes, id_transacoes=transacao_id)
+
+    # Verificando se o critério está relacionado ao tributo
+    empresa_transacao = get_object_or_404(EmpresaTransacoes, id_transacoes_transacoes=transacao,
+                                          id_empresa_empresa=empresa)
+
+    if request.method == 'POST':
+        # Deletando a relação entre o critério e o tributo
+        empresa_transacao.delete()
+
+        # Opcional: Deletar o critério completamente se não estiver relacionado a outro tributo
+        transacao.delete()
+
+        # Redirecionando para a página de visualização de critérios
+        return redirect('transacoes', empresa_id=empresa.id_empresa)
+
+    return render(request, 'frontend/excluir_transacao.html', {
+        'empresa': empresa,
+        'transacao': transacao
+    })
