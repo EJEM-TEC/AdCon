@@ -25,9 +25,8 @@ class Municipal(models.Model):
 
 class Vencimento(models.Model):
     id_data_vencimento = models.AutoField(primary_key=True)
-    dia = models.IntegerField(null=True, blank=True)
+    dia = models.DateField(auto_now=False, auto_now_add=False)
     periodo_pagamento = models.CharField(max_length=100, null=True, blank=True)
-    mes = models.IntegerField(null=True, blank=True)
 
 class Estadual(models.Model):
     ie = models.AutoField(primary_key=True)
@@ -60,6 +59,7 @@ class Empresa(models.Model):
     id_empresa = models.AutoField(primary_key=True)
     nome = models.CharField(max_length=100)
     responsaveis = models.CharField(max_length=100)
+    regime_apuracao = models.CharField(max_length=100)
     atividade = models.CharField(max_length=100)
     cnpj_federal = models.ForeignKey(Federal, on_delete=models.CASCADE)
     ie_estadual = models.ForeignKey(Estadual, on_delete=models.CASCADE)

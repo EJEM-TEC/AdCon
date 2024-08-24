@@ -295,7 +295,7 @@
                                 <div>
                                   <label for="inputNumber" class="col-sm-2 col-form-label">Dia</label>
                                 <div class="col-sm-10">
-                                  <input type="number" class="form-control" name="dia" required>
+                                  <input type="date" class="form-control" name="dia" required>
                                 </div>
                                 </div>
                                   <div class="form-group my-3">
@@ -306,30 +306,6 @@
                                       <option value="anual">Anual</option>
                                     </select>
                                   </div>
-                                <div>
-                                   <div class="row">
-                                    <div class="col-md-8">
-                                      <div class="form-group">
-                                        <label for="nomeEmpresa">Mês</label>
-                                        <select class="form-control" id="regimeApuracao1" name="mes">
-                                          <option value=1>Janeiro</option>
-                                          <option value=2>Fevereiro</option>
-                                          <option value=3>Março</option>
-                                          <option value=4>Abril</option>
-                                            <option value=5>Maio</option>
-                                          <option value=6>Junho</option>
-                                          <option value=7>Julho</option>
-                                          <option value=8>Agosto</option>
-                                            <option value=9>Setembro</option>
-                                          <option value=10>Outubro</option>
-                                          <option value=11>Novembro</option>
-                                          <option value=12>Dezembro</option>
-                                        </select>
-                                      </div>
-
-                                    </div>
-                              </div>
-                                </div>
                               </div><hr>
                               <h5 class="card-title">Critérios</h5>
                               <div class="row">
@@ -636,88 +612,36 @@
                           <tr>
                             <th scope="col">ID</th>
                             <th scope="col">Nome</th>
-                            <th scope="col">Aliquota (%)</th>
-                            <th scope="col">Dedução (%)</th>
+                            <th scope="col">Fonte de Receita</th>
                             <th scope="col">Data de vencimento</th>
+                              <th scope="col">Período de Pagamento</th>
+                            <th scope="col">Critérios</th>
                             <th scope="col">Ações</th>
                           </tr>
                         </thead>
                         <tbody>
+                        {% for tributo in tributos %}
                           <tr>
-                            <th scope="row">1</th>
-                            <td>Brandon Jacob</td>
-                            <td>Designer</td>
-                            <td>28</td>
-                            <td>2016-05-25</td>
+                            <th scope="row">{{ tributo.id_tributo }}</th>
+                            <td>{{ tributo.nome }}</td>
+                            <td>{{ tributo.id_fonte_receita_fonte_receita.nome }}</td>
+                            <td>{{ tributo.id_data_vencimento_vencimento.dia}}</td>
+                            <td>{{ tributo.id_data_vencimento_vencimento.periodo_pagamento}}</td>
+                            <td><a href="{% url 'criterios' tributo_id=tributo.id_tributo %}"><i class="bi bi-table"></i></a></td>
                             <td>
-                                <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#editarTributos">
-                                  <i class="bi bi-pencil-fill" style="margin-right: 17%; margin-left: 0%;"></i>
-                                </button>
-                                <a href="#"><i class="bi bi-trash-fill" style="margin-right: 17%;"></i></a>
+                                <a href="{% url 'update_tributo' tributo_id=tributo.id_tributo %}">
+                                    <i class="bi bi-pencil-fill" style="margin-right: 17%; margin-left: 0%;"></i>
+                                </a>
+                                <a href="{% url 'delete_tributo' tributo_id=tributo.id_tributo %}"><i class="bi bi-trash-fill" style="margin-right: 17%;"></i></a>
                             </td>
                           </tr>
-                          <tr>
-                            <th scope="row">2</th>
-                            <td>Bridie Kessler</td>
-                            <td>Developer</td>
-                            <td>35</td>
-                            <td>2014-12-05</td>
-                            <td>
-                               <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#editarTributos">
-                                  <i class="bi bi-pencil-fill" style="margin-right: 17%; margin-left: 0%;"></i>
-                                </button>
-                                <a href="#"><i class="bi bi-trash-fill" style="margin-right: 17%;"></i></a>
-                            </td>
-                          </tr>
-                          <tr>
-                            <th scope="row">3</th>
-                            <td>Ashleigh Langosh</td>
-                            <td>Finance</td>
-                            <td>45</td>
-                            <td>2011-08-12</td>
-                            <td>
-                                <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#editarTributos">
-                                  <i class="bi bi-pencil-fill" style="margin-right: 17%; margin-left: 0%;"></i>
-                                </button>
-                                <a href="#"><i class="bi bi-trash-fill" style="margin-right: 17%;"></i></a>
-                            </td>
-                          </tr>
-                          <tr>
-                            <th scope="row">4</th>
-                            <td>Angus Grady</td>
-                            <td>HR</td>
-                            <td>34</td>
-                            <td>2012-06-11</td>
-                            <td>
-                                <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#editarTributos">
-                                  <i class="bi bi-pencil-fill" style="margin-right: 17%; margin-left: 0%;"></i>
-                                </button>
-                                <a href="#"><i class="bi bi-trash-fill" style="margin-right: 17%;"></i></a>
-                            </td>
-                          </tr>
-                          <tr>
-                            <th scope="row">5</th>
-                            <td>Raheem Lehner</td>
-                            <td>Dynamic Division Officer</td>
-                            <td>47</td>
-                            <td>2011-04-19</td>
-                            <td>
-                                 <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#editarTributos">
-                                  <i class="bi bi-pencil-fill" style="margin-right: 17%; margin-left: 0%;"></i>
-                                </button>
-                                <a href="#"><i class="bi bi-trash-fill" style="margin-right: 17%;"></i></a>
-                            </td>
-                          </tr>
+                        {% endfor %}
                         </tbody>
                       </table>
                       <!-- End Default Table Example -->
                     </div>
                   </div>
             </div><!-- End Reports -->
-
-            
-
-            
 
           </div>
         </div><!-- End Left side columns -->
@@ -729,7 +653,7 @@
           <div class="card">
             <div class="card-body">
               <h5 class="card-title" style="display: flex; align-items: center; justify-content: space-between;">
-                Empresa X 
+                Tributo
               </h5>
               <form>
                 <div class="row mb-3">
@@ -759,8 +683,6 @@
             </div>
             </div>
         </div><!-- End Recent Activity -->
-
-          
 
         </div><!-- End Right side columns -->
         

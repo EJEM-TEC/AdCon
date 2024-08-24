@@ -320,7 +320,6 @@ def tributos(request):
         fonte_receita_id = request.POST.get('fonte_receita')
         dia_vencimento = request.POST.get('dia')
         periodo_pagamento = request.POST.get('periodo_pagamento')
-        mes_vencimento = request.POST.get('mes')
         deducao_imposto = request.POST.get('deducao_imposto')
         limite_superior = request.POST.get('limite_superior')
         limite_inferior = request.POST.get('limite_inferior')
@@ -331,7 +330,6 @@ def tributos(request):
         vencimento = Vencimento.objects.create(
             dia=dia_vencimento,
             periodo_pagamento=periodo_pagamento,
-            mes=mes_vencimento
         )
 
         # Criando Criterios
@@ -368,11 +366,172 @@ def tributos(request):
 @login_required(login_url='/')
 def excluir_tributo(request, tributo_id):
     context = {}
-    tributo = get_object_or_404(Tributo, id=tributo_id)
+    tributo = get_object_or_404(Tributo, id_tributo=tributo_id)
     context['object'] = tributo
     if request.method == 'POST':
         tributo.delete()
         return redirect('tributos')
-    return render(request, 'frontend/excluir_tributo.html', context);
+    return render(request, 'frontend/excluir_tributo.html', {'tributo': tributo});
+
+@login_required(login_url='/')
+def editar_tributo(request, tributo_id):
+    tributo = get_object_or_404(Tributo, id_tributo=tributo_id)
+    vencimento = get_object_or_404(Vencimento, id_data_vencimento=tributo.id_data_vencimento_vencimento.id_data_vencimento)
+    fonte_receita = get_object_or_404(FonteReceita, id_fonte_receita=tributo.id_fonte_receita_fonte_receita.id_fonte_receita)
+
+    if request.method == 'POST':
+        # Coletando dados do formulário manualmente
+        nome_tributo = request.POST.get('nome')
+        periodo_pagamento = request.POST.get('periodo_pagamento')
+        fonte_receita_id = request.POST.get('fonte_receita')
+        dia_vencimento = request.POST.get('dia')
+
+        vencimento.dia = dia_vencimento
+        vencimento.periodo_pagamento = periodo_pagamento
+        tributo.nome = nome_tributo
+        fonte_receita.nome = fonte_receita_id
+
+        tributo.save()
+
+    fontes_receitas = FonteReceita.objects.all()
+    return render(request, 'frontend/editar_tributo.html', {'tributo': tributo,
+                                                                'fontes_receita': fontes_receitas})
 
 
+@login_required(login_url='/')
+def criterios(request, tributo_id):
+    # Obtendo o tributo pelo id_tributo fornecido
+    tributo = get_object_or_404(Tributo, id_tributo=tributo_id)
+
+    # Função para criar um novo critério em relação a um tributo
+    if request.method == 'POST':
+        # Coletando dados do formulário
+        deducao_imposto = request.POST.get('deducao_imposto')
+        limite_superior = request.POST.get('limite_superior')
+        limite_inferior = request.POST.get('limite_inferior')
+        aliquota = request.POST.get('aliquota')
+
+        # Criando um novo critério
+        novo_criterio = Criterios.objects.create(
+            deducao_imposto=deducao_imposto,
+            limite_superior=limite_superior,
+            limite_inferior=limite_inferior,
+            aliquota=aliquota
+        )
+
+        # Relacionando o critério ao tributo
+        CriterioAliquotas.objects.create(
+            id_aliquotas_criterios=novo_criterio,  # Passando a instância de Criterios
+            id_tributo_tributo=tributo  # Passando a instância de Tributo
+        )
+
+        # Redirecionando para a página de visualização de critérios
+        return redirect('criterios', tributo_id=tributo.id_tributo)
+
+    # Obtendo todos os CriterioAliquotas relacionados ao tributo
+    criterio_aliquotas = CriterioAliquotas.objects.filter(id_tributo_tributo=tributo).select_related('id_aliquotas_criterios')
+
+    # Extraindo todos os critérios relacionados aos CriterioAliquotas
+    criterios = [ca.id_aliquotas_criterios for ca in criterio_aliquotas]
+
+    return render(request, 'frontend/criterios.html', {
+        'tributo': tributo,
+        'criterios': criterios
+    })
+
+
+@login_required(login_url='/')
+def editar_criterio(request, tributo_id, criterio_id):
+    # Obtendo o tributo pelo id_tributo fornecido
+    tributo = get_object_or_404(Tributo, id_tributo=tributo_id)
+
+    # Obtendo o critério pelo id_aliquotas fornecido
+    criterio = get_object_or_404(Criterios, id_aliquotas=criterio_id)
+
+    if request.method == 'POST':
+
+        deducao_imposto = request.POST.get('deducao_imposto')
+        limite_superior = request.POST.get('limite_superior')
+        limite_inferior = request.POST.get('limite_inferior')
+        aliquota = request.POST.get('aliquota')
+
+        criterio.deducao_imposto = deducao_imposto
+        criterio.limite_superior = limite_superior
+        criterio.limite_inferior = limite_inferior
+        criterio.aliquota = aliquota
+
+        criterio.save()
+
+        # Redirecionando para a página de visualização de critérios
+        return redirect('criterios', tributo_id=tributo.id_tributo)
+
+    return render(request, 'frontend/editar_criterio.html', {
+        'tributo': tributo,
+        'criterio': criterio
+    })
+
+@login_required(login_url='/')
+def deletar_criterio(request, tributo_id, criterio_id):
+    # Obtendo o tributo pelo id_tributo fornecido
+    tributo = get_object_or_404(Tributo, id_tributo=tributo_id)
+
+    # Obtendo o critério pelo id_aliquotas fornecido
+    criterio = get_object_or_404(Criterios, id_aliquotas=criterio_id)
+
+    # Verificando se o critério está relacionado ao tributo
+    criterio_aliquota = get_object_or_404(CriterioAliquotas, id_aliquotas_criterios=criterio,
+                                          id_tributo_tributo=tributo)
+
+    if request.method == 'POST':
+        # Deletando a relação entre o critério e o tributo
+        criterio_aliquota.delete()
+
+        # Opcional: Deletar o critério completamente se não estiver relacionado a outro tributo
+        criterio.delete()
+
+        # Redirecionando para a página de visualização de critérios
+        return redirect('criterios', tributo_id=tributo.id_tributo)
+
+    return render(request, 'frontend/excluir_criterio.html', {
+        'tributo': tributo,
+        'criterio': criterio
+    })
+
+@login_required(login_url='/')
+def fontes_receitas(request):
+
+    fonte_receitas = FonteReceita.objects.all()
+
+    if request.method == 'POST':
+        fonte_receita_nome = request.POST.get('fonte_receita')
+
+        FonteReceita.objects.create(nome=fonte_receita_nome)
+
+        return redirect('fontes_receitas')
+
+    return render(request, 'frontend/fonte_receitas.html', {'fonte_receitas': fonte_receitas})
+
+
+@login_required(login_url='/')
+def editar_fontes_receitas(request, fonte_receita_id):
+    fonte_receita = get_object_or_404(FonteReceita, id_fonte_receita=fonte_receita_id)
+
+    if request.method == 'POST':
+        fonte_receita_nome = request.POST.get('fonte_receita')
+
+        fonte_receita.nome = fonte_receita_nome
+        fonte_receita.save()
+
+        return redirect('fontes_receitas')
+
+    return render(request, 'frontend/editar_fonte_receita.html', {'fonte_receita': fonte_receita})
+
+@login_required(login_url='/')
+def deletar_fontes_receitas(request, fonte_receita_id):
+    fonte_receita = get_object_or_404(FonteReceita, id_fonte_receita=fonte_receita_id)
+
+    if request.method == 'POST':
+        fonte_receita.delete()
+        return redirect('fontes_receitas')
+
+    return render(request, 'frontend/excluir_fonte_receita.html', {'fonte_receita': fonte_receita})
