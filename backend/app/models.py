@@ -12,7 +12,7 @@ class Choice(models.Model):
 
 class Criterios(models.Model):
     id_aliquotas = models.AutoField(primary_key=True)
-    deducao_imposto = models.IntegerField()
+    deducao_imposto = models.CharField(max_length=100, blank=True, null=True)
     limite_superior = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     limite_inferior = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     aliquota = models.DecimalField(max_digits=10, decimal_places=2)

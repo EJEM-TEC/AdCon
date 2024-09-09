@@ -109,7 +109,7 @@
     <ul class="sidebar-nav" id="sidebar-nav">
 
       <li class="nav-item">
-        <a class="nav-link " href="{% url 'index' %}">
+        <a class="nav-link " href="index">
           <i class="bi bi-grid"></i>
           <span>Dashboard</span>
         </a>
@@ -132,7 +132,7 @@
       </li><!-- End F.A.Q Page Nav -->
 
       <li class="nav-item">
-        <a class="nav-link collapsed" href={% url 'colaboradores' %}>
+        <a class="nav-link collapsed" href="{% url 'colaboradores' %}">
           <i class="bi bi-people-fill"></i>
           <span>Colaboradores</span>
         </a>
@@ -144,14 +144,14 @@
 
   </aside><!-- End Sidebar-->
 
-  <main id="main" class="main">
+  <main id="main" class="main" style="background-image: url('{% static "img/graphic-side.svg" %}')">
 
     <div class="pagetitle">
-      <h1>Dashboard</h1>
+      <h1 class="text-white">Dashboard</h1>
       <nav>
         <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="index">Home</a></li>
-          <li class="breadcrumb-item active">Dashboard</li>
+          <li class="breadcrumb-item"><a href="{% url 'index' %}">Home</a></li>
+          <li class="breadcrumb-item active text-white">Associação de Tributo</li>
         </ol>
       </nav>
     </div><!-- End Page Title -->
@@ -159,13 +159,26 @@
     <section class="section dashboard">
 
     <div class="card">
-        <div class="card-body">
-            <form method="post"> {% csrf_token %}
-            <h5 class="card-title">Deletando critério</h5>
-            <p class="card-text">Tem certeza que quer deletar esse critério?</p>
-            <p class="card-text"><button type="submit" class="btn btn-danger">Confirmar</button></p>
-            <p class="card-text"><a href="{% url 'criterios' tributo_id=tributo.id_tributo %}" class="btn btn-secondary">Cancelar</a></p>
-            </form>
+        <div class="card-body p-4">
+            <form action="{% url 'ass_empresa_tributo' empresa_id=empresa.id_empresa %}" method="POST"> {% csrf_token %}
+                  <div class="row">
+                    <div class="col-md-8">
+                      <div class="form-group">
+                        <label for="regimeApuracao" class="my-2">Tributo</label>
+                        <select class="form-control" id="regimeApuracao" name="tributo" required>
+                          {% for tributo in tributos %}
+                          <option value="{{ tributo.id_tributo }}">{{ tributo.nome }}</option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                  <hr>
+                    <div class="modal-footer">
+                     <button type="reset" class="btn btn-secondary mx-3">Resetar</button>
+                     <button type="submit" class="btn btn-primary" id="salvarEmpresa">Salvar</button>
+                    </div>
+                </form>
         </div>
     </div><!-- End Card with titles, buttons, and links -->
     </section>

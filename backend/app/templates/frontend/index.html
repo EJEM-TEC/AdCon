@@ -44,18 +44,12 @@
   <header id="header" class="header fixed-top d-flex align-items-center">
 
     <div class="d-flex align-items-center justify-content-between">
-      <a href="index" class="logo d-flex align-items-center">
+      <a href="{% url 'index' %}" class="logo d-flex align-items-center">
         <img src="{% static "img/logo.png" %}" alt="" >
       </a>
       <i class="bi bi-list toggle-sidebar-btn"></i>
     </div><!-- End Logo -->
 
-    <div class="search-bar">
-      <form class="search-form d-flex align-items-center" method="POST" action="#">
-        <input type="text" name="query" placeholder="Search" title="Enter search keyword">
-        <button type="submit" title="Search"><i class="bi bi-search"></i></button>
-      </form>
-    </div><!-- End Search Bar -->
 
     <nav class="header-nav ms-auto">
       <ul class="d-flex align-items-center">
@@ -114,7 +108,7 @@
     <ul class="sidebar-nav" id="sidebar-nav">
 
       <li class="nav-item">
-        <a class="nav-link " href="index">
+        <a class="nav-link " href="{% url 'index' %}">
           <i class="bi bi-grid"></i>
           <span>Dashboard</span>
         </a>
@@ -123,21 +117,21 @@
       <li class="nav-heading">Pages</li>
 
       <li class="nav-item">
-        <a class="nav-link collapsed" href="index">
-          <i class="bi bi-building"></i>
-          <span>Empresas</span>
+        <a class="nav-link collapsed" href="{% url 'fontes_receitas' %}">
+          <i class="bi bi-cash-coin"></i>
+          <span>Fontes de Receita</span>
         </a>
       </li><!-- End Profile Page Nav -->
 
       <li class="nav-item">
-        <a class="nav-link collapsed" href="tributos">
+        <a class="nav-link collapsed" href="{% url 'tributos' %}">
           <i class="bi bi-file-earmark-text-fill"></i>
           <span>Tributos</span>
         </a>
       </li><!-- End F.A.Q Page Nav -->
 
       <li class="nav-item">
-        <a class="nav-link collapsed" href="colaboradores">
+        <a class="nav-link collapsed" href={% url 'colaboradores' %}>
           <i class="bi bi-people-fill"></i>
           <span>Colaboradores</span>
         </a>
@@ -173,35 +167,31 @@
                 <h5 class="card-title" style="font-size: xx-large;">Filtro</h5>
                 
                 <!-- Formulário do filtro -->
-                <form>
+                <form action="{% url 'index' %}" method="GET"> {% csrf_token %}
                   <div class="row mb-3">
                     <div class="col-sm-6">
-                      <label for="inputText" class="form-label">Nome/CNPJ</label>
-                      <input type="text" class="form-control" id="inputText">
+                      <label for="inputText" class="form-label">Nome</label>
+                      <input type="text" class="form-control" id="inputText" name="nome">
                     </div>
                     <div class="col-sm-6">
                       <label for="inputText" class="form-label">Atividade</label>
-                      <input type="text" class="form-control" id="inputText">
+                      <input type="text" class="form-control" id="inputText" name="atividade">
                     </div>
                   </div>
                   <div class="row mb-3">
                     <div class="col-sm-6">
-                      <label for="inputPassword" class="form-label">Responsável</label>
-                      <input type="password" class="form-control" id="inputPassword">
+                      <label for="inputPassword" class="form-label">Setor</label>
+                      <input type="password" class="form-control" id="inputPassword" name="responsavel">
                     </div>
-                    <div class="col-sm-6">
+                    <div class="col-sm-6 mb-3">
                       <label for="regimeApuracao">Regime de Apuração</label>
-                          <select class="form-control" id="regimeApuracao">
+                          <select class="form-control" id="regimeApuracao" data-value="regime_apuracao">
                             <option value="Simples Nacional">Simples Nacional</option>
                             <option value="Lucro Real">Lucro Real</option>
                             <option value="Lucro Presumido">Lucro Presumido</option>
                             <option value="Outro">Outro</option>
                           </select>
                     </div>
-                  </div>
-                  <div class="mb-3 form-check">
-                    <input type="checkbox" class="form-check-input" id="gridCheck1">
-                    <label class="form-check-label" for="gridCheck1">A empresa está ativa?</label>
                   </div>
                   <div class="text-center">
                     <button type="submit" class="btn btn-primary">Enviar</button>
@@ -220,13 +210,13 @@
               <div class="col-xxl-6 col-md-6">
                 <div class="card info-card sales-card">
                   <div class="card-body">
-                    <h5 class="card-title">Empresas ativas</h5>
+                    <h5 class="card-title">Total de Empresas</h5>
                     <div class="d-flex align-items-center">
                       <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
                         <i class="ri ri-building-4-fill"></i>
                       </div>
                       <div class="ps-3">
-                        <h6>145</h6>
+                        <h6>{{ empresas.count }}</h6>
                       </div>
                     </div>
                   </div>
@@ -237,13 +227,13 @@
               <div class="col-xxl-6 col-md-6">
                 <div class="card info-card sales-card">
                   <div class="card-body">
-                    <h5 class="card-title">Total de empresas</h5>
+                    <h5 class="card-title">Simples Nacional</h5>
                     <div class="d-flex align-items-center">
                       <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
                         <i class="ri ri-building-4-fill"></i>
                       </div>
                       <div class="ps-3">
-                        <h6>145</h6>
+                        <h6>{{ empresas_simples_nacional }}</h6>
                       </div>
                     </div>
                   </div>
@@ -256,13 +246,13 @@
               <div class="col-xxl-6 col-md-6">
                 <div class="card info-card sales-card">
                   <div class="card-body">
-                    <h5 class="card-title">Simples Nacional</h5>
+                    <h5 class="card-title">Lucro Presumido</h5>
                     <div class="d-flex align-items-center">
                       <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
                         <i class="ri ri-building-4-fill"></i>
                       </div>
                       <div class="ps-3">
-                        <h6>145</h6>
+                        <h6>{{ empresas_lucro_presumido }}</h6>
                       </div>
                     </div>
                   </div>
@@ -273,13 +263,13 @@
               <div class="col-xxl-6 col-md-6">
                 <div class="card info-card sales-card">
                   <div class="card-body">
-                    <h5 class="card-title">Lucro Presumido</h5>
+                    <h5 class="card-title">Lucro Real</h5>
                     <div class="d-flex align-items-center">
                       <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
                         <i class="ri ri-building-4-fill"></i>
                       </div>
                       <div class="ps-3">
-                        <h6>145</h6>
+                        <h6>{{ empresas_lucro_real }}</h6>
                       </div>
                     </div>
                   </div>
@@ -295,9 +285,9 @@
               <div class="card-body">
                 <h5 class="card-title" style="display: flex; justify-content: space-between;">
                   <span style="font-size: x-large; color: rgb(0, 0, 0);">Empresas</span>
-                  <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#verticalycentered">
+                  <a href="{% url 'criar_empresa' %}">
                     <i style="font-size: 2rem; color: black;" class="bi bi-plus-lg"></i>
-                  </button>
+                  </a>
                   <div class="modal fade" id="verticalycentered" tabindex="-1" role="dialog" aria-labelledby="modalAdicionarEmpresaLabel" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
                   <div class="modal-content">
@@ -307,7 +297,7 @@
                     <div class="modal-body">
                       <!-- Formulário para informações gerais -->
                       <h2>Informações Gerais</h2>
-                      <form action="{% url 'index' %}" method="POST"> {% csrf_token %}
+                      <form method="POST"> {% csrf_token %}
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
@@ -325,7 +315,7 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="responsaveis">Responsáveis</label>
+                                        <label for="responsaveis">Setor</label>
                                         <input type="text" class="form-control" id="responsaveis" name="responsaveis_empresa">
                                     </div>
                                 </div>
@@ -434,7 +424,7 @@
                       <th>CNPJ</th>
                       <th>Regime de apuração</th>
                       <th>Atividade</th>
-                      <th>Responsáveis</th>
+                      <th>Setor</th>
                       <th>Ações</th>
                     </tr>
                   </thead>

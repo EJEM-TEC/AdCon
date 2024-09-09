@@ -13,6 +13,13 @@ from rolepermissions.decorators import has_role_decorator
 from django.views.generic.edit import DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
+from django.shortcuts import render, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from .models import Empresa, Federal, Estadual, Municipal, EmpresaFonteReceita, FonteReceita, EmpresaTributo, Tributo, EmpresaTransacoes
+from django.db.models import Sum
+from django.utils.timezone import now
+from django.db.models.functions import TruncMonth
+import json
 from .models import Empresa, Federal, Estadual, Municipal, Tributo, FonteReceita, Vencimento, Criterios, \
     EmpresaFonteReceita, EmpresaTributo, CriterioAliquotas, EmpresaTransacoes, Transacoes
 
@@ -21,26 +28,73 @@ from .models import Empresa, Federal, Estadual, Municipal, Tributo, FonteReceita
 def exibir_empresa(request, empresa_id):
     empresa = get_object_or_404(Empresa, id_empresa=empresa_id)
 
+    # Recupera os IDs de CNPJ, IE e CCM da empresa
     cnpj = empresa.cnpj_federal.cnpj
     ie = empresa.ie_estadual.ie
     ccm = empresa.ccm_municipal.ccm
 
-    print(ccm)  # Retorna o valor do ccm
-    print(cnpj)  # Retorna o valor do cnpj
-    print(ie)  # Retorna o valor do ie
-
-    # Recuperando as instâncias relacionadas
+    # Recupera instâncias de Federal, Estadual e Municipal usando os IDs
     Cnpj = get_object_or_404(Federal, cnpj=cnpj)
     Ie = get_object_or_404(Estadual, ie=ie)
     Ccm = get_object_or_404(Municipal, ccm=ccm)
+
+    # Fontes de Receita da Empresa
+    empresa_fontesreceitas = EmpresaFonteReceita.objects.filter(id_empresa_empresa=empresa).select_related(
+        'id_fonte_receita_fonte_receita')
+
+    fontes_receitas = [efr.id_fonte_receita_fonte_receita for efr in empresa_fontesreceitas]
+
+    # Tributos de uma empresa
+    empresa_tributos = EmpresaTributo.objects.filter(id_empresa_empresa=empresa_id).select_related(
+        'id_tributo_tributo'
+    )
+    tributos = [et.id_tributo_tributo for et in empresa_tributos]
+
+    # Transações de uma empresa
+    empresa_transacoes = EmpresaTransacoes.objects.filter(id_empresa_empresa=empresa).select_related(
+        'id_transacoes_transacoes')
+
+    transacoes = [et.id_transacoes_transacoes.transacao for et in empresa_transacoes]
+    sum_transacoes = sum(transacoes)
+
+    n_empresa_fontes_receita = empresa_fontesreceitas.count()
+    n_empresa_tributos = empresa_tributos.count()
+
+    # Somatória das transações agrupadas por mês do ano corrente
+    transacoes_por_mes = EmpresaTransacoes.objects.filter(
+        id_empresa_empresa=empresa,
+        id_transacoes_transacoes__data__year=now().year
+    ).annotate(
+        mes=TruncMonth('id_transacoes_transacoes__data')
+    ).values('mes').annotate(
+        total_transacoes=Sum('id_transacoes_transacoes__transacao')
+    ).order_by('mes')
+
+    # Preparar dados para o gráfico ApexCharts
+    meses = [t['mes'].strftime('%Y-%m') for t in transacoes_por_mes]  # Formato 'YYYY-MM' para representar o mês
+    total_transacoes = [float(t['total_transacoes']) for t in transacoes_por_mes]
+
+    # Convertendo os dados para JSON
+    data_for_chart = json.dumps({
+        'categories': meses,
+        'series': total_transacoes
+    })
+
+    contextos = calcular_tributo_empresa(empresa_id);
+
     return render(request, template_name="frontend/Empresa.html", context={
-        "empresa":  empresa,
+        "empresa": empresa,
         "tributos": tributos,
         "Ccm": Ccm,
         "Ie": Ie,
         "Cnpj": Cnpj,
+        'fontes_receitas': fontes_receitas,
+        'n_empresa_fontes_receita': n_empresa_fontes_receita,
+        'n_empresa_tributos': n_empresa_tributos,
+        'sum_transacoes': sum_transacoes,
+        'data_for_chart': data_for_chart,  # Dados para o gráfico
+        'contextos': contextos
     })
-
 
 def login(request):
     if request.user.is_authenticated:
@@ -99,8 +153,8 @@ def perfil(request):
 
 
 @login_required(login_url="/")
-def page_404(request):
-    return render(request, template_name="frontend/pages-404.html")
+def page_404(request, exception):
+    return render(request, "frontend/pages-404.html", {}, status=404)
 
 
 def delete_user(request, user_id):
@@ -151,7 +205,7 @@ def update_user(request, user_id):
 
 
 @login_required(login_url="/")
-def index(request):
+def criacao_empresa(request):
     if request.method == 'POST':
         try:
             # Criação das entidades
@@ -193,8 +247,7 @@ def index(request):
             print(f"Ocorreu um erro: {str(e)}")
             return render(request, 'frontend/index.html', {'error_message': str(e)})
 
-    empresas = Empresa.objects.all()
-    return render(request, 'frontend/index.html', {'empresas': empresas})
+    return render(request, 'frontend/adicionar_empresa.html')
 
 @login_required(login_url="/")
 def update_empresa(request, empresa_id):
@@ -358,10 +411,16 @@ def tributos(request):
         return redirect('tributos')  # Redirecione para uma página de sucesso
 
     fontes_receitas = FonteReceita.objects.all()
+    tributos_mensais = Tributo.objects.filter(id_data_vencimento_vencimento__periodo_pagamento="Mensal").count()
+    tributos_trimestral = Tributo.objects.filter(id_data_vencimento_vencimento__periodo_pagamento="Trimestral").count()
+    tributos_anual = Tributo.objects.filter(id_data_vencimento_vencimento__periodo_pagamento="anual").count()
     return render(request, 'frontend/tributos.html',
                   {
                       "fontes_receita": fontes_receitas,
-                      "tributos": tributos
+                      "tributos": tributos,
+                      "tributos_mensais": tributos_mensais,
+                      "tributos_trimestral": tributos_trimestral,
+                      "tributos_anual": tributos_anual
                   })
 
 @login_required(login_url='/')
@@ -393,6 +452,8 @@ def editar_tributo(request, tributo_id):
         fonte_receita.nome = fonte_receita_id
 
         tributo.save()
+
+        return redirect('tributos')
 
     fontes_receitas = FonteReceita.objects.all()
     return render(request, 'frontend/editar_tributo.html', {'tributo': tributo,
@@ -546,6 +607,8 @@ def transacoes(request, empresa_id):
         fonte_receita = request.POST.get('fonte_receita')
         valor = request.POST.get('valor')
 
+        print(fonte_receita)
+
         # Criando um novo critério
         nova_transacao = Transacoes.objects.create(
             data=data,
@@ -559,7 +622,7 @@ def transacoes(request, empresa_id):
             id_empresa_empresa=empresa  # Passando a instância de Tributo
         )
 
-        return redirect('transacoes', empresa_id=empresa.empresa_id)
+        return redirect('transacoes', empresa_id=empresa.id_empresa)
 
     # Obtendo todos os CriterioAliquotas relacionados ao tributo
     empresa_transacoes = EmpresaTransacoes.objects.filter(id_empresa_empresa=empresa).select_related(
@@ -601,3 +664,221 @@ def deletar_transacao(request, empresa_id, transacao_id):
         'empresa': empresa,
         'transacao': transacao
     })
+
+@login_required(login_url='/')
+def AssociarEmpresaFonteReceita(request, empresa_id):
+    empresa = get_object_or_404(Empresa, id_empresa=empresa_id)
+    fontes_receitas = FonteReceita.objects.all()
+
+    if request.method == 'POST':
+
+        fonte_receita_id = request.POST.get('fonte_receita')
+        fonte_receita = FonteReceita.objects.get(id_fonte_receita=fonte_receita_id)
+
+        EmpresaFonteReceita.objects.create(
+            id_empresa_empresa=empresa,
+            id_fonte_receita_fonte_receita=fonte_receita,
+        )
+
+        return redirect('exibirempresas', empresa_id=empresa.id_empresa)
+
+    return render(request, 'frontend/associar_empresa_fontereceita.html', {
+        'fontes_receitas': fontes_receitas,
+        'empresa': empresa
+    })
+
+@login_required(login_url='/')
+def DissociarEmpresaFonteReceita(request, empresa_id, fontereceita_id):
+    # Obtendo o tributo pelo id_tributo fornecido
+    empresa = get_object_or_404(Empresa, id_empresa=empresa_id)
+
+    # Obtendo o critério pelo id_aliquotas fornecido
+    fonte_receita = get_object_or_404(FonteReceita, id_fonte_receita=fontereceita_id)
+
+    # Verificando se o critério está relacionado ao tributo
+    empresa_fontereceita = get_object_or_404(EmpresaFonteReceita, id_empresa_empresa=empresa,
+                                          id_fonte_receita_fonte_receita=fonte_receita)
+
+    if request.method == 'POST':
+        # Deletando a relação entre o critério e o tributo
+        empresa_fontereceita.delete()
+
+        # Redirecionando para a página de visualização de critérios
+        return redirect('exibirempresas', empresa_id=empresa.id_empresa)
+
+    return render(request, 'frontend/des_empresa_fontereceita.html', {
+        'fonte_receita': fonte_receita,
+        'empresa': empresa
+    })
+
+@login_required(login_url='/')
+def AssociarEmpresaTributo(request, empresa_id):
+    empresa = get_object_or_404(Empresa, id_empresa=empresa_id)
+    tributos = Tributo.objects.all()
+
+    if request.method == 'POST':
+
+     tributo_id = request.POST.get('tributo')
+     tributo = Tributo.objects.get(id_tributo=tributo_id)
+
+     EmpresaTributo.objects.create(
+            id_empresa_empresa=empresa,
+            id_tributo_tributo=tributo,
+     )
+
+     return redirect('exibirempresas', empresa_id=empresa.id_empresa)
+
+    return render(request, 'frontend/associar_empresa_tributo.html', {
+        'tributos': tributos,
+        'empresa': empresa
+    })
+
+@login_required(login_url='/')
+def DissociarEmpresaTributo(request, empresa_id, tributo_id):
+    # Obtendo o tributo pelo id_tributo fornecido
+    empresa = get_object_or_404(Empresa, id_empresa=empresa_id)
+
+    # Obtendo o critério pelo id_aliquotas fornecido
+    tributo = get_object_or_404(Tributo, id_tributo=tributo_id)
+
+    # Verificando se o critério está relacionado ao tributo
+    empresa_tributo = get_object_or_404(EmpresaTributo, id_empresa_empresa=empresa,
+                                          id_tributo_tributo=tributo)
+
+    if request.method == 'POST':
+        # Deletando a relação entre o critério e o tributo
+        empresa_tributo.delete()
+
+        # Redirecionando para a página de visualização de critérios
+        return redirect('exibirempresas', empresa_id=empresa.id_empresa)
+
+    return render(request, 'frontend/des_empresa_fontereceita.html', {
+        'tributo': tributo,
+        'empresa': empresa
+    })
+
+def index(request):
+    nome = request.GET.get('nome')
+    atividade = request.GET.get('atividade')
+    responsavel = request.GET.get('responsavel')
+    regime_apuracao = request.GET.get('regime_apuracao')
+
+    empresas_lucro_real = Empresa.objects.filter(regime_apuracao='Lucro Real').count()
+    empresas_simples_nacional = Empresa.objects.filter(regime_apuracao='Simples Nacional').count()
+    empresas_lucro_presumido = Empresa.objects.filter(regime_apuracao='Lucro Presumido').count()
+
+    # Inicializa a queryset com todas as empresas
+    empresas = Empresa.objects.all()
+
+    # Aplicando os filtros
+    if nome:
+        empresas = empresas.filter(nome__icontains=nome)
+
+    if atividade:
+        empresas = empresas.filter(atividade__icontains=atividade)
+
+    if responsavel:
+        empresas = empresas.filter(responsavel__icontains=responsavel)
+
+    if regime_apuracao:
+        empresas = empresas.filter(regime_apuracao=regime_apuracao)
+
+    return render(request, 'frontend/index.html', {
+        'empresas': empresas,
+        'empresas_lucro_real': empresas_lucro_real,
+        'empresas_simples_nacional': empresas_simples_nacional,
+        'empresas_lucro_presumido': empresas_lucro_presumido
+    })
+
+def calcular_tributo_empresa(empresa_id):
+    # Recuperar a empresa pelo ID
+    empresa = get_object_or_404(Empresa, id_empresa=empresa_id)
+
+    # Pegar todas as transações da empresa
+    transacoes = Transacoes.objects.filter(empresatransacoes__id_empresa_empresa=empresa)
+
+    tributo_contexts = []  # Lista para armazenar os dados de cada tributo
+    detalhes_gerais = []  # Lista para armazenar os detalhes de todas as transações
+    total_imposto_geral = 0
+    total_deducao_geral = 0
+
+    # Iterar sobre todos os tributos relacionados à empresa
+    empresa_tributos = EmpresaTributo.objects.filter(id_empresa_empresa=empresa)
+
+    for empresa_tributo in empresa_tributos:
+        tributo = empresa_tributo.id_tributo_tributo
+
+        # Inicializar totais por tributo
+        total_imposto = 0
+        total_deducao = 0
+        detalhes = []
+
+        # Iterar sobre todas as transações da empresa
+        for transacao in transacoes:
+            fonte_receita = transacao.fonte_receita
+            valor_transacao = transacao.transacao
+
+            # Verificar se a fonte de receita da transação coincide com o tributo
+            if tributo.id_fonte_receita_fonte_receita.nome == fonte_receita:
+
+                # Pegar o critério de alíquota associado ao tributo que se aplica ao valor da transação
+                criterio_aliquota = CriterioAliquotas.objects.filter(
+                    id_tributo_tributo=tributo,
+                    id_aliquotas_criterios__limite_inferior__lte=valor_transacao,
+                    id_aliquotas_criterios__limite_superior__gte=valor_transacao
+                ).first()
+
+                if criterio_aliquota:
+                    # Aplicar a alíquota somente se a transação estiver dentro do intervalo correto
+                    aliquota = criterio_aliquota.id_aliquotas_criterios.aliquota / 100  # Dividir por 100 para obter a porcentagem
+                    valor_calculado = valor_transacao * aliquota  # Calcular o valor baseado na alíquota
+
+                    # Verificar se é imposto ou dedução
+                    tipo = criterio_aliquota.id_aliquotas_criterios.deducao_imposto
+
+                    if tipo == 'deducao':
+                        total_deducao += valor_calculado
+                    elif tipo == 'imposto':
+                        total_imposto += valor_calculado
+
+                    # Guardar os detalhes de cada transação e seu tributo relacionado
+                    detalhes.append({
+                        'transacao': transacao,
+                        'tributo': tributo.nome,
+                        'valor_calculado': valor_calculado,
+                        'tipo': tipo,
+                        'aliquota': criterio_aliquota.id_aliquotas_criterios.aliquota,
+                        'limite_inferior': criterio_aliquota.id_aliquotas_criterios.limite_inferior,
+                        'limite_superior': criterio_aliquota.id_aliquotas_criterios.limite_superior
+                    })
+
+        # Somatório dos valores de imposto e dedução por tributo
+        total_a_pagar = total_imposto - total_deducao
+
+        # Armazenar os dados para este tributo
+        tributo_contexts.append({
+            'tributo': tributo.nome,
+            'detalhes': detalhes,
+            'total_imposto': total_imposto,
+            'total_deducao': total_deducao,
+            'total_a_pagar': total_a_pagar,
+        })
+
+        # Adicionar os valores totais ao geral
+        total_imposto_geral += total_imposto
+        total_deducao_geral += total_deducao
+        detalhes_gerais.extend(detalhes)
+
+    total_a_pagar_geral = total_imposto_geral - total_deducao_geral
+
+    context = {
+        'empresa': empresa,
+        'tributo_contexts': tributo_contexts,  # Contexto de cada tributo
+        'detalhes_gerais': detalhes_gerais,  # Todos os detalhes de transações
+        'total_imposto_geral': total_imposto_geral,
+        'total_deducao_geral': total_deducao_geral,
+        'total_a_pagar_geral': total_a_pagar_geral,
+    }
+
+    # Renderizar o template com os dados de todos os tributos e transações
+    return context

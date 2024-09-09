@@ -44,18 +44,11 @@
   <header id="header" class="header fixed-top d-flex align-items-center">
 
     <div class="d-flex align-items-center justify-content-between">
-      <a href="index" class="logo d-flex align-items-center">
+      <a href="{% url 'index' %}" class="logo d-flex align-items-center">
         <img src="{% static "img/logo.png" %}" alt="">
       </a>
       <i class="bi bi-list toggle-sidebar-btn"></i>
     </div><!-- End Logo -->
-
-    <div class="search-bar">
-      <form class="search-form d-flex align-items-center" method="POST" action="#">
-        <input type="text" name="query" placeholder="Search" title="Enter search keyword">
-        <button type="submit" title="Search"><i class="bi bi-search"></i></button>
-      </form>
-    </div><!-- End Search Bar -->
 
     <nav class="header-nav ms-auto">
       <ul class="d-flex align-items-center">
@@ -93,10 +86,12 @@
               <hr class="dropdown-divider">
             </li>
             <li>
-              <a class="dropdown-item d-flex align-items-center" href="#">
-                <i class="bi bi-box-arrow-right"></i>
-                <span>Sign Out</span>
-              </a>
+              <form action={% url 'logout' %} method="POST" class="dropdown-item d-flex align-items-center" href="{% url 'logout' %}">{%csrf_token%}
+                  <button class="dropdown-item d-flex align-items-center" type="submit">
+                    <i class="bi bi-box-arrow-right"></i>
+                    <span>Fazer logout</span>
+                  </button>
+                </form>
             </li>
 
           </ul><!-- End Profile Dropdown Items -->
@@ -113,19 +108,18 @@
     <ul class="sidebar-nav" id="sidebar-nav">
 
       <li class="nav-item">
-        <a class="nav-link " href="index">
+        <a class="nav-link " href="{% url 'index' %}">
           <i class="bi bi-grid"></i>
           <span>Dashboard</span>
         </a>
       </li><!-- End Dashboard Nav -->
 
-
       <li class="nav-heading">Pages</li>
 
       <li class="nav-item">
-        <a class="nav-link collapsed" href="{% url 'index' %}">
-          <i class="bi bi-building"></i>
-          <span>Empresas</span>
+        <a class="nav-link collapsed" href="{% url 'fontes_receitas' %}">
+          <i class="bi bi-cash-coin"></i>
+          <span>Fontes de Receita</span>
         </a>
       </li><!-- End Profile Page Nav -->
 
@@ -137,7 +131,7 @@
       </li><!-- End F.A.Q Page Nav -->
 
       <li class="nav-item">
-        <a class="nav-link collapsed" href="{% url 'colaboradores' %}">
+        <a class="nav-link collapsed" href={% url 'colaboradores' %}>
           <i class="bi bi-people-fill"></i>
           <span>Colaboradores</span>
         </a>
@@ -169,20 +163,20 @@
           <div class="row">
 
             <!-- Sales Card -->
-            <div class="col-xxl-4 col-md-6">
+            <div class="col-xl-6">
               <div class="card info-card sales-card">
 
                 
 
                 <div class="card-body">
-                  <h5 class="card-title">Receitas Tributáveis</h5>
+                  <h5 class="card-title">Fontes de Receita</h5>
 
                   <div class="d-flex align-items-center">
                     <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
                       <i class="bi bi-cart"></i>
                     </div>
                     <div class="ps-3">
-                      <h6>145</h6>
+                      <h6>{{ n_empresa_fontes_receita }}</h6>
                       
 
                     </div>
@@ -192,45 +186,20 @@
               </div>
             </div><!-- End Sales Card -->
 
-            <!-- Revenue Card -->
-            <div class="col-xxl-4 col-md-6">
-              <div class="card info-card revenue-card">
-
-                
-
-                <div class="card-body">
-                  <h5 class="card-title">Fontes de receitas</h5>
-
-                  <div class="d-flex align-items-center">
-                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                      <i class="bi bi-currency-dollar"></i>
-                    </div>
-                    <div class="ps-3">
-                      <h6>$3,264</h6>
-                     
-
-                    </div>
-                  </div>
-                </div>
-
-              </div>
-            </div><!-- End Revenue Card -->
-
             <!-- Customers Card -->
-            <div class="col-xxl-4 col-xl-12">
+            <div class="col-xl-6">
 
               <div class="card info-card customers-card">
 
                 <div class="card-body">
-                  <h5 class="card-title">Em Dedução</h5>
+                  <h5 class="card-title">Tributos</h5>
 
                   <div class="d-flex align-items-center">
                     <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
                       <i class="bi bi-people"></i>
                     </div>
                     <div class="ps-3">
-                      <h6>1244</h6>
-                      
+                      <h6>{{ n_empresa_tributos }}</h6>
 
                     </div>
                   </div>
@@ -239,19 +208,19 @@
               </div>
 
             </div><!-- End Customers Card -->
-            <div class="col-xxl-6 col-xl-12">
+            <div class="col-12">
 
               <div class="card info-card customers-card">
 
                 <div class="card-body">
-                  <h5 class="card-title">Em receitas</h5>
+                  <h5 class="card-title">Transações</h5>
 
                   <div class="d-flex align-items-center">
                     <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
                       <i class="bi bi-people"></i>
                     </div>
                     <div class="ps-3">
-                      <h6>1244</h6>
+                      <h6>$ {{ sum_transacoes }}</h6>
                       
 
                     </div>
@@ -261,29 +230,6 @@
               </div>
 
             </div>
-            <div class="col-xxl-6 col-xl-12">
-
-              <div class="card info-card customers-card">
-
-                <div class="card-body">
-                  <h5 class="card-title">Em tributos</h5>
-
-                  <div class="d-flex align-items-center">
-                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                      <i class="bi bi-people"></i>
-                    </div>
-                    <div class="ps-3">
-                      <h6>1244</h6>
-                     
-
-                    </div>
-                  </div>
-
-                </div>
-              </div>
-
-            </div>
-
             <!-- Reports -->
             <div class="col-12">
               <div class="card">
@@ -291,63 +237,62 @@
                 
 
                 <div class="card-body">
-                  <h5 class="card-title">Reports <span>/Today</span></h5>
+                  <h5 class="card-title">Transações <span>/Today</span></h5>
 
                   <!-- Line Chart -->
                   <div id="reportsChart"></div>
 
                   <script>
-                    document.addEventListener("DOMContentLoaded", () => {
-                      new ApexCharts(document.querySelector("#reportsChart"), {
-                        series: [{
-                          name: 'Sales',
-                          data: [31, 40, 28, 51, 42, 82, 56],
-                        }, {
-                          name: 'Revenue',
-                          data: [11, 32, 45, 32, 34, 52, 41]
-                        }, {
-                          name: 'Customers',
-                          data: [15, 11, 32, 18, 9, 24, 11]
-                        }],
-                        chart: {
-                          height: 350,
-                          type: 'area',
-                          toolbar: {
-                            show: false
-                          },
-                        },
-                        markers: {
-                          size: 4
-                        },
-                        colors: ['#4154f1', '#2eca6a', '#ff771d'],
-                        fill: {
-                          type: "gradient",
-                          gradient: {
-                            shadeIntensity: 1,
-                            opacityFrom: 0.3,
-                            opacityTo: 0.4,
-                            stops: [0, 90, 100]
-                          }
-                        },
-                        dataLabels: {
-                          enabled: false
-                        },
-                        stroke: {
-                          curve: 'smooth',
-                          width: 2
-                        },
-                        xaxis: {
-                          type: 'datetime',
-                          categories: ["2018-09-19T00:00:00.000Z", "2018-09-19T01:30:00.000Z", "2018-09-19T02:30:00.000Z", "2018-09-19T03:30:00.000Z", "2018-09-19T04:30:00.000Z", "2018-09-19T05:30:00.000Z", "2018-09-19T06:30:00.000Z"]
-                        },
-                        tooltip: {
-                          x: {
-                            format: 'dd/MM/yy HH:mm'
-                          },
-                        }
-                      }).render();
-                    });
-                  </script>
+                          document.addEventListener("DOMContentLoaded", () => {
+                            // Parse the JSON data passed from Django
+                            const chartData = JSON.parse('{{ data_for_chart|safe }}');
+                            const categories = chartData.categories;
+                            const seriesData = chartData.series;
+
+                            new ApexCharts(document.querySelector("#reportsChart"), {
+                              series: [{
+                                name: 'Transações',
+                                data: seriesData,
+                              }],
+                              chart: {
+                                height: 350,
+                                type: 'area',
+                                toolbar: {
+                                  show: false
+                                },
+                              },
+                              markers: {
+                                size: 4
+                              },
+                              colors: ['#4154f1'],
+                              fill: {
+                                type: "gradient",
+                                gradient: {
+                                  shadeIntensity: 1,
+                                  opacityFrom: 0.3,
+                                  opacityTo: 0.4,
+                                  stops: [0, 90, 100]
+                                }
+                              },
+                              dataLabels: {
+                                enabled: false
+                              },
+                              stroke: {
+                                curve: 'smooth',
+                                width: 2
+                              },
+                              xaxis: {
+                                type: 'datetime',
+                                categories: categories
+                              },
+                              tooltip: {
+                                x: {
+                                  format: 'dd/MM/yyyy'
+                                },
+                              }
+                            }).render();
+                          });
+                        </script>
                   <!-- End Line Chart -->
 
                 </div>
@@ -537,9 +482,9 @@
                 
                 <h5 class="card-title" style="display: flex; justify-content: space-between;">
                   <span><h5 class="card-title">Fontes de receitas</h5></span>
-                  <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#fontesreceitas">
+                  <a href="{% url 'ass_empresa_fonte_receita' empresa_id=empresa.id_empresa %}">
                     <i style="font-size: 2rem; color: black;" class="bi bi-plus-lg"></i>
-                  </button>
+                  </a>
                   <div class="modal fade" id="fontesreceitas" tabindex="-1" role="dialog" aria-labelledby="modalAdicionarEmpresaLabel" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered modal-md" role="document">
                   <div class="modal-content">
@@ -553,13 +498,17 @@
                       <!-- Formulário para informações gerais -->
                       <form>
                         <div class="row">
-                          <div class="col-md-8">
-                            <div class="form-group">
-                              <label for="nomeEmpresa">Nome</label>
-                              <input type="text" class="form-control" id="nomeEmpresa" required>
-                            </div>
-                          </div>
-                        </div>
+                                <div class="col-md-8">
+                                  <div class="form-group">
+                                    <label for="regimeApuracao">Fonte de receita</label>
+                                    <select class="form-control" id="regimeApuracao" name="fonte_receita" required>
+                                      {% for fonte_receita in fontes_receita %}
+                                      <option value="{{ fonte_receita.id_fonte_receita }}">{{ fonte_receita.nome }}</option>
+                                      {% endfor %}
+                                    </select>
+                                  </div>
+                                </div>
+                              </div>
                         
                       </form>
                     </div>
@@ -579,35 +528,21 @@
                     <tr>
                       <th scope="col">ID</th>
                       <th scope="col">Nome</th>
+                        <th scope="col">Ação</th>
                     </tr>
                   </thead>
                   <tbody>
-
+                    {% for fonte_receita in fontes_receitas %}
                     <tr>
-                      <th scope="row"><a href="#">#2457</a></th>
-                      <td>Brandon Jacob</td>
-                      
+                      <th scope="row">{{ fonte_receita.id_fonte_receita }}</th>
+                      <td>{{ fonte_receita.nome }}</td>
+                        <td>
+                            <a href="{% url 'dis_empresa_fonte_receita' empresa_id=empresa.id_empresa fontereceita_id=fonte_receita.id_fonte_receita %}" class="btn btn-danger btn-sm">
+                                <i class="bi bi-trash-fill"></i>
+                            </a>
+                        </td>
                     </tr>
-                    <tr>
-                      <th scope="row"><a href="#">#2147</a></th>
-                      <td>Bridie Kessler</td>
-                     
-                    </tr>
-                    <tr>
-                      <th scope="row"><a href="#">#2049</a></th>
-                      <td>Ashleigh Langosh</td>
-                      
-                    </tr>
-                    <tr>
-                      <th scope="row"><a href="#">#2644</a></th>
-                      <td>Angus Grady</td>
-                     
-                    </tr>
-                    <tr>
-                      <th scope="row"><a href="#">#2644</a></th>
-                      <td>Raheem Lehner</td>
-                      
-                    </tr>
+                    {% endfor %}
                   </tbody>
                 </table>
 
@@ -624,10 +559,10 @@
 
               <div class="card-body">
                 <h5 class="card-title" style="display: flex; justify-content: space-between;">
-                  <span><h5 class="card-title">Receitas tributaveis</h5></span>
-                  <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#receitastributaveis">
+                  <span><h5 class="card-title">Tributos</h5></span>
+                  <a href="{% url 'ass_empresa_tributo' empresa_id=empresa.id_empresa %}">
                     <i style="font-size: 2rem; color: black;" class="bi bi-plus-lg"></i>
-                  </button>
+                  </a>
                   <div class="modal fade" id="receitastributaveis" tabindex="-1" role="dialog" aria-labelledby="modalAdicionarEmpresaLabel" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered modal-md" role="document">
                   <div class="modal-content">
@@ -659,7 +594,7 @@
                                 <option value="Outro">Outro</option>
                               </select>
                             </div>
-                            
+
                           </div>
                         </div>
                         <hr>
@@ -673,7 +608,7 @@
                           </div>
                           <div>
                             <legend>Mês</legend>
-                            
+
                             <div class="row">
                               <div class="col-sm-6">
                                 <div class="form-check">
@@ -682,21 +617,21 @@
                                     Janeiro
                                   </label>
                                 </div>
-                            
+
                                 <div class="form-check">
                                   <input class="form-check-input" type="checkbox" id="gridCheck2" checked>
                                   <label class="form-check-label" for="gridCheck2">
                                     Fevereiro
                                   </label>
                                 </div>
-                            
+
                                 <div class="form-check">
                                   <input class="form-check-input" type="checkbox" id="gridCheck3">
                                   <label class="form-check-label" for="gridCheck3">
                                     Março
                                   </label>
                                 </div>
-                            
+
                                 <div class="form-check">
                                   <input class="form-check-input" type="checkbox" id="gridCheck4" checked>
                                   <label class="form-check-label" for="gridCheck4">
@@ -716,7 +651,7 @@
                                   </label>
                                 </div>
                               </div>
-                            
+
                               <div class="col-sm-6">
                                 <div class="form-check">
                                   <input class="form-check-input" type="checkbox" id="gridCheck5">
@@ -724,21 +659,21 @@
                                     Julho
                                   </label>
                                 </div>
-                            
+
                                 <div class="form-check">
                                   <input class="form-check-input" type="checkbox" id="gridCheck6" checked>
                                   <label class="form-check-label" for="gridCheck6">
                                     Agosto
                                   </label>
                                 </div>
-                            
+
                                 <div class="form-check">
                                   <input class="form-check-input" type="checkbox" id="gridCheck7">
                                   <label class="form-check-label" for="gridCheck7">
                                     Setembro
                                   </label>
                                 </div>
-                            
+
                                 <div class="form-check">
                                   <input class="form-check-input" type="checkbox" id="gridCheck8" checked>
                                   <label class="form-check-label" for="gridCheck8">
@@ -759,8 +694,8 @@
                                 </div>
                               </div>
                             </div>
-                            
-                          
+
+
                           </div>
                         </div><hr>
                         <h5 class="card-title">Alíquotas</h5>
@@ -789,78 +724,37 @@
                   </div>
                 </div>
               </div>
-    
+
               </h5>
                 
 
                 <table class="table table-borderless datatable">
                   <thead>
-                    <tr>
-                      <th scope="col">ID</th>
-                      <th scope="col">Nome</th>
-                      <th scope="col">Imposto (%)</th>
-                      <th scope="col">Dedução (%)</th>
-                      <th scope="col">Data de vencimento</th>
-                      <th scope="col">Ações</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <th scope="row"><a href="#">#2457</a></th>
-                      <td>Brandon Jacob</td>
-                      <td><a href="#" class="text-primary">At praesentium minu</a></td>
-                      <td>$64</td>
-                      <td><span class="badge bg-success">Approved</span></td>
-                      <td>
-                        <a href="#"><i class="bi bi-pencil-fill" style="margin-right: 17%; margin-left: 0%;"></i></a>
-                        <a href="#"><i class="bi bi-trash-fill" style="margin-right: 17%;"></i></a>
-                      </td>
-                    </tr>
-                    <tr>
-                      <th scope="row"><a href="#">#2147</a></th>
-                      <td>Bridie Kessler</td>
-                      <td><a href="#" class="text-primary">Blanditiis</a></td>
-                      <td>$47</td>
-                      <td><span class="badge bg-warning">Pending</span></td>
-                      <td>
-                        <a href="#"><i class="bi bi-pencil-fill" style="margin-right: 17%; margin-left: 0%;"></i></a>
-                        <a href="#"><i class="bi bi-trash-fill" style="margin-right: 17%;"></i></a>
-                      </td>
-                    </tr>
-                    <tr>
-                      <th scope="row"><a href="#">#2049</a></th>
-                      <td>Ashleigh Langosh</td>
-                      <td><a href="#" class="text-primary">At recusandae </a></td>
-                      <td>$147</td>
-                      <td><span class="badge bg-success">Approved</span></td>
-                      <td>
-                        <a href="#"><i class="bi bi-pencil-fill" style="margin-right: 17%; margin-left: 0%;"></i></a>
-                        <a href="#"><i class="bi bi-trash-fill" style="margin-right: 17%;"></i></a>
-                      </td>
-                    </tr>
-                    <tr>
-                      <th scope="row"><a href="#">#2644</a></th>
-                      <td>Angus Grady</td>
-                      <td><a href="#" class="text-primar">Ut </a></td>
-                      <td>$67</td>
-                      <td><span class="badge bg-danger">Rejected</span></td>
-                      <td>
-                        <a href="#"><i class="bi bi-pencil-fill" style="margin-right: 17%; margin-left: 0%;"></i></a>
-                        <a href="#"><i class="bi bi-trash-fill" style="margin-right: 17%;"></i></a>
-                      </td>
-                    </tr>
-                    <tr>
-                      <th scope="row"><a href="#">#2644</a></th>
-                      <td>Raheem Lehner</td>
-                      <td><a href="#" class="text-primary">Sunt</a></td>
-                      <td>$165</td>
-                      <td><span class="badge bg-success">Approved</span></td>
-                      <td>
-                        <a href="#"><i class="bi bi-pencil-fill" style="margin-right: 17%; margin-left: 0%;"></i></a>
-                        <a href="#"><i class="bi bi-trash-fill" style="margin-right: 17%;"></i></a>
-                      </td>
-                    </tr>
-                  </tbody>
+                          <tr>
+                            <th scope="col">ID</th>
+                            <th scope="col">Nome</th>
+                            <th scope="col">Fonte de Receita</th>
+                            <th scope="col">Data de vencimento</th>
+                              <th scope="col">Período de Pagamento</th>
+                            <th scope="col">Critérios</th>
+                            <th scope="col">Ações</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                        {% for tributo in tributos %}
+                          <tr>
+                            <th scope="row">{{ tributo.id_tributo }}</th>
+                            <td>{{ tributo.nome }}</td>
+                            <td>{{ tributo.id_fonte_receita_fonte_receita.nome }}</td>
+                            <td>{{ tributo.id_data_vencimento_vencimento.dia}}</td>
+                            <td>{{ tributo.id_data_vencimento_vencimento.periodo_pagamento}}</td>
+                            <td><a href="{% url 'criterios' tributo_id=tributo.id_tributo %}"><i class="bi bi-table"></i></a></td>
+                            <td>
+                                <a href="{% url 'dis_empresa_tributo' empresa_id=empresa.id_empresa tributo_id=tributo.id_tributo %}"><i class="bi bi-trash-fill" style="margin-right: 17%;"></i></a>
+                            </td>
+                          </tr>
+                        {% endfor %}
+                        </tbody>
                 </table>
 
               </div>
@@ -869,416 +763,46 @@
             </div>
             
           </div><!-- End Recent Sales -->
-          <div class="col-13">
-            <div class="card recent-sales overflow-auto">
+      </div>
+      <div class="row">
+      <div class="card recent-sales overflow-auto">
+          <div class="card-body">
 
-             
-
-              <div class="card-body">
                 <h5 class="card-title" style="display: flex; justify-content: space-between;">
-                  <span><h5 class="card-title">Tributos</h5></span>
-                  <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#tributos">
-                    <i style="font-size: 2rem; color: black;" class="bi bi-plus-lg"></i>
-                  </button>
-                  <div class="modal fade" id="tributos" tabindex="-1" role="dialog" aria-labelledby="modalAdicionarEmpresaLabel" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
-                  <div class="modal-content">
-                    <div class="modal-header">
-                      <h2 class="modal-title font-weight-bold" id="modalAdicionarEmpresaLabel">Adicionar tributos</h2>
-                      <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
-                        <span aria-hidden="true">&times;</span>
-                      </button>
-                    </div>
-                    <div class="modal-body">
-                      <!-- Formulário para informações gerais -->
-                      <form>
-                        <div class="row">
-                          <div class="col-lg-8">
-                            <div class="form-group">
-                              <label for="nomeEmpresa">Nome</label>
-                              <input type="text" class="form-control" id="nomeEmpresa" required>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="row">
-                          <div class="col-md-8">
-                            <div class="form-group">
-                              <label for="nomeEmpresa">Fonte de receita</label>
-                              <select class="form-control" id="regimeApuracao">
-                                <option value="Simples Nacional">Simples Nacional</option>
-                                <option value="Lucro Real">Lucro Real</option>
-                                <option value="Lucro Presumido">Lucro Presumido</option>
-                                <option value="Outro">Outro</option>
-                              </select>
-                            </div>
-                            
-                          </div>
-                        </div>
-                        <hr>
-                        <h5 class="card-title">Vencimento</h5>
-                        <div class="row">
-                          <div>
-                            <label for="inputNumber" class="col-sm-2 col-form-label">Dia</label>
-                          <div class="col-sm-10">
-                            <input type="number" class="form-control">
-                          </div>
-                          </div>
-                          <div>
-                            <legend>Mês</legend>
-                            
-                            <div class="row">
-                              <div class="col-sm-6">
-                                <div class="form-check">
-                                  <input class="form-check-input" type="checkbox" id="gridCheck1">
-                                  <label class="form-check-label" for="gridCheck1">
-                                    Janeiro
-                                  </label>
-                                </div>
-                            
-                                <div class="form-check">
-                                  <input class="form-check-input" type="checkbox" id="gridCheck2" checked>
-                                  <label class="form-check-label" for="gridCheck2">
-                                    Fevereiro
-                                  </label>
-                                </div>
-                            
-                                <div class="form-check">
-                                  <input class="form-check-input" type="checkbox" id="gridCheck3">
-                                  <label class="form-check-label" for="gridCheck3">
-                                    Março
-                                  </label>
-                                </div>
-                            
-                                <div class="form-check">
-                                  <input class="form-check-input" type="checkbox" id="gridCheck4" checked>
-                                  <label class="form-check-label" for="gridCheck4">
-                                    Abril
-                                  </label>
-                                </div>
-                                <div class="form-check">
-                                  <input class="form-check-input" type="checkbox" id="gridCheck4" checked>
-                                  <label class="form-check-label" for="gridCheck4">
-                                    Maio
-                                  </label>
-                                </div>
-                                <div class="form-check">
-                                  <input class="form-check-input" type="checkbox" id="gridCheck4" checked>
-                                  <label class="form-check-label" for="gridCheck4">
-                                    Junho
-                                  </label>
-                                </div>
-                              </div>
-                            
-                              <div class="col-sm-6">
-                                <div class="form-check">
-                                  <input class="form-check-input" type="checkbox" id="gridCheck5">
-                                  <label class="form-check-label" for="gridCheck5">
-                                    Julho
-                                  </label>
-                                </div>
-                            
-                                <div class="form-check">
-                                  <input class="form-check-input" type="checkbox" id="gridCheck6" checked>
-                                  <label class="form-check-label" for="gridCheck6">
-                                    Agosto
-                                  </label>
-                                </div>
-                            
-                                <div class="form-check">
-                                  <input class="form-check-input" type="checkbox" id="gridCheck7">
-                                  <label class="form-check-label" for="gridCheck7">
-                                    Setembro
-                                  </label>
-                                </div>
-                            
-                                <div class="form-check">
-                                  <input class="form-check-input" type="checkbox" id="gridCheck8" checked>
-                                  <label class="form-check-label" for="gridCheck8">
-                                    Outubro
-                                  </label>
-                                </div>
-                                <div class="form-check">
-                                  <input class="form-check-input" type="checkbox" id="gridCheck7">
-                                  <label class="form-check-label" for="gridCheck7">
-                                    Novembro
-                                  </label>
-                                </div>
-                                <div class="form-check">
-                                  <input class="form-check-input" type="checkbox" id="gridCheck7">
-                                  <label class="form-check-label" for="gridCheck7">
-                                    Dezembro
-                                  </label>
-                                </div>
-                              </div>
-                            </div>
-                            
-                          
-                          </div>
-                        </div><hr>
-                        <h5 class="card-title">Critérios</h5>
-                        <div class="row">
-                          <div class="col-md-8">
-                            <div class="form-group">
-                              <label for="nomeEmpresa">Limite Superior (R$)</label>
-                              <input type="number" class="form-control">
-                            </div>
-                          </div>
-                        </div>
-                        <div class="row">
-                          <div class="col-md-8">
-                            <div class="form-group">
-                              <label for="nomeEmpresa">Limite Inferior (R$)</label>
-                              <input type="number" class="form-control">
-                            </div>
-                          </div>
-                        </div>
-                      
-                        <div class="row">
-                          <div class="col-md-8">
-                            <div class="form-group">
-                              <label for="nomeEmpresa">Alíquota (%)</label>
-                              <input type="number" class="form-control">
-                            </div>
-                          </div>
-                        </div>
-                        <div class="row">
-                          <div class="col-md-8">
-                            <div class="form-group">
-                              <label for="nomeEmpresa">Tipo</label>
-                              <select class="form-control" id="regimeApuracao">
-                                <option value="Simples Nacional">Simples Nacional</option>
-                                <option value="Lucro Real">Lucro Real</option>
-                                <option value="Lucro Presumido">Lucro Presumido</option>
-                                <option value="Outro">Outro</option>
-                              </select>
-                            </div>
-                            
-                          </div>
-                        </div><hr>
-                        <div class="row">
-                          <div class="col-lg-6">
-                  
-                            <div class="card">
-                              <div class="card-body">
-                                <h5 class="card-title">Impostos</h5>
-                  
-                                <!-- Default Table -->
-                                <table class="table">
-                                  <thead>
-                                    <tr>
-                                      <th scope="col">Limite Inferior (R$)</th>
-                                      <th scope="col">Limite Superior (R$)</th>
-                                      <th scope="col">Alíquota (%)</th>
-                                      <th scope="col">Ações</th>
-                                    </tr>
-                                  </thead>
-                                  <tbody>
-                                    <tr>
-                                      <td>Brandon Jacob</td>
-                                      <td>Designer</td>
-                                      <td>28</td>
-                                      <td>
-                                        <a href="#"><i class="bi bi-trash-fill" style="margin-right: 17%;"></i></a>
-                                      </td>
-                                    </tr>
-                                    <tr>
-                                      <td>Bridie Kessler</td>
-                                      <td>Developer</td>
-                                      <td>35</td>
-                                      <td>
-                                        <a href="#"><i class="bi bi-trash-fill" style="margin-right: 17%;"></i></a>
-                                      </td>
-                                    </tr>
-                                    <tr>
-                                      <td>Ashleigh Langosh</td>
-                                      <td>Finance</td>
-                                      <td>45</td>
-                                      <td>
-                                        <a href="#"><i class="bi bi-trash-fill" style="margin-right: 17%;"></i></a>
-                                      </td>
-                                    </tr>
-                                    <tr>
-                                      <td>Angus Grady</td>
-                                      <td>HR</td>
-                                      <td>34</td>
-                                      <td>
-                                        <a href="#"><i class="bi bi-trash-fill" style="margin-right: 17%;"></i></a>
-                                      </td>
-                                    </tr>
-                                    <tr>
-                                      <td>Raheem Lehner</td>
-                                      <td>Dynamic Division Officer</td>
-                                      <td>47</td>
-                                      <td>
-                                        <a href="#"><i class="bi bi-trash-fill" style="margin-right: 17%;"></i></a>
-                                      </td>
-                                    </tr>
-                                  </tbody>
-                                </table>
-                                <!-- End Default Table Example -->
-                              </div>
-                            </div>
-                          </div>
-                          <div class="col-lg-6">
-                  
-                            <div class="card">
-                              <div class="card-body">
-                                <h5 class="card-title">Dedução</h5>
-                  
-                                <!-- Default Table -->
-                                <table class="table">
-                                  <thead>
-                                    <tr>
-                                      <th scope="col">Limite Inferior (R$)</th>
-                                      <th scope="col">Limite Superior (R$)</th>
-                                      <th scope="col">Alíquota (%)</th>
-                                      <th scope="col">Ações</th>
-                                    </tr>
-                                  </thead>
-                                  <tbody>
-                                    <tr>
-                                      <td>Brandon Jacob</td>
-                                      <td>Designer</td>
-                                      <td>28</td>
-                                      <td>
-                                        <a href="#"><i class="bi bi-trash-fill" style="margin-right: 17%;"></i></a>
-                                      </td>
-                                    </tr>
-                                    <tr>
-                                      <td>Bridie Kessler</td>
-                                      <td>Developer</td>
-                                      <td>35</td>
-                                      <td>
-                                        <a href="#"><i class="bi bi-trash-fill" style="margin-right: 17%;"></i></a>
-                                      </td>
-                                    </tr>
-                                    <tr>
-                                      <td>Ashleigh Langosh</td>
-                                      <td>Finance</td>
-                                      <td>45</td>
-                                      <td>
-                                        <a href="#"><i class="bi bi-trash-fill" style="margin-right: 17%;"></i></a>
-                                      </td>
-                                    </tr>
-                                    <tr>
-                                      <td>Angus Grady</td>
-                                      <td>HR</td>
-                                      <td>34</td>
-                                      <td>
-                                        <a href="#"><i class="bi bi-trash-fill" style="margin-right: 17%;"></i></a>
-                                      </td>
-                                    </tr>
-                                    <tr>
-                                      <td>Raheem Lehner</td>
-                                      <td>Dynamic Division Officer</td>
-                                      <td>47</td>
-                                      <td>
-                                        <a href="#"><i class="bi bi-trash-fill" style="margin-right: 17%;"></i></a>
-                                      </td>
-                                    </tr>
-                                  </tbody>
-                                </table>
-                                <!-- End Default Table Example -->
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </form>
-                    </div>
-                    <div class="modal-footer">
-                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
-                      <button type="button" class="btn btn-primary" id="salvarEmpresa">Salvar</button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-    
+                  <span><h5 class="card-title">Resultados</h5></span>
               </h5>
 
                 <table class="table table-borderless datatable">
                   <thead>
                     <tr>
-                      <th scope="col">ID</th>
-                      <th scope="col">Nome</th>
-                      <th scope="col">Valor Base (R$)</th>
-                      <th scope="col">Imposto (R$)</th>
-                      <th scope="col">Dedução (R$)</th>
-                      <th scope="col">Cobrança</th>
-                      <th scope="col">Ações</th>
+                      <th scope="col">Tributo</th>
+                      <th scope="col">Valor imposto</th>
+                        <th scope="col">Valor dedução</th>
+                        <th scope="col">Valor a ser pago</th>
                     </tr>
                   </thead>
                   <tbody>
+                    {% for contexto in contextos.tributo_contexts %}
                     <tr>
-                      <th scope="row"><a href="#">#2457</a></th>
-                      <td>Brandon Jacob</td>
-                      <td><a href="#" class="text-primary">At praesentium minu</a></td>
-                      <td>$64</td>
-                      <td><span class="badge bg-success">Approved</span></td>
-                      <td>Enviar confirmação</td>
-                      <td>
-                        <a href="#"><i class="bi bi-pencil-fill" style="margin-right: 17%; margin-left: 0%;"></i></a>
-                        <a href="#"><i class="bi bi-trash-fill" style="margin-right: 17%;"></i></a>
-                      </td>
+                      <th scope="row">{{ contexto.tributo }}</th>
+                      <td>{{ contexto.total_imposto }}</td>
+                        <td>
+                            {{ contexto.total_deducao }}
+                        </td>
+                     <td>
+                            {{ contexto.total_a_pagar }}
+                        </td>
                     </tr>
-                    <tr>
-                      <th scope="row"><a href="#">#2147</a></th>
-                      <td>Bridie Kessler</td>
-                      <td><a href="#" class="text-primary">Blanditiis dolor omnis similique</a></td>
-                      <td>$47</td>
-                      <td><span class="badge bg-warning">Pending</span></td>
-                      <td>Enviar confirmação</td>
-                      <td>
-                        <a href="#"><i class="bi bi-pencil-fill" style="margin-right: 17%; margin-left: 0%;"></i></a>
-                        <a href="#"><i class="bi bi-trash-fill" style="margin-right: 17%;"></i></a>
-                      </td>
-                    </tr>
-                    <tr>
-                      <th scope="row"><a href="#">#2049</a></th>
-                      <td>Ashleigh Langosh</td>
-                      <td><a href="#" class="text-primary">At recusandae consectetur</a></td>
-                      <td>$147</td>
-                      <td><span class="badge bg-success">Approved</span></td>
-                      <td>Enviar confirmação</td>
-                      <td>
-                        <a href="#"><i class="bi bi-pencil-fill" style="margin-right: 17%; margin-left: 0%;"></i></a>
-                        <a href="#"><i class="bi bi-trash-fill" style="margin-right: 17%;"></i></a>
-                      </td>
-                    </tr>
-                    <tr>
-                      <th scope="row"><a href="#">#2644</a></th>
-                      <td>Angus Grady</td>
-                      <td><a href="#" class="text-primar">Ut voluptatem id earum et</a></td>
-                      <td>$67</td>
-                      <td><span class="badge bg-danger">Rejected</span></td>
-                      <td>Enviar confirmação</td>
-                      <td>
-                        <a href="#"><i class="bi bi-pencil-fill" style="margin-right: 17%; margin-left: 0%;"></i></a>
-                        <a href="#"><i class="bi bi-trash-fill" style="margin-right: 17%;"></i></a>
-                      </td>
-                    </tr>
-                    <tr>
-                      <th scope="row"><a href="#">#2644</a></th>
-                      <td>Raheem Lehner</td>
-                      <td><a href="#" class="text-primary">Sunt similique distinctio</a></td>
-                      <td>$165</td>
-                      <td><span class="badge bg-success">Approved</span></td>
-                      <td>Enviar confirmação</td>
-                      <td>
-                        <a href="#"><i class="bi bi-pencil-fill" style="margin-right: 17%; margin-left: 0%;"></i></a>
-                        <a href="#"><i class="bi bi-trash-fill" style="margin-right: 17%;"></i></a>
-                      </td>
-                    </tr>
+                    {% endfor %}
                   </tbody>
                 </table>
 
               </div>
-              
 
             </div>
-            
+          </div>
+
           </div><!-- End Recent Sales -->
-          
-          
       </div>
     </div>
 

@@ -25,6 +25,7 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("", views.login, name="login"),
     path("index", views.index, name="index"),
+    path("criar_empresa", views.criacao_empresa, name='criar_empresa'),
     path("exibirempresa/<int:empresa_id>", views.exibir_empresa, name="exibirempresas"),
     path('empresas/<int:empresa_id>/update/', views.update_empresa, name="editar_empresa"),
     path('empresas/<int:empresa_id>/delete/', views.delete_empresa, name="deletar_empresa"),
@@ -46,5 +47,8 @@ urlpatterns = [
     path("404", views.page_404, name="page_404"),
     path('users/<int:user_id>/delete/', views.delete_user, name='delete_user'),
     path('users/<int:user_id>/update/', views.update_user, name='update_user'),
-
+    path('associacao_empresa_fonte_receita/<int:empresa_id>', views.AssociarEmpresaFonteReceita, name='ass_empresa_fonte_receita'),
+    path('dissociacao_empresa_fonte_receita/<int:empresa_id>/fonte_receita/<int:fontereceita_id>', views.DissociarEmpresaFonteReceita, name='dis_empresa_fonte_receita'),
+    path('associacao_empresa_tributo/<int:empresa_id>', views.AssociarEmpresaTributo, name='ass_empresa_tributo'),
+    path('dissociacao_empresa_tributo/<int:empresa_id>/tributo/<int:tributo_id>', views.DissociarEmpresaTributo, name='dis_empresa_tributo')
 ]

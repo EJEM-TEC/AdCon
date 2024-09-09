@@ -161,10 +161,10 @@
     <div class="card">
         <div class="card-body">
             <form method="post"> {% csrf_token %}
-            <h5 class="card-title">Deletando critério</h5>
-            <p class="card-text">Tem certeza que quer deletar esse critério?</p>
+            <h5 class="card-title">Dissociando a fonte de receita: {{ fonte_receita.nome }}</h5>
+            <p class="card-text">Tem certeza que quer dissociar essa fonte de receita a empresa {{ empresa.nome }}?</p>
             <p class="card-text"><button type="submit" class="btn btn-danger">Confirmar</button></p>
-            <p class="card-text"><a href="{% url 'criterios' tributo_id=tributo.id_tributo %}" class="btn btn-secondary">Cancelar</a></p>
+            <p class="card-text"><a href="{% url 'exibirempresas' empresa_id=empresa.id_empresa %}" class="btn btn-secondary">Cancelar</a></p>
             </form>
         </div>
     </div><!-- End Card with titles, buttons, and links -->
