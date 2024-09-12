@@ -50,5 +50,10 @@ urlpatterns = [
     path('associacao_empresa_fonte_receita/<int:empresa_id>', views.AssociarEmpresaFonteReceita, name='ass_empresa_fonte_receita'),
     path('dissociacao_empresa_fonte_receita/<int:empresa_id>/fonte_receita/<int:fontereceita_id>', views.DissociarEmpresaFonteReceita, name='dis_empresa_fonte_receita'),
     path('associacao_empresa_tributo/<int:empresa_id>', views.AssociarEmpresaTributo, name='ass_empresa_tributo'),
-    path('dissociacao_empresa_tributo/<int:empresa_id>/tributo/<int:tributo_id>', views.DissociarEmpresaTributo, name='dis_empresa_tributo')
+    path('dissociacao_empresa_tributo/<int:empresa_id>/tributo/<int:tributo_id>', views.DissociarEmpresaTributo, name='dis_empresa_tributo'),
+    path('adicionar_observcao/<int:empresa_id>', views.adicionarObservacao, name='adicionar_observacao'),
+    path('deletar_observacao/<int:empresa_id>/<int:observacao_id>', views.deletarObservacao, name='deletar_observacao'),
+    path('adicionar_historico/<int:empresa_id>', views.adicionarHistorico, name='adicionar_historico'),
+    path('deletar_historico/<int:empresa_id>/<int:historico_id>', views.deletarHistorico, name='deletar_historico'),
+
 ]

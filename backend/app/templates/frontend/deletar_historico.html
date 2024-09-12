@@ -49,12 +49,11 @@
       <i class="bi bi-list toggle-sidebar-btn"></i>
     </div><!-- End Logo -->
 
-
     <nav class="header-nav ms-auto">
       <ul class="d-flex align-items-center">
 
         <li class="nav-item d-block d-lg-none">
-          <a class="nav-link nav-icon search-bar-toggle " href="{% url 'index' %}">
+          <a class="nav-link nav-icon search-bar-toggle " href="#">
             <i class="bi bi-search"></i>
           </a>
         </li><!-- End Search Icon-->
@@ -133,7 +132,7 @@
       </li><!-- End F.A.Q Page Nav -->
 
       <li class="nav-item">
-        <a class="nav-link collapsed" href="{% url 'colaboradores' %}">
+        <a class="nav-link collapsed" href={% url 'colaboradores' %}>
           <i class="bi bi-people-fill"></i>
           <span>Colaboradores</span>
         </a>
@@ -145,14 +144,14 @@
 
   </aside><!-- End Sidebar-->
 
-  <main id="main" class="main" style="background-image: url('{% static "img/graphic-side.svg" %}')">
+  <main id="main" class="main">
 
     <div class="pagetitle">
-      <h1 class="text-white">Dashboard</h1>
+      <h1>Dashboard</h1>
       <nav>
         <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="{% url 'index' %}">Home</a></li>
-          <li class="breadcrumb-item active text-white">Edição de Tributo</li>
+          <li class="breadcrumb-item"><a href="{% url 'exibirempresas' empresa_id=empresa.id_empresa %}">{{ empresa.nome }}</a></li>
+          <li class="breadcrumb-item active">Dashboard</li>
         </ol>
       </nav>
     </div><!-- End Page Title -->
@@ -161,68 +160,12 @@
 
     <div class="card">
         <div class="card-body">
-            <form action="{% url 'update_tributo' tributo_id=tributo.id_tributo %}" method="POST"> {% csrf_token %}
-                  <div class="row my-3">
-                    <div class="col-lg-8">
-                      <div class="form-group">
-                        <label for="nomeEmpresa">Nome</label>
-                        <input type="text" class="form-control" id="nomeEmpresa" name="nome" required value="{{ tributo.nome }}">
-                      </div>
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-md-8">
-                      <div class="form-group">
-                        <label for="regimeApuracao">Fonte de receita</label>
-                        <select class="form-control" id="regimeApuracao" name="fonte_receita" required>
-                          {% for fonte_receita in fontes_receita %}
-                          <option value="{{ tributo.id_fonte_receita_fonte_receita.nome }}">{{ fonte_receita.nome }}</option>
-                          {% endfor %}
-                        </select>
-                      </div>
-                    </div>
-                  </div>
-                    <div class="row">
-                        <div>
-                          <label for="inputNumber" class="col-sm-2 col-form-label">Envio Email</label>
-                        <div class="col-sm-10">
-                          <input type="date" class="form-control" name="envio_email" value="{{ tributo.envio_email }}">
-                        </div>
-                        </div>
-                      </div>
-
-                    <div class="row">
-                        <div>
-                          <label for="inputNumber" class="col-sm-2 col-form-label">Confirmação Email</label>
-                        <div class="col-sm-10">
-                          <input type="date" class="form-control" name="confirmar_email" value="{{ tributo.confirmacao_email }}">
-                        </div>
-                        </div>
-                      </div>
-                  <hr>
-                  <h5 class="card-title">Vencimento</h5>
-                  <div class="row">
-                    <div>
-                      <label for="inputNumber" class="col-sm-2 col-form-label">Dia</label>
-                    <div class="col-sm-10">
-                      <input type="date" class="form-control" name="dia" required value="{{ tributo.id_data_vencimento_vencimento.dia }}">
-                    </div>
-                    </div>
-                      <div class="form-group my-3">
-                        <label for="nomeEmpresa">Período do vencimento</label>
-                        <select class="form-control" id="regimeApuracao" name="periodo_pagamento" required data-value="{{ tributo.id_data_vencimento_vencimento.periodo_pagamento }}">
-                          <option value="mensal">Mensal</option>
-                          <option value="trimestral">Trimestral</option>
-                          <option value="anual">Anual</option>
-                        </select>
-                      </div>
-                  </div>
-                <hr>
-                    <div class="modal-footer">
-                     <button type="reset" class="btn btn-secondary mx-3">Resetar</button>
-                     <button type="submit" class="btn btn-primary" id="salvarEmpresa">Salvar</button>
-                    </div>
-                </form>
+            <form method="post"> {% csrf_token %}
+            <h5 class="card-title">Deletando um histórico</h5>
+            <p class="card-text">Tem certeza que quer deletar esse histórico?</p>
+            <p class="card-text"><button type="submit" class="btn btn-danger">Confirmar</button></p>
+            <p class="card-text"><a href="{% url 'exibirempresas' empresa_id=empresa.id_empresa %}" class="btn btn-secondary">Cancelar</a></p>
+            </form>
         </div>
     </div><!-- End Card with titles, buttons, and links -->
     </section>

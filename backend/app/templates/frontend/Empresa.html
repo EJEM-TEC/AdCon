@@ -149,7 +149,7 @@
       <h1 style="color: white;">Dashboard</h1>
       <nav>
         <ol class="breadcrumb" style="margin-bottom: 50px; margin-top: 50px; font-size: xx-large;">
-          <li class="breadcrumb-item" style="color: white;">Empresas</li>
+          <li class="breadcrumb-item" style="color: white;">{{ empresa.nome }}</li>
           <li class="breadcrumb-item" style="color: white;" >Visão geral</li>
         </ol>
       </nav>
@@ -308,103 +308,8 @@
           <!-- Recent Activity -->
           <div class="card">
             <div class="card-body">
-              <h5 class="card-title" style="display: flex; align-items: center; justify-content: space-between;">
+              <h5 class="card-title my-3" style="display: flex; align-items: center; justify-content: space-between;">
                 {{ empresa.nome }}
-                <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#verticalycentered">
-                  <i style="font-size: 2rem; color: black;" class="bi bi-box-arrow-up-right"></i>
-                </button>
-                <div class="modal fade" id="verticalycentered" tabindex="-1" role="dialog" aria-labelledby="modalAdicionarEmpresaLabel" aria-hidden="true">
-              <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <h2 class="modal-title font-weight-bold" id="modalAdicionarEmpresaLabel">Editar informações da empresa</h2>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
-                      <span aria-hidden="true">&times;</span>
-                    </button>
-                  </div>
-                  <div class="modal-body">
-                    <!-- Formulário para informações gerais -->
-                    
-                    <form>
-                      
-            
-                      <!-- Linha separadora -->
-                      
-            
-                      <!-- Seções de Inscrição -->
-                      <div class="row">
-                        <!-- Inscrição Municipal -->
-                        <div class="col-lg-4">
-                          <h2>Inscrição Municipal</h2>
-                          <div class="form-check">
-                            <input type="checkbox" class="form-check-input" id="comCertificadoMunicipal">
-                            <label class="form-check-label" for="comCertificadoMunicipal">Com certificado digital?</label>
-                          </div>
-                          <div class="form-group">
-                            <label for="ccm">CCM</label>
-                            <input type="text" class="form-control" id="ccm">
-                          </div>
-                          <div class="form-group">
-                            <label for="loginMunicipal">Login</label>
-                            <input type="text" class="form-control" id="loginMunicipal">
-                          </div>
-                          <div class="form-group">
-                            <label for="senhaMunicipal">Senha</label>
-                            <input type="password" class="form-control" id="senhaMunicipal">
-                          </div>
-                        </div>
-            
-                        <!-- Inscrição Estadual -->
-                        <div class="col-lg-4">
-                          <h2>Inscrição Estadual</h2>
-                          <div class="form-check">
-                            <input type="checkbox" class="form-check-input" id="comCertificadoEstadual">
-                            <label class="form-check-label" for="comCertificadoEstadual">Com certificado digital?</label>
-                          </div>
-                          <div class="form-group">
-                            <label for="ie">IE</label>
-                            <input type="text" class="form-control" id="ie">
-                          </div>
-                          <div class="form-group">
-                            <label for="loginEstadual">Login</label>
-                            <input type="text" class="form-control" id="loginEstadual">
-                          </div>
-                          <div class="form-group">
-                            <label for="senhaEstadual">Senha</label>
-                            <input type="password" class="form-control" id="senhaEstadual">
-                          </div>
-                        </div>
-            
-                        <!-- Inscrição Federal -->
-                        <div class="col-lg-4">
-                          <h2>Inscrição Federal</h2>
-                          <div class="form-check">
-                            <input type="checkbox" class="form-check-input" id="comCertificadoFederal">
-                            <label class="form-check-label" for="comCertificadoFederal">Com certificado digital?</label>
-                          </div>
-                          <div class="form-group">
-                            <label for="cnpjFederal">CNPJ</label>
-                            <input type="text" class="form-control" id="cnpjFederal">
-                          </div>
-                          <div class="form-group">
-                            <label for="loginFederal">Login</label>
-                            <input type="text" class="form-control" id="loginFederal">
-                          </div>
-                          <div class="form-group">
-                            <label for="senhaFederal">Senha</label>
-                            <input type="password" class="form-control" id="senhaFederal">
-                          </div>
-                        </div>
-                      </div>
-                    </form>
-                  </div>
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
-                    <button type="button" class="btn btn-primary" id="salvarEmpresa">Salvar</button>
-                  </div>
-                </div>
-              </div>
-            </div>
   
             </h5>
               <p>Regime de apuração: <b>{{ empresa.regime_apuracao }}</b></p>
@@ -558,203 +463,33 @@
               
 
               <div class="card-body">
-                <h5 class="card-title" style="display: flex; justify-content: space-between;">
-                  <span><h5 class="card-title">Tributos</h5></span>
-                  <a href="{% url 'ass_empresa_tributo' empresa_id=empresa.id_empresa %}">
-                    <i style="font-size: 2rem; color: black;" class="bi bi-plus-lg"></i>
-                  </a>
-                  <div class="modal fade" id="receitastributaveis" tabindex="-1" role="dialog" aria-labelledby="modalAdicionarEmpresaLabel" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered modal-md" role="document">
-                  <div class="modal-content">
-                    <div class="modal-header">
-                      <h2 class="modal-title font-weight-bold" id="modalAdicionarEmpresaLabel">Adicionar receita tributavel</h2>
-                      <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
-                        <span aria-hidden="true">&times;</span>
-                      </button>
-                    </div>
-                    <div class="modal-body">
-                      <!-- Formulário para informações gerais -->
-                      <form>
-                        <div class="row">
-                          <div class="col-md-8">
-                            <div class="form-group">
-                              <label for="nomeEmpresa">Nome</label>
-                              <input type="text" class="form-control" id="nomeEmpresa" required>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="row">
-                          <div class="col-md-8">
-                            <div class="form-group">
-                              <label for="nomeEmpresa">Fonte de receita</label>
-                              <select class="form-control" id="regimeApuracao">
-                                <option value="Simples Nacional">Simples Nacional</option>
-                                <option value="Lucro Real">Lucro Real</option>
-                                <option value="Lucro Presumido">Lucro Presumido</option>
-                                <option value="Outro">Outro</option>
-                              </select>
-                            </div>
-
-                          </div>
-                        </div>
-                        <hr>
-                        <h5 class="card-title">Vencimento</h5>
-                        <div class="row">
-                          <div>
-                            <label for="inputNumber" class="col-sm-2 col-form-label">Dia</label>
-                          <div class="col-sm-10">
-                            <input type="number" class="form-control">
-                          </div>
-                          </div>
-                          <div>
-                            <legend>Mês</legend>
-
-                            <div class="row">
-                              <div class="col-sm-6">
-                                <div class="form-check">
-                                  <input class="form-check-input" type="checkbox" id="gridCheck1">
-                                  <label class="form-check-label" for="gridCheck1">
-                                    Janeiro
-                                  </label>
-                                </div>
-
-                                <div class="form-check">
-                                  <input class="form-check-input" type="checkbox" id="gridCheck2" checked>
-                                  <label class="form-check-label" for="gridCheck2">
-                                    Fevereiro
-                                  </label>
-                                </div>
-
-                                <div class="form-check">
-                                  <input class="form-check-input" type="checkbox" id="gridCheck3">
-                                  <label class="form-check-label" for="gridCheck3">
-                                    Março
-                                  </label>
-                                </div>
-
-                                <div class="form-check">
-                                  <input class="form-check-input" type="checkbox" id="gridCheck4" checked>
-                                  <label class="form-check-label" for="gridCheck4">
-                                    Abril
-                                  </label>
-                                </div>
-                                <div class="form-check">
-                                  <input class="form-check-input" type="checkbox" id="gridCheck4" checked>
-                                  <label class="form-check-label" for="gridCheck4">
-                                    Maio
-                                  </label>
-                                </div>
-                                <div class="form-check">
-                                  <input class="form-check-input" type="checkbox" id="gridCheck4" checked>
-                                  <label class="form-check-label" for="gridCheck4">
-                                    Junho
-                                  </label>
-                                </div>
-                              </div>
-
-                              <div class="col-sm-6">
-                                <div class="form-check">
-                                  <input class="form-check-input" type="checkbox" id="gridCheck5">
-                                  <label class="form-check-label" for="gridCheck5">
-                                    Julho
-                                  </label>
-                                </div>
-
-                                <div class="form-check">
-                                  <input class="form-check-input" type="checkbox" id="gridCheck6" checked>
-                                  <label class="form-check-label" for="gridCheck6">
-                                    Agosto
-                                  </label>
-                                </div>
-
-                                <div class="form-check">
-                                  <input class="form-check-input" type="checkbox" id="gridCheck7">
-                                  <label class="form-check-label" for="gridCheck7">
-                                    Setembro
-                                  </label>
-                                </div>
-
-                                <div class="form-check">
-                                  <input class="form-check-input" type="checkbox" id="gridCheck8" checked>
-                                  <label class="form-check-label" for="gridCheck8">
-                                    Outubro
-                                  </label>
-                                </div>
-                                <div class="form-check">
-                                  <input class="form-check-input" type="checkbox" id="gridCheck7">
-                                  <label class="form-check-label" for="gridCheck7">
-                                    Novembro
-                                  </label>
-                                </div>
-                                <div class="form-check">
-                                  <input class="form-check-input" type="checkbox" id="gridCheck7">
-                                  <label class="form-check-label" for="gridCheck7">
-                                    Dezembro
-                                  </label>
-                                </div>
-                              </div>
-                            </div>
-
-
-                          </div>
-                        </div><hr>
-                        <h5 class="card-title">Alíquotas</h5>
-                        <div class="row">
-                          <div class="col-md-8">
-                            <div class="form-group">
-                              <label for="nomeEmpresa">Imposto (%)</label>
-                              <input type="number" class="form-control">
-                            </div>
-                          </div>
-                        </div>
-                        <div class="row">
-                          <div class="col-md-8">
-                            <div class="form-group">
-                              <label for="nomeEmpresa">Dedução (%)</label>
-                              <input type="number" class="form-control">
-                            </div>
-                          </div>
-                        </div>
-                      </form>
-                    </div>
-                    <div class="modal-footer">
-                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
-                      <button type="button" class="btn btn-primary" id="salvarEmpresa">Salvar</button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
+                 <h5 class="card-title" style="display: flex; justify-content: space-between;">
+                  <span><h5 class="card-title">Valores de Pagamento</h5></span>
               </h5>
-                
 
-                <table class="table table-borderless datatable">
+                  <table class="table table-borderless datatable">
                   <thead>
-                          <tr>
-                            <th scope="col">ID</th>
-                            <th scope="col">Nome</th>
-                            <th scope="col">Fonte de Receita</th>
-                            <th scope="col">Data de vencimento</th>
-                              <th scope="col">Período de Pagamento</th>
-                            <th scope="col">Critérios</th>
-                            <th scope="col">Ações</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                        {% for tributo in tributos %}
-                          <tr>
-                            <th scope="row">{{ tributo.id_tributo }}</th>
-                            <td>{{ tributo.nome }}</td>
-                            <td>{{ tributo.id_fonte_receita_fonte_receita.nome }}</td>
-                            <td>{{ tributo.id_data_vencimento_vencimento.dia}}</td>
-                            <td>{{ tributo.id_data_vencimento_vencimento.periodo_pagamento}}</td>
-                            <td><a href="{% url 'criterios' tributo_id=tributo.id_tributo %}"><i class="bi bi-table"></i></a></td>
-                            <td>
-                                <a href="{% url 'dis_empresa_tributo' empresa_id=empresa.id_empresa tributo_id=tributo.id_tributo %}"><i class="bi bi-trash-fill" style="margin-right: 17%;"></i></a>
-                            </td>
-                          </tr>
-                        {% endfor %}
-                        </tbody>
+                    <tr>
+                      <th scope="col">Tributo</th>
+                      <th scope="col">Valor imposto (R$)</th>
+                        <th scope="col">Valor dedução (R$)</th>
+                        <th scope="col">Valor a ser pago (R$)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for contexto in contextos.tributo_contexts %}
+                    <tr>
+                      <th scope="row">{{ contexto.tributo }}</th>
+                      <td>R$ {{ contexto.total_imposto }}</td>
+                        <td>
+                            R$ {{ contexto.total_deducao }}
+                        </td>
+                     <td>
+                            R$ {{ contexto.total_a_pagar }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
                 </table>
 
               </div>
@@ -768,29 +503,118 @@
       <div class="card recent-sales overflow-auto">
           <div class="card-body">
 
-                <h5 class="card-title" style="display: flex; justify-content: space-between;">
-                  <span><h5 class="card-title">Resultados</h5></span>
+
+
+          <h5 class="card-title" style="display: flex; justify-content: space-between;">
+                  <span><h5 class="card-title">Tributos</h5></span>
+                  <a href="{% url 'ass_empresa_tributo' empresa_id=empresa.id_empresa %}">
+                    <i style="font-size: 2rem; color: black;" class="bi bi-plus-lg"></i>
+                  </a>
               </h5>
 
                 <table class="table table-borderless datatable">
                   <thead>
+                          <tr>
+                            <th scope="col">ID</th>
+                            <th scope="col">Nome</th>
+                            <th scope="col">Fonte de Receita</th>
+                              <th scope="col">Envio de E-mail</th>
+                              <th scope="col">Confirmação E-mail</th>
+                            <th scope="col">Data de vencimento</th>
+                              <th scope="col">Período de Pagamento</th>
+                            <th scope="col">Critérios</th>
+                            <th scope="col">Ações</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                        {% for tributo in tributos %}
+                          <tr>
+                            <th scope="row">{{ tributo.id_tributo }}</th>
+                            <td>{{ tributo.nome }}</td>
+                            <td>{{ tributo.id_fonte_receita_fonte_receita.nome }}</td>
+                              <td>{{ tributo.envio_email }}</td>
+                              <td>{{ tributo.confirmacao_email }}</td>
+                            <td>{{ tributo.id_data_vencimento_vencimento.dia}}</td>
+                            <td>{{ tributo.id_data_vencimento_vencimento.periodo_pagamento}}</td>
+                            <td><a href="{% url 'criterios' tributo_id=tributo.id_tributo %}"><i class="bi bi-table"></i></a></td>
+                            <td>
+                                <a href="{% url 'dis_empresa_tributo' empresa_id=empresa.id_empresa tributo_id=tributo.id_tributo %}"><i class="bi bi-trash-fill"></i></a>
+                            </td>
+                          </tr>
+                        {% endfor %}
+                        </tbody>
+                </table>
+
+              </div>
+
+            </div>
+          </div>
+
+            <div class="row">
+             <div class="card recent-sales overflow-auto">
+                 <div class="card-body">
+                   <h5 class="card-title" style="display: flex; justify-content: space-between;">
+                      <span><h5 class="card-title">Observações</h5></span>
+                      <a href="{% url 'adicionar_observacao' empresa_id=empresa.id_empresa %}">
+                        <i style="font-size: 2rem; color: black;" class="bi bi-plus-lg"></i>
+                      </a>
+                  </h5>
+                <table class="table table-borderless datatable">
+                  <thead>
                     <tr>
-                      <th scope="col">Tributo</th>
-                      <th scope="col">Valor imposto</th>
-                        <th scope="col">Valor dedução</th>
-                        <th scope="col">Valor a ser pago</th>
+                      <th scope="col">Id</th>
+                      <th scope="col">Observação</th>
+                      <th>Ações</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {% for contexto in contextos.tributo_contexts %}
+                    {% for observacao in observacoes %}
                     <tr>
-                      <th scope="row">{{ contexto.tributo }}</th>
-                      <td>{{ contexto.total_imposto }}</td>
-                        <td>
-                            {{ contexto.total_deducao }}
+                      <th scope="row">{{ observacao.id }}</th>
+                      <td>{{ observacao.observacao }}</td>
+                      <td>
+                            <a href="{% url 'deletar_observacao' empresa_id=empresa.id_empresa observacao_id=observacao.id %}" class="btn btn-danger btn-sm">
+                                <i class="bi bi-trash-fill"></i>
+                            </a>
                         </td>
-                     <td>
-                            {{ contexto.total_a_pagar }}
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+
+              </div>
+
+            </div>
+          </div>
+
+          <div class="row">
+             <div class="card recent-sales overflow-auto">
+                 <div class="card-body">
+                 <h5 class="card-title" style="display: flex; justify-content: space-between;">
+                  <span><h5 class="card-title">Históricos</h5></span>
+                  <a href="{% url 'adicionar_historico' empresa_id=empresa.id_empresa %}">
+                    <i style="font-size: 2rem; color: black;" class="bi bi-plus-lg"></i>
+                  </a>
+              </h5>
+                <table class="table table-borderless datatable">
+                  <thead>
+                    <tr>
+                      <th scope="col">Id</th>
+                      <th scope="col">Data</th>
+                        <th scope="col">Informação</th>
+                      <th>Ações</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for historico in historicos %}
+                    <tr>
+                      <th scope="row">{{ historico.id }}</th>
+                        <td>{{ historico.data }}</td>
+                      <td>{{ historico.informacao }}</td>
+                      <td>
+                            <a href="{% url 'deletar_historico' empresa_id=empresa.id_empresa historico_id=historico.id %}" class="btn btn-danger btn-sm">
+                                <i class="bi bi-trash-fill"></i>
+                            </a>
                         </td>
                     </tr>
                     {% endfor %}

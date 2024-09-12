@@ -24,9 +24,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-klxc5qzknwa(2f4))&+=yzz*zqug&g8-!b@sxz6gyr(_*62*e%'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -126,4 +126,4 @@ MEDIA_URL = 'img/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 STATICFILES_DIRS = (os.path.join(BASE_DIR,'app/static'),)
 LOGOUT_REDIRECT_URL = '/'
-ROLEPERMISSIONS_MODULE = "backend.roles"
+#ROLEPERMISSIONS_MODULE = "backend.roles"

@@ -147,7 +147,7 @@
     <div class="pagetitle">
       <nav>
         <ol class="breadcrumb" style="margin-bottom: 50px; margin-top: 50px; font-size: xx-large;">
-          <li class="breadcrumb-item" style="color: white;"><a style="color: white" href="#">Empresa X</a></li>
+          <li class="breadcrumb-item" style="color: white;"><a style="color: white" href="{% url 'exibirempresas' empresa_id=empresa.id_empresa %}">{{ empresa.nome }}</a></li>
           <li class="breadcrumb-item" style="color: white;" >Transações</li>
         </ol>
       </nav>
@@ -194,9 +194,8 @@
 
                     <div class="card-body">
                       <h1 style="margin-top: 5%;">Adicionar transação</h1><br>
-                        <p>Total de Transações: {{ transacoes.count }}</p>
 
-                      <button style="margin-top: 10%; width: 100%;" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addtransacao">
+                      <button style="margin-top: 5%; width: 100%;" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addtransacao">
                         Adicionar Transação
                       </button>
                       <div class="modal fade" id="addtransacao" tabindex="-1" role="dialog" aria-labelledby="modalAdicionarEmpresaLabel" aria-hidden="true">
