@@ -81,6 +81,14 @@ DATABASES = {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
+    #'default': {
+    #    'ENGINE': 'django.db.backends.mysql',
+    #    'NAME': 'my_database_adcon',
+    #    'USER': 'adminBdAdcon',
+    #    'PASSWORD': 'senha001',
+    #    'HOST': 'databaseadcon1.cz6cyeq0avog.sa-east-1.rds.amazonaws.com',
+    #    'PORT': '3306'
+    #}
 }
 
 
