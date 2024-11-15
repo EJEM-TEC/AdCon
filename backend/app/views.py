@@ -24,7 +24,7 @@ import json
 from .models import Empresa, Federal, Estadual, Municipal, Tributo, FonteReceita, Vencimento, Criterios, \
     EmpresaFonteReceita, EmpresaTributo, CriterioAliquotas, EmpresaTransacoes, Transacoes, Observacoes, \
     EmpresaObservacao, \
-    Historico, HistoricoEmpresa
+    Historico, HistoricoEmpresa, DepartamentoDP, Empresa_DP, EmpresaDespesas, Despesas, SimplesNacional, Anexos, SimplesAnexo
 
 
 @login_required(login_url="/")
@@ -66,6 +66,13 @@ def exibir_empresa(request, empresa_id):
     )
 
     historicos = [eh.id_historico for eh in empresa_historicos]
+
+    #Dp de uma empresa
+    empresa_dp = Empresa_DP.objects.filter(id_empresa_empresa=empresa_id).select_related(
+        'id_dp_dp'
+    )
+
+    dps = [ed.id_dp_dp for ed in empresa_dp]
 
     # Transações de uma empresa
     empresa_transacoes = EmpresaTransacoes.objects.filter(id_empresa_empresa=empresa).select_related(
@@ -112,7 +119,8 @@ def exibir_empresa(request, empresa_id):
         'data_for_chart': data_for_chart,  # Dados para o gráfico
         'contextos': contextos,
         'observacoes': observacoes,
-        'historicos': historicos
+        'historicos': historicos,
+        'dps': dps
     })
 
 
@@ -1025,4 +1033,260 @@ def deletarHistorico(request, empresa_id, historico_id):
     return render(request, 'frontend/deletar_historico.html', {
         'empresa': empresa,
         'historico': historico
+    })
+
+@login_required(login_url='/')
+def adicionarDP(request, empresa_id):
+    empresa = get_object_or_404(Empresa, id_empresa=empresa_id)
+
+    if request.method == 'POST':
+
+        data = request.POST.get("data")
+        imposto = request.POST.get("imposto")
+        valor = request.POST.get("valor")
+        valor_juros = request.POST.get("valor_juros")
+        local_pagamento = request.POST.get("local_pagamento")
+
+        novo_dp = DepartamentoDP.objects.create(
+            data_pagamento=data,
+            imposto = imposto,
+            valor = valor,
+            valor_com_juros = valor_juros,
+            local_pagamento = local_pagamento
+        )
+
+        Empresa_DP.objects.create(
+            id_dp_dp=novo_dp, 
+            id_empresa_empresa=empresa 
+        )
+
+        return redirect('exibirempresas', empresa_id=empresa.id_empresa)
+
+    return render(request, 'frontend/adicionar_dp.html', {'empresa': empresa})
+
+@login_required(login_url='/')
+def deletarDP(request, empresa_id, dp_id):
+    # Obtendo o tributo pelo id_tributo fornecido
+    empresa = get_object_or_404(Empresa, id_empresa=empresa_id)
+
+    # Obtendo o critério pelo id_aliquotas fornecido
+    dp = get_object_or_404(DepartamentoDP, id=dp_id)
+
+    # Verificando se o critério está relacionado ao tributo
+    empresa_dp = get_object_or_404(Empresa_DP, id_dp_dp=dp,
+                                           id_empresa_empresa=empresa)
+
+    if request.method == 'POST':
+        # Deletando a relação entre o critério e o tributo
+        empresa_dp.delete()
+
+        # Opcional: Deletar o critério completamente se não estiver relacionado a outro tributo
+        dp.delete()
+
+        # Redirecionando para a página de visualização de critérios
+        return redirect('exibirempresas', empresa_id=empresa.id_empresa)
+
+    return render(request, 'frontend/deletar_dp.html', {
+        'empresa': empresa,
+        'dp': dp
+    })
+
+@login_required(login_url='/')
+def depesas(request, empresa_id):
+    empresa = get_object_or_404(Empresa, id_empresa=empresa_id)
+
+    if request.method == 'POST':
+        data = request.POST.get('data')
+        motivo = request.POST.get('motivo')
+        valor = request.POST.get('valor')
+
+
+        # Criando um novo critério
+        nova_despesa = Despesas.objects.create(
+            data=data,
+            motivo=motivo,
+            despesa=valor,
+        )
+
+        # Relacionando o critério ao tributo
+        EmpresaDespesas.objects.create(
+            id_despesa_despesa=nova_despesa,  # Passando a instância de Criterios
+            id_empresa_empresa=empresa  # Passando a instância de Tributo
+        )
+
+        return redirect('despesas', empresa_id=empresa.id_empresa)
+
+    # Obtendo todos os CriterioAliquotas relacionados ao tributo
+    empresa_despesas = EmpresaDespesas.objects.filter(id_empresa_empresa=empresa).select_related(
+        'id_despesa_despesa')
+
+    # Extraindo todos os critérios relacionados aos CriterioAliquotas
+    despesas = [ed.id_despesa_despesa for ed in empresa_despesas]
+
+    return render(request, 'frontend/historico-despesas.html', {'despesas': despesas,
+                                                                  'empresa': empresa})
+
+@login_required(login_url='/')
+def deletar_despesa(request, empresa_id, despesa_id):
+    # Obtendo o tributo pelo id_tributo fornecido
+    empresa = get_object_or_404(Empresa, id_empresa=empresa_id)
+
+    # Obtendo o critério pelo id_aliquotas fornecido
+    despesa = get_object_or_404(Despesas, id=despesa_id)
+
+    # Verificando se o critério está relacionado ao tributo
+    empresa_despesa = get_object_or_404(EmpresaDespesas, id_despesa_despesa=despesa,
+                                          id_empresa_empresa=empresa)
+
+    if request.method == 'POST':
+        # Deletando a relação entre o critério e o tributo
+        empresa_despesa.delete()
+
+        # Opcional: Deletar o critério completamente se não estiver relacionado a outro tributo
+        despesa.delete()
+
+        # Redirecionando para a página de visualização de critérios
+        return redirect('despesas', empresa_id=empresa.id_empresa)
+
+    return render(request, 'frontend/excluir_despesa.html', {
+        'empresa': empresa,
+        'despesa': despesa
+    })
+
+@login_required(login_url='/')
+def simplesNacional(request):
+    anexos = SimplesNacional.objects.all()
+
+    if request.method == 'POST':
+        # Coletando dados do formulário manualmente
+        numero_anexo = request.POST.get('numero_anexo')
+        tipo = request.POST.get('tipo')
+        deducao = request.POST.get('deducao')
+        limite_superior = request.POST.get('limite_superior')
+        limite_inferior = request.POST.get('limite_inferior')
+        aliquota = request.POST.get('aliquota')
+
+        # Criando Anexos
+        anexo = Anexos.objects.create(
+            deducao=deducao,
+            limite_superior=limite_superior,
+            limite_inferior=limite_inferior,
+            aliquota=aliquota
+        )
+
+        simplesnacional = SimplesNacional.objects.create(
+            numero_anexo=numero_anexo,
+            tipo=tipo   
+        )
+
+        # Criando CriterioAliquotas
+        SimplesAnexo.objects.create(
+            id_simples=simplesnacional,
+            id_anexo=anexo
+        )
+
+        return redirect('simplesNacional')  # Redirecione para uma página de sucesso
+    
+    return render(request, 'frontend/SimplesNacional.html',
+                  {
+                      "anexos": anexos,
+                  })
+
+@login_required(login_url='/')
+def anexosCriterios(request, anexo_id):
+    # Obtendo o tributo pelo id_tributo fornecido
+    anexo = get_object_or_404(SimplesNacional, id=anexo_id)
+
+    # Função para criar um novo critério em relação a um tributo
+    if request.method == 'POST':
+        # Coletando dados do formulário
+        deducao = request.POST.get('deducao')
+        limite_superior = request.POST.get('limite_superior')
+        limite_inferior = request.POST.get('limite_inferior')
+        aliquota = request.POST.get('aliquota')
+
+        # Criando um novo critério
+        novo_criterio = Anexos.objects.create(
+            deducao=deducao,
+            limite_superior=limite_superior,
+            limite_inferior=limite_inferior,
+            aliquota=aliquota
+        )
+
+        # Relacionando o critério ao tributo
+        SimplesAnexo.objects.create(
+            id_anexo=novo_criterio,  # Passando a instância de Criterios
+            id_simples=anexo  # Passando a instância de Tributo
+        )
+
+        # Redirecionando para a página de visualização de critérios
+        return redirect('anexos', anexo_id=anexo.id)
+
+    # Obtendo todos os CriterioAliquotas relacionados ao tributo
+    simples_anexos = SimplesAnexo.objects.filter(id_simples=anexo).select_related(
+        'id_anexo')
+
+    # Extraindo todos os critérios relacionados aos CriterioAliquotas
+    criterios = [ca.id_anexo for ca in simples_anexos]
+
+    return render(request, 'frontend/anexoCriterios.html', {
+        'anexo': anexo,
+        'criterios': criterios
+    })
+
+@login_required(login_url='/')
+def editar_anexoCriterio(request, anexo_id, criterio_id):
+    # Obtendo o tributo pelo id_tributo fornecido
+    anexo = get_object_or_404(SimplesNacional, id=anexo_id)
+
+    # Obtendo o critério pelo id_aliquotas fornecido
+    criterio = get_object_or_404(Anexos, id=criterio_id)
+
+    if request.method == 'POST':
+        deducao = request.POST.get('deducao')
+        limite_superior = request.POST.get('limite_superior')
+        limite_inferior = request.POST.get('limite_inferior')
+        aliquota = request.POST.get('aliquota')
+
+        criterio.deducao = deducao
+        criterio.limite_superior = limite_superior
+        criterio.limite_inferior = limite_inferior
+        criterio.aliquota = aliquota
+
+        criterio.save()
+
+        # Redirecionando para a página de visualização de critérios
+        return redirect('anexos', anexo_id=anexo.id)
+
+    return render(request, 'frontend/editar_anexoCriterio.html', {
+        'anexo': anexo,
+        'criterio': criterio
+    })
+
+
+@login_required(login_url='/')
+def deletar_anexoCriterio(request, anexo_id, criterio_id):
+    # Obtendo o tributo pelo id_tributo fornecido
+    anexo = get_object_or_404(SimplesNacional, id=anexo_id)
+
+    # Obtendo o critério pelo id_aliquotas fornecido
+    criterio = get_object_or_404(Anexos, id=criterio_id)
+
+    # Verificando se o critério está relacionado ao tributo
+    criterio_anexo = get_object_or_404(SimplesAnexo, id_simples=anexo,
+                                          id_anexo=criterio)
+
+    if request.method == 'POST':
+        # Deletando a relação entre o critério e o tributo
+        criterio_anexo.delete()
+
+        # Opcional: Deletar o critério completamente se não estiver relacionado a outro tributo
+        criterio.delete()
+
+        # Redirecionando para a página de visualização de critérios
+        return redirect('criterios', anexo_id=anexo.id)
+
+    return render(request, 'frontend/excluir_anexoCriterio.html', {
+        'anexo': anexo,
+        'criterio': criterio
     })

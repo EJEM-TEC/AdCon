@@ -314,7 +314,8 @@
             </h5>
               <p>Regime de apuração: <b>{{ empresa.regime_apuracao }}</b></p>
               <p>Atividade: <b>{{ empresa.atividade }}</b></p>
-              <p>Transações: <b><a href="{% url 'transacoes' empresa_id=empresa.id_empresa %}">Ver historico de transações</a></b></p><br><hr style="margin-top: 8%; margin-bottom: 7%;"><br>
+              <p>Transações: <b><a href="{% url 'transacoes' empresa_id=empresa.id_empresa %}">Ver historico de transações</a></b></p>
+              <p>Despesas: <b><a href="{% url 'despesas' empresa_id=empresa.id_empresa %}">Ver historico de despesas</a></b></p><br><hr style="margin-top: 8%; margin-bottom: 7%;"><br>
               <div class="accordion" id="accordionExample">
                 <div class="accordion-item">
                   <h2 class="accordion-header" id="headingOne">
@@ -424,10 +425,7 @@
                   </div>
                 </div>
               </div>
-    
               </h5>
-              
-
                 <table class="table table-borderless datatable">
                   <thead>
                     <tr>
@@ -625,6 +623,51 @@
 
             </div>
           </div>
+
+          <div class="row">
+            <div class="card recent-sales overflow-auto">
+                <div class="card-body">
+                <h5 class="card-title" style="display: flex; justify-content: space-between;">
+                 <span><h5 class="card-title">Setor de DP</h5></span>
+                 <a href="{% url 'adicionar_dp' empresa_id=empresa.id_empresa %}">
+                   <i style="font-size: 2rem; color: black;" class="bi bi-plus-lg"></i>
+                 </a>
+             </h5>
+               <table class="table table-borderless datatable">
+                 <thead>
+                   <tr>
+                     <th scope="col">Id</th>
+                     <th scope="col">Imposto</th>
+                     <th scope="col">Valor ( R$ )</th>
+                       <th scope="col">Valor com Juros ( R$ )</th>
+                       <th scope="col">Local de Pagamento</th>
+                       <th scope="col">Data de Pagamento</th>
+                     <th>Ações</th>
+                   </tr>
+                 </thead>
+                 <tbody>
+                   {% for dp in dps %}
+                   <tr>
+                     <th scope="row">{{ dp.id }}</th>
+                      <td>{{ dp.imposto }}</td>
+                     <td>{{ dp.valor }}</td>
+                     <td>{{ dp.valor_com_juros }}</td>
+                     <td>{{ dp.local_pagamento }}</td>
+                     <td>{{ dp.data_pagamento }}</td>
+                     <td>
+                           <a href="{% url  'deletar_dp' empresa_id=empresa.id_empresa dp_id=dp.id %}" class="btn btn-danger btn-sm">
+                               <i class="bi bi-trash-fill"></i>
+                           </a>
+                       </td>
+                   </tr>
+                   {% endfor %}
+                 </tbody>
+               </table>
+
+             </div>
+
+           </div>
+         </div>
 
           </div><!-- End Recent Sales -->
       </div>

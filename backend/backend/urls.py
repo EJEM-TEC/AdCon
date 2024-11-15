@@ -55,5 +55,13 @@ urlpatterns = [
     path('deletar_observacao/<int:empresa_id>/<int:observacao_id>', views.deletarObservacao, name='deletar_observacao'),
     path('adicionar_historico/<int:empresa_id>', views.adicionarHistorico, name='adicionar_historico'),
     path('deletar_historico/<int:empresa_id>/<int:historico_id>', views.deletarHistorico, name='deletar_historico'),
+    path('adicionar_dp/<int:empresa_id>/', views.adicionarDP, name='adicionar_dp'),
+    path('deletar_dp/<int:empresa_id>/<int:dp_id>', views.deletarDP, name='deletar_dp'),
+    path("despesas/<int:empresa_id>", views.depesas, name="despesas"),
+    path("despesas/<int:empresa_id>/delete/<int:despesa_id>/", views.deletar_despesa, name="delete_despesa"),
+    path("simplesNacional", views.simplesNacional, name="simplesNacional"),
+    path("Anexocriterios/<int:anexo_id>", views.anexosCriterios, name="Anexocriterios"),
+    path('Anexocriterios/<int:anexo_id>/delete/<int:criterio_id>/', views.deletar_anexoCriterio, name='delete_Anexocriterio'),
+    path('Anexocriterios/<int:anexo_id>/update/<int:criterio_id>/', views.editar_anexoCriterio, name='update_Anexocriterio'),
 
 ]

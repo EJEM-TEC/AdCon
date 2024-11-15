@@ -107,3 +107,53 @@ class EmpresaTributo(models.Model):
     id_empresa_empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE)
     id_tributo_tributo = models.ForeignKey(Tributo, on_delete=models.CASCADE)
 
+class DepartamentoDP(models.Model):
+    id =  models.AutoField(primary_key=True)
+    imposto = models.CharField(max_length=100)
+    valor = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    valor_com_juros = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    local_pagamento = models.CharField(max_length=100)
+    data_pagamento = models.DateField(blank=True, null=True)
+
+class Empresa_DP(models.Model):
+    id = models.AutoField(primary_key=True)
+    id_empresa_empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE)
+    id_dp_dp = models.ForeignKey(DepartamentoDP, on_delete=models.CASCADE)
+
+class Despesas(models.Model):
+    id = models.AutoField(primary_key=True)
+    despesa = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    data = models.DateField(blank=True, null=True)
+    motivo = models.CharField(max_length=100, blank=True, null=True)
+
+class EmpresaDespesas(models.Model):
+    id = models.AutoField(primary_key=True)
+    id_empresa_empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE)
+    id_despesa_despesa = models.ForeignKey(Despesas, on_delete=models.CASCADE)
+    
+class SimplesNacional(models.Model):
+    id = models.AutoField(primary_key=True)
+    numero_anexo = models.CharField(max_length=100)
+    tipo = models.CharField(max_length=100)
+
+class Anexos(models.Model):
+    id = models.AutoField(primary_key=True)
+    limite_superior = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    limite_inferior = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    aliquota = models.DecimalField(max_digits=10, decimal_places=2)
+    deducao = models.IntegerField()
+
+class SimplesAnexo(models.Model):
+    id = models.AutoField(primary_key=True)
+    id_simples = models.ForeignKey(SimplesNacional, on_delete=models.CASCADE)
+    id_anexo = models.ForeignKey(Anexos, on_delete=models.CASCADE)
+
+class EmpresaSimples(models.Model):
+    id = models.AutoField(primary_key=True)
+    id_empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE)
+    id_simples = models.ForeignKey(SimplesNacional, on_delete=models.CASCADE)
+
+
+
+
+    
