@@ -81,6 +81,20 @@ def exibir_empresa(request, empresa_id):
     transacoes = [et.id_transacoes_transacoes.transacao for et in empresa_transacoes]
     sum_transacoes = sum(transacoes)
 
+
+    # Despesas de uma determianda empresa
+
+    empresa_despesas = EmpresaDespesas.objects.filter(id_empresa_empresa=empresa).select_related(
+        'id_despesa_despesa'
+    )
+
+    despesas = [ed.id_despesa_despesa for ed in empresa_despesas]
+    sum_despesas = sum(despesas)
+
+    # Calculo do Lucro de uma empresa
+
+    lucro = sum_transacoes - sum_despesas
+
     n_empresa_fontes_receita = empresa_fontesreceitas.count()
     n_empresa_tributos = empresa_tributos.count()
 
@@ -120,7 +134,8 @@ def exibir_empresa(request, empresa_id):
         'contextos': contextos,
         'observacoes': observacoes,
         'historicos': historicos,
-        'dps': dps
+        'dps': dps,
+        'lucro': lucro
     })
 
 
@@ -408,10 +423,8 @@ def tributos(request):
         envio_email = request.POST.get('envio_email')
         confirmar_email = request.POST.get('confirmar_email')
         periodo_pagamento = request.POST.get('periodo_pagamento')
-        deducao_imposto = request.POST.get('deducao_imposto')
-        limite_superior = request.POST.get('limite_superior')
-        limite_inferior = request.POST.get('limite_inferior')
         aliquota = request.POST.get('aliquota')
+        regime = request.POST.get('regime')
 
         # Criando Vencimento
         vencimento = Vencimento.objects.create(
@@ -419,13 +432,6 @@ def tributos(request):
             periodo_pagamento=periodo_pagamento,
         )
 
-        # Criando Criterios
-        criterios = Criterios.objects.create(
-            deducao_imposto=deducao_imposto,
-            limite_superior=limite_superior,
-            limite_inferior=limite_inferior,
-            aliquota=aliquota
-        )
 
         # Criando Tributo
         fonte_receita = FonteReceita.objects.get(id_fonte_receita=fonte_receita_id)
@@ -433,14 +439,10 @@ def tributos(request):
             nome=nome_tributo,
             envio_email=envio_email,
             confirmacao_email=confirmar_email,
+            aliquota = aliquota,
+            regime = regime,
             id_data_vencimento_vencimento_id=vencimento.id_data_vencimento,
             id_fonte_receita_fonte_receita_id=fonte_receita.id_fonte_receita,
-        )
-
-        # Criando CriterioAliquotas
-        CriterioAliquotas.objects.create(
-            id_aliquotas_criterios_id=criterios.id_aliquotas,
-            id_tributo_tributo_id=tributo.id_tributo
         )
 
         return redirect('tributos')  # Redirecione para uma página de sucesso
@@ -448,14 +450,14 @@ def tributos(request):
     fontes_receitas = FonteReceita.objects.all()
     tributos_mensais = Tributo.objects.filter(id_data_vencimento_vencimento__periodo_pagamento="Mensal").count()
     tributos_trimestral = Tributo.objects.filter(id_data_vencimento_vencimento__periodo_pagamento="Trimestral").count()
-    tributos_anual = Tributo.objects.filter(id_data_vencimento_vencimento__periodo_pagamento="anual").count()
+
+
     return render(request, 'frontend/tributos.html',
                   {
                       "fontes_receita": fontes_receitas,
                       "tributos": tributos,
                       "tributos_mensais": tributos_mensais,
                       "tributos_trimestral": tributos_trimestral,
-                      "tributos_anual": tributos_anual
                   })
 
 
@@ -484,6 +486,8 @@ def editar_tributo(request, tributo_id):
         periodo_pagamento = request.POST.get('periodo_pagamento')
         envio_email = request.POST.get('envio_email')
         confirmar_email = request.POST.get('confirmar_email')
+        aliquota = request.POST.get('aliquota')
+        regime = request.POST.get('request')
         fonte_receita_id = request.POST.get('fonte_receita')
         dia_vencimento = request.POST.get('dia')
 
@@ -491,6 +495,8 @@ def editar_tributo(request, tributo_id):
         vencimento.periodo_pagamento = periodo_pagamento
         tributo.nome = nome_tributo
         tributo.envio_email = envio_email
+        tributo.aliquota = aliquota
+        tributo.regime = regime
         tributo.confirmacao_email = confirmar_email
         fonte_receita.nome = fonte_receita_id
 
@@ -1290,3 +1296,13 @@ def deletar_anexoCriterio(request, anexo_id, criterio_id):
         'anexo': anexo,
         'criterio': criterio
     })
+
+@login_required(login_url='/')
+def deletar_Anexo(request, anexo_id):
+    context = {}
+    anexo = get_object_or_404(SimplesNacional, id=anexo_id)
+    context['object'] = anexo
+    if request.method == 'POST':
+        anexo.delete()
+        return redirect('simplesNacional')
+    return render(request, 'frontend/excluir_anexo.html', {'anexo': anexo});

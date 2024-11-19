@@ -64,6 +64,8 @@ class Tributo(models.Model):
     nome = models.CharField(max_length=100, blank=True, null=True)
     envio_email = models.DateField(blank=True, null=True)
     confirmacao_email = models.DateField(blank=True, null=True)
+    aliquota = models.IntegerField(null=True, blank=True)
+    regime = models.CharField(max_length=100, null=True, blank=True)
     id_data_vencimento_vencimento = models.ForeignKey(Vencimento, on_delete=models.CASCADE)
     id_fonte_receita_fonte_receita = models.ForeignKey(FonteReceita, on_delete=models.CASCADE)
 

@@ -234,32 +234,7 @@
                 </div>
               </div>
 
-            </div><!-- End Customers Card -->
-
-          <!-- Customers Card -->
-            <div class="col-xxl-3 col-xl-12">
-
-              <div class="card info-card customers-card">
-
-                <div class="card-body">
-                  <h5 class="card-title">Tributos Anuais</h5>
-
-                  <div class="d-flex align-items-center">
-                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                        <i class="bi bi-currency-dollar"></i>
-                    </div>
-                    <div class="ps-3">
-                      <h6>{{ tributos_anual }}</h6>
-
-
-                    </div>
-                  </div>
-
-                </div>
-              </div>
-
-            </div><!-- End Customers Card -->
-           
+            </div><!-- End Customers Card -->           
             
 
             <!-- Reports -->
@@ -333,28 +308,10 @@
                                     <select class="form-control" id="regimeApuracao" name="periodo_pagamento" required>
                                       <option value="mensal">Mensal</option>
                                       <option value="trimestral">Trimestral</option>
-                                      <option value="anual">Anual</option>
+                                      <!-- <option value="anual">Anual</option> -->
                                     </select>
                                   </div>
-                              </div><hr>
-                              <h5 class="card-title">Critérios</h5>
-                              <div class="row">
-                                <div class="col-md-8">
-                                  <div class="form-group">
-                                    <label for="nomeEmpresa">Limite Superior (R$)</label>
-                                    <input type="number" class="form-control" name="limite_superior">
-                                  </div>
-                                </div>
                               </div>
-                              <div class="row">
-                                <div class="col-md-8">
-                                  <div class="form-group">
-                                    <label for="nomeEmpresa">Limite Inferior (R$)</label>
-                                    <input type="number" class="form-control" name="limite_inferior">
-                                  </div>
-                                </div>
-                              </div>
-                            
                               <div class="row">
                                 <div class="col-md-8">
                                   <div class="form-group">
@@ -366,15 +323,15 @@
                               <div class="row">
                                 <div class="col-md-8">
                                   <div class="form-group">
-                                    <label for="nomeEmpresa">Tipo</label>
-                                    <select class="form-control" id="regimeApuracao0" name="deducao_imposto">
-                                      <option value="deducao">Dedução</option>
-                                      <option value="imposto">Imposto</option>
+                                    <label for="nomeEmpresa">Regime de Apuração</label>
+                                    <select class="form-control" id="regime" name="regime">
+                                      <option class="Lucro Pressumido"> Lucro Pressumido </option>
+                                      <option class="Lucro Real"> Lucro Real </option>
                                     </select>
                                   </div>
-                                  
                                 </div>
-                              </div><hr>
+                              </div>
+                              <hr>
                                 <div class="modal-footer">
                                  <button type="reset" class="btn btn-secondary" data-dismiss="modal">Resetar</button>
                                  <button type="submit" class="btn btn-primary" id="salvarEmpresa">Salvar</button>
@@ -413,7 +370,7 @@
                                       <option value="Simples Nacional">Simples Nacional</option>
                                       <option value="Lucro Real">Lucro Real</option>
                                       <option value="Lucro Presumido">Lucro Presumido</option>
-                                      <option value="Outro">Outro</option>
+                                      <!-- <option value="Outro">Outro</option> -->
                                     </select>
                                   </div>
 
@@ -643,11 +600,13 @@
                             <th scope="col">ID</th>
                             <th scope="col">Nome</th>
                             <th scope="col">Fonte de Receita</th>
-                              <th scope="col">Envio de E-mail</th>
-                              <th scope="col">Confirmação E-mail</th>
+                            <th scope="col">Aliquota ( % )</th>
+                            <th scope="col">Regime de Apuração</th>
+                            <th scope="col">Envio de E-mail</th>
+                            <th scope="col">Confirmação E-mail</th>
                             <th scope="col">Data de vencimento</th>
-                              <th scope="col">Período de Pagamento</th>
-                            <th scope="col">Critérios</th>
+                            <th scope="col">Período de Pagamento</th>
+                            
                             <th scope="col">Ações</th>
                           </tr>
                         </thead>
@@ -657,11 +616,13 @@
                             <th scope="row">{{ tributo.id_tributo }}</th>
                             <td>{{ tributo.nome }}</td>
                             <td>{{ tributo.id_fonte_receita_fonte_receita.nome }}</td>
-                              <td>{{ tributo.envio_email }}</td>
-                              <td>{{ tributo.confirmacao_email }}</td>
+                            <td>{{ tributo.aliquota }}</td>
+                            <td>{{ tributo.regime }}</td>
+                            <td>{{ tributo.envio_email }}</td>
+                            <td>{{ tributo.confirmacao_email }}</td>
                             <td>{{ tributo.id_data_vencimento_vencimento.dia}}</td>
                             <td>{{ tributo.id_data_vencimento_vencimento.periodo_pagamento}}</td>
-                            <td><a href="{% url 'criterios' tributo_id=tributo.id_tributo %}"><i class="bi bi-table"></i></a></td>
+                            
                             <td>
                                 <a href="{% url 'update_tributo' tributo_id=tributo.id_tributo %}">
                                     <i class="bi bi-pencil-fill" style="margin-right: 17%; margin-left: 0%;"></i>

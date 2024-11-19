@@ -543,7 +543,7 @@
                                 <a href="#">
                                     <i class="bi bi-pencil-fill" style="margin-right: 17%; margin-left: 0%;"></i>
                                 </a>
-                                <a href="#"><i class="bi bi-trash-fill" style="margin-right: 17%;"></i></a>
+                                <a href="{% url 'delete_Anexo' anexo_id=anexo.id %}"><i class="bi bi-trash-fill" style="margin-right: 17%;"></i></a>
                             </td>
                           </tr>
                         {% endfor %}

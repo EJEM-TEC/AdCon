@@ -63,5 +63,6 @@ urlpatterns = [
     path("Anexocriterios/<int:anexo_id>", views.anexosCriterios, name="Anexocriterios"),
     path('Anexocriterios/<int:anexo_id>/delete/<int:criterio_id>/', views.deletar_anexoCriterio, name='delete_Anexocriterio'),
     path('Anexocriterios/<int:anexo_id>/update/<int:criterio_id>/', views.editar_anexoCriterio, name='update_Anexocriterio'),
+    path('deletarAnexo/<int:anexo_id>', views.deletar_Anexo, name='delete_Anexo')
 
 ]

@@ -131,7 +131,7 @@
       </li><!-- End F.A.Q Page Nav -->
 
       <li class="nav-item">
-        <a class="nav-link collapsed" href={% url 'colaboradores' %}>
+        <a class="nav-link collapsed" href="{% url 'colaboradores' %}">
           <i class="bi bi-people-fill"></i>
           <span>Colaboradores</span>
         </a>
@@ -208,7 +208,7 @@
               </div>
 
             </div><!-- End Customers Card -->
-            <div class="col-12">
+            <div class="col-xl-6">
 
               <div class="card info-card customers-card">
 
@@ -220,7 +220,7 @@
                       <i class="bi bi-people"></i>
                     </div>
                     <div class="ps-3">
-                      <h6>$ {{ sum_transacoes }}</h6>
+                      <h6>R$ {{ sum_transacoes }}</h6>
                       
 
                     </div>
@@ -230,14 +230,30 @@
               </div>
 
             </div>
+
+            <div class="col-xl-6">
+
+              <div class="card info-card customers-card">
+
+                <div class="card-body">
+                  <h5 class="card-title">Lucro Líquido</h5>
+
+                  <div class="d-flex align-items-center">
+                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                      <i class="bi bi-people"></i>
+                    </div>
+                    <div class="ps-3">
+                      <h6>R$ {{ lucro }}</h6>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
             <!-- Reports -->
             <div class="col-12">
               <div class="card">
-
-                
-
                 <div class="card-body">
-                  <h5 class="card-title">Transações <span>/Today</span></h5>
+                  <h5 class="card-title">Transações ( R$ ) <span>/Today</span></h5>
 
                   <!-- Line Chart -->
                   <div id="reportsChart"></div>
@@ -516,11 +532,12 @@
                             <th scope="col">ID</th>
                             <th scope="col">Nome</th>
                             <th scope="col">Fonte de Receita</th>
-                              <th scope="col">Envio de E-mail</th>
-                              <th scope="col">Confirmação E-mail</th>
+                            <th scope="col">Aliquota ( % )</th>
+                            <th scope="col">Regime de Apuração</th>
+                            <th scope="col">Envio de E-mail</th>
+                            <th scope="col">Confirmação E-mail</th>
                             <th scope="col">Data de vencimento</th>
-                              <th scope="col">Período de Pagamento</th>
-                            <th scope="col">Critérios</th>
+                            <th scope="col">Período de Pagamento</th>
                             <th scope="col">Ações</th>
                           </tr>
                         </thead>
@@ -530,11 +547,12 @@
                             <th scope="row">{{ tributo.id_tributo }}</th>
                             <td>{{ tributo.nome }}</td>
                             <td>{{ tributo.id_fonte_receita_fonte_receita.nome }}</td>
-                              <td>{{ tributo.envio_email }}</td>
-                              <td>{{ tributo.confirmacao_email }}</td>
+                            <td>{{ tributo.aliquota }}</td>
+                            <td>{{ tributo.regime }}</td>
+                            <td>{{ tributo.envio_email }}</td>
+                            <td>{{ tributo.confirmacao_email }}</td>
                             <td>{{ tributo.id_data_vencimento_vencimento.dia}}</td>
                             <td>{{ tributo.id_data_vencimento_vencimento.periodo_pagamento}}</td>
-                            <td><a href="{% url 'criterios' tributo_id=tributo.id_tributo %}"><i class="bi bi-table"></i></a></td>
                             <td>
                                 <a href="{% url 'dis_empresa_tributo' empresa_id=empresa.id_empresa tributo_id=tributo.id_tributo %}"><i class="bi bi-trash-fill"></i></a>
                             </td>
