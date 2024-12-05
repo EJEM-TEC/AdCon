@@ -149,6 +149,13 @@
           <i class="bi bi-people-fill"></i>
           <span>Colaboradores</span>
         </a>
+      </li>
+      
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{% url 'simplesNacional' %}">
+          <i class="bi bi-people-fill"></i>
+          <span>Simples Nacional</span>
+        </a>
       </li><!-- End Contact Page Nav -->
 
       <!-- AQUI ACABA A AREA PADRÃO DE TODAS AS PAGINAS -->
@@ -255,70 +262,7 @@
               <div class="card-body">
                 <h5 class="card-title" style="display: flex; justify-content: space-between;">
                   <span style="font-size: xx-large; color: rgb(0, 0, 0);">Colaboradores</span>
-                  <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="modalAdicionarEmpresaLabel" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
-                  <div class="modal-content">
-                    <div class="modal-header">
-                      <h2 class="modal-title font-weight-bold" id="modalAdicionarEmpresaLabel">Editar Colaborador</h2>
-                    </div>
-                    <div class="modal-body">
-                      <!-- Formulário para informações gerais -->
-                      <h2>Informações Gerais</h2>
-                      <form method="post" onsubmit="return validateForm()">
-                        {% csrf_token %}
-                        <div class="row">
-                            <div class="col-md-6 my-2">
-                                <div class="form-group">
-                                    <label for="nomeColaborador">Nome</label>
-                                    <input type="text" class="form-control" id="nomeColaborador" name="username" required value="{{ user.username }}">
-                                </div>
-                            </div>
-                            <div class="col-md-6 my-2">
-                                <div class="form-group">
-                                    <label for="emailColaborador">E-mail</label>
-                                    <input type="email" class="form-control" id="emailColaborador" name="email" required value="{{ user.email }}">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6 my-2">
-                                <div class="form-group">
-                                    <label for="senhaColaborador" class="my-1">Senha</label>
-                                    <input type="password" class="form-control" id="senhaColaborador" name="senha">
-                                </div>
-                            </div>
-                            <div class="col-md-6 my-2">
-                                <div class="form-group">
-                                    <label for="inputConfirmPassword" class="my-1">Confirmar senha</label>
-                                    <input type="password" class="form-control" id="inputConfirmPassword">
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group my-2">
-                                    <label for="cargoColaborador">Cargo</label>
-                                    <select class="form-control" id="cargoColaborador" name="group">
-                                        <option value="colaborador" {% if user.groups.first.name == "colaborador" %}selected{% endif %}>Colaborador</option>
-                                        <option value="administrador" {% if user.groups.first.name == "administrador" %}selected{% endif %}>Administrador</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Linha separadora -->
-                        <hr>
-                        <div class="modal-footer">
-                            <button type="reset" class="btn btn-secondary" data-dismiss="modal">Resetar</button>
-                            <button type="submit" class="btn btn-primary" value="salvarColaborador">Salvar</button>
-                        </div>
-                    </form>
-
-                    </div>
-
-                  </div>
-                </div>
-              </div>
-
-              </h5>
+                </h5>
 
               <!-- Bootstrap JS (Necessário para o modal funcionar corretamente) -->
                 <!-- Tabela de colaboradores -->

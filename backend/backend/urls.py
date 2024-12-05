@@ -56,6 +56,7 @@ urlpatterns = [
     path('adicionar_historico/<int:empresa_id>', views.adicionarHistorico, name='adicionar_historico'),
     path('deletar_historico/<int:empresa_id>/<int:historico_id>', views.deletarHistorico, name='deletar_historico'),
     path('adicionar_dp/<int:empresa_id>/', views.adicionarDP, name='adicionar_dp'),
+    path('editar_dp/<int:empresa_id>/<int:dp_id>', views.editarDP, name='editar_dp'),
     path('deletar_dp/<int:empresa_id>/<int:dp_id>', views.deletarDP, name='deletar_dp'),
     path("despesas/<int:empresa_id>", views.depesas, name="despesas"),
     path("despesas/<int:empresa_id>/delete/<int:despesa_id>/", views.deletar_despesa, name="delete_despesa"),
@@ -63,6 +64,9 @@ urlpatterns = [
     path("Anexocriterios/<int:anexo_id>", views.anexosCriterios, name="Anexocriterios"),
     path('Anexocriterios/<int:anexo_id>/delete/<int:criterio_id>/', views.deletar_anexoCriterio, name='delete_Anexocriterio'),
     path('Anexocriterios/<int:anexo_id>/update/<int:criterio_id>/', views.editar_anexoCriterio, name='update_Anexocriterio'),
-    path('deletarAnexo/<int:anexo_id>', views.deletar_Anexo, name='delete_Anexo')
+    path('deletarAnexo/<int:anexo_id>', views.deletar_Anexo, name='delete_Anexo'),
+    path('anexoempresas/<int:empresa_id>', views.AssociarAnexoEmpresa, name='associar_Empresaanexo'),
+    path('dissociarAnexoEmpresa/<int:empresa_id>/<int:anexo_id>', views.DissociarAnexoEmpresa, name='dissociar_EmpresaAnexo'),
+    path('resultados_empresa/<int:empresa_id>', views.resultados_empresa, name='resultados_empresa'),
 
 ]

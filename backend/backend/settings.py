@@ -134,4 +134,4 @@ MEDIA_URL = 'img/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 STATICFILES_DIRS = (os.path.join(BASE_DIR,'app/static'),)
 LOGOUT_REDIRECT_URL = '/'
-#ROLEPERMISSIONS_MODULE = "backend.roles"
+ROLEPERMISSIONS_MODULE = "backend.roles"

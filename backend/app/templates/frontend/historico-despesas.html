@@ -134,6 +134,13 @@
           <i class="bi bi-people-fill"></i>
           <span>Colaboradores</span>
         </a>
+      </li>
+      
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{% url 'simplesNacional' %}">
+          <i class="bi bi-people-fill"></i>
+          <span>Simples Nacional</span>
+        </a>
       </li><!-- End Contact Page Nav -->
 
       <!-- AQUI ACABA A AREA PADRÃO DE TODAS AS PAGINAS -->
@@ -148,7 +155,7 @@
       <nav>
         <ol class="breadcrumb" style="margin-bottom: 50px; margin-top: 50px; font-size: xx-large;">
           <li class="breadcrumb-item" style="color: white;"><a style="color: white" href="{% url 'exibirempresas' empresa_id=empresa.id_empresa %}">{{ empresa.nome }}</a></li>
-          <li class="breadcrumb-item" style="color: white;" >Transações</li>
+          <li class="breadcrumb-item" style="color: white;" >Despesas</li>
         </ol>
       </nav>
     </div><!-- End Page Title -->

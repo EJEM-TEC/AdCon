@@ -135,6 +135,13 @@
           <i class="bi bi-people-fill"></i>
           <span>Colaboradores</span>
         </a>
+      </li>
+      
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{% url 'simplesNacional' %}">
+          <i class="bi bi-people-fill"></i>
+          <span>Simples Nacional</span>
+        </a>
       </li><!-- End Contact Page Nav -->
 
       <!-- AQUI ACABA A AREA PADRÃO DE TODAS AS PAGINAS -->
@@ -331,7 +338,18 @@
               <p>Regime de apuração: <b>{{ empresa.regime_apuracao }}</b></p>
               <p>Atividade: <b>{{ empresa.atividade }}</b></p>
               <p>Transações: <b><a href="{% url 'transacoes' empresa_id=empresa.id_empresa %}">Ver historico de transações</a></b></p>
-              <p>Despesas: <b><a href="{% url 'despesas' empresa_id=empresa.id_empresa %}">Ver historico de despesas</a></b></p><br><hr style="margin-top: 8%; margin-bottom: 7%;"><br>
+              <p>Despesas: <b><a href="{% url 'despesas' empresa_id=empresa.id_empresa %}">Ver historico de despesas</a></b></p>
+              <p>Resultados: <b><a href="{% url 'resultados_empresa' empresa_id=empresa.id_empresa %}">Ver historico de resultados</a></b></p><br>
+
+              {% if empresa.regime_apuracao == 'Simples Nacional' %}
+                <p>Simples Nacional: <b><a href="{% url 'associar_Empresaanexo' empresa_id=empresa.id_empresa %}">Relacionar Anexo</a></b></p>
+                {% for anexo in anexos %}
+                  <p>Anexo:<b> {{ anexo.numero_anexo }}</b></p>
+                  <p>Dissacioar Anexo: <b><a href="{% url 'dissociar_EmpresaAnexo' empresa_id=empresa.id_empresa anexo_id=anexo.id %}">Desassociar</a></b></p>
+                {% endfor %}               
+              {% endif %}
+              
+              <hr style="margin-top: 8%; margin-bottom: 7%;"><br>
               <div class="accordion" id="accordionExample">
                 <div class="accordion-item">
                   <h2 class="accordion-header" id="headingOne">
@@ -397,8 +415,6 @@
           <!-- Left side columns -->
           <div class="col-4">
             <div class="card recent-sales overflow-auto">
-              
-
               <div class="card-body">
                 
                 
@@ -407,40 +423,6 @@
                   <a href="{% url 'ass_empresa_fonte_receita' empresa_id=empresa.id_empresa %}">
                     <i style="font-size: 2rem; color: black;" class="bi bi-plus-lg"></i>
                   </a>
-                  <div class="modal fade" id="fontesreceitas" tabindex="-1" role="dialog" aria-labelledby="modalAdicionarEmpresaLabel" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered modal-md" role="document">
-                  <div class="modal-content">
-                    <div class="modal-header">
-                      <h2 class="modal-title font-weight-bold" id="modalAdicionarEmpresaLabel">Adicionar Fonte de receita</h2>
-                      <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
-                        <span aria-hidden="true">&times;</span>
-                      </button>
-                    </div>
-                    <div class="modal-body">
-                      <!-- Formulário para informações gerais -->
-                      <form>
-                        <div class="row">
-                                <div class="col-md-8">
-                                  <div class="form-group">
-                                    <label for="regimeApuracao">Fonte de receita</label>
-                                    <select class="form-control" id="regimeApuracao" name="fonte_receita" required>
-                                      {% for fonte_receita in fontes_receita %}
-                                      <option value="{{ fonte_receita.id_fonte_receita }}">{{ fonte_receita.nome }}</option>
-                                      {% endfor %}
-                                    </select>
-                                  </div>
-                                </div>
-                              </div>
-                        
-                      </form>
-                    </div>
-                    <div class="modal-footer">
-                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
-                      <button type="button" class="btn btn-primary" id="salvarEmpresa">Salvar</button>
-                    </div>
-                  </div>
-                </div>
-              </div>
               </h5>
                 <table class="table table-borderless datatable">
                   <thead>
@@ -471,48 +453,171 @@
             </div>
             
           </div><!-- End Recent Sales -->
+          {% if empresa.regime_apuracao == 'Lucro Presumido' %}
           <div class="col-8">
             <div class="card recent-sales overflow-auto">
+                <div class="card-body">
+                    <h5 class="card-title" style="display: flex; justify-content: space-between;">
+                        <span><h5 class="card-title">Valores de Pagamento - Lucro Presumido</h5></span>
+                    </h5>
+        
+                    <table class="table table-borderless datatable">
+                        <thead>
+                            <tr>
+                                <th scope="col">Tributo</th>
+                                <th scope="col">Alíquota (%)</th>
+                                <th scope="col">Período</th>
+                                <th scope="col">Valor Base (R$)</th>
+                                <th scope="col">Valor Imposto (R$)</th>
+                                <th scope="col">Valor Pagamento (R$)</th>
+                                <th scope="col">Vencimento</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Itera sobre os resultados do cálculo -->
+                            {% for resultado in resultados_lucroPressumido %}
+                            <tr>
+                                <th scope="row">{{ resultado.imposto }}</th>
+                                <td>{{ resultado.aliquota }}</td>
+                                
+                                <!-- Exibe o período de forma adequada ao regime -->
+                                <td>
+                                    {% if resultado.regime == 'mensal' %}
+                                        {{ resultado.mes_ano }}
+                                    {% elif resultado.regime == 'trimestral' %}
+                                        Trimestre {{ resultado.trimestre_ano }}
+                                    {% endif %}
+                                </td>
+        
+                                <!-- Exibe os valores calculados e formatados -->
+                                <td>R$ {{ resultado.base_calculo|floatformat:2 }}</td>
+                                <td>R$ {{ resultado.valor_imposto|floatformat:2 }}</td>
+                                <td>R$ {{ resultado.valor_pagamento|floatformat:2 }}</td>
 
-              
+                                <!-- Exibe a data de vencimento -->
+                                <td>{{ resultado.vencimento|date:"d/m/Y" }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
 
-              <div class="card-body">
-                 <h5 class="card-title" style="display: flex; justify-content: space-between;">
-                  <span><h5 class="card-title">Valores de Pagamento</h5></span>
-              </h5>
-
-                  <table class="table table-borderless datatable">
-                  <thead>
-                    <tr>
-                      <th scope="col">Tributo</th>
-                      <th scope="col">Valor imposto (R$)</th>
-                        <th scope="col">Valor dedução (R$)</th>
-                        <th scope="col">Valor a ser pago (R$)</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {% for contexto in contextos.tributo_contexts %}
-                    <tr>
-                      <th scope="row">{{ contexto.tributo }}</th>
-                      <td>R$ {{ contexto.total_imposto }}</td>
-                        <td>
-                            R$ {{ contexto.total_deducao }}
-                        </td>
-                     <td>
-                            R$ {{ contexto.total_a_pagar }}
-                        </td>
-                    </tr>
-                    {% endfor %}
-                  </tbody>
-                </table>
-
-              </div>
-              
-
+                    
+                </div>
             </div>
-            
-          </div><!-- End Recent Sales -->
+        </div>
+        
+      {% endif %}
+
+        {% if empresa.regime_apuracao == 'Lucro Real' %}
+                <div class="col-8">
+                  <div class="card recent-sales overflow-auto">
+                      <div class="card-body">
+                          <h5 class="card-title" style="display: flex; justify-content: space-between;">
+                              <span><h5 class="card-title">Valores de Pagamento - Lucro Real</h5></span>
+                          </h5>
+              
+                          <table class="table table-borderless datatable">
+                              <thead>
+                                  <tr>
+                                      <th scope="col">Tributo</th>
+                                      <th scope="col">Alíquota (%)</th>
+                                      <th scope="col">Período</th>
+                                      <th scope="col">Faturamento (R$)</th>
+                                      <th scope="col">Despesas (R$)</th>
+                                      <th scope="col">Lucro Real (R$)</th>
+                                      <th scope="col">Valor Imposto (R$)</th>
+                                      <th scope="col">Valor Pagamento (R$)</th>
+                                      <th scope="col">Vencimento</th>
+                                  </tr>
+                              </thead>
+                              <tbody>
+                                  <!-- Itera sobre os resultados do cálculo -->
+                                  {% for resultado in resultados_lucroReal %}
+                                  <tr>
+                                      <th scope="row">{{ resultado.imposto }}</th>
+                                      <td>{{ resultado.aliquota }}</td>
+                                      
+                                      <!-- Exibe o período de forma adequada ao regime -->
+                                      <td>
+                                          {% if resultado.regime == 'mensal' %}
+                                              {{ resultado.mes_ano }}
+                                          {% elif resultado.regime == 'trimestral' %}
+                                              Trimestre {{ resultado.trimestre_ano }}
+                                          {% endif %}
+                                      </td>
+              
+                                      <!-- Exibe o faturamento, despesas, e o lucro real -->
+                                      <td>R$ {{ resultado.faturamento|floatformat:2 }}</td>
+                                      <td>R$ {{ resultado.despesas|floatformat:2 }}</td>
+                                      <td>R$ {{ resultado.lucro_real|floatformat:2 }}</td>
+              
+                                      <!-- Exibe o valor do imposto -->
+                                      <td>R$ {{ resultado.valor_imposto|floatformat:2 }}</td>
+                                      <td>R$ {{ resultado.valor_pagamento|floatformat:2 }}</td>
+              
+                                      <!-- Exibe a data de vencimento -->
+                                      <td>{{ resultado.vencimento|date:"d/m/Y" }}</td>
+                                  </tr>
+                                  {% endfor %}
+                              </tbody>
+                          </table>
+                      </div>
+                  </div>
+              </div>
+      
+        
+          {% endif %}
+
+          {% if empresa.regime_apuracao == 'Simples Nacional' %}
+
+          <div class="col-8">
+            <div class="card recent-sales overflow-auto">
+              <div class="card-body">
+                    {% if empresa.regime_apuracao == 'Simples Nacional' %}
+
+                      <h5 class="card-title" style="display: flex; justify-content: space-between;">
+                        <span><h5 class="card-title">DAS ( Documento de Arrecadação do Simples Nacional )</h5></span>
+                    </h5>
+                
+                        <table class="table table-borderless datatable">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Período</th>
+                                    <th scope="col">Faturamento Anual (R$)</th>
+                                    <th scope="col">Imposto Total (R$)</th>
+                                    <th scope="col">Deduções Totais (R$)</th>
+                                    <th scope="col">Pagamento Total (R$)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% if resultados_das.resultados %}
+                              {% for resultado in resultados_das.resultados %}
+                                <tr>
+                                    <td> {{ resultado.periodo  }}</td>
+                                    <td>{{ resultado.faturamento_anual|floatformat:2 }}</td>
+                                    <td>R$ {{ resultado.imposto_total|floatformat:2}}</td>
+                                    <td>R$ {{ resultado.deducao_total|floatformat:2 }}</td>
+                                    <td>R$ {{ resultado.valor_pagamento|floatformat:2 }}</td>
+                                </tr>
+                              {% endfor %}
+                              {% else %}
+                                <div class="alert alert-danger">
+                                    Nenhum resultado encontrado para os cálculos.
+                                </div>
+                            {% endif %}
+                            </tbody>
+                          </table>
+                    {% endif %}
+                  
+                  </div>
+            </div>
+          </div>
+
+
+          {% endif %}
       </div>
+
+      {% if empresa.regime_apuracao == 'Lucro Real' %}
       <div class="row">
       <div class="card recent-sales overflow-auto">
           <div class="card-body">
@@ -565,6 +670,7 @@
 
             </div>
           </div>
+        {% endif %}
 
             <div class="row">
              <div class="card recent-sales overflow-auto">
@@ -658,9 +764,11 @@
                      <th scope="col">Imposto</th>
                      <th scope="col">Valor ( R$ )</th>
                        <th scope="col">Valor com Juros ( R$ )</th>
-                       <th scope="col">Local de Pagamento</th>
+                       <th scope="col">Forma de envio</th>
                        <th scope="col">Data de Pagamento</th>
-                     <th>Ações</th>
+                       <th scope="col">Confirmação</th>
+                       <th>Editar</th>
+                     <th>Deletar</th>
                    </tr>
                  </thead>
                  <tbody>
@@ -670,8 +778,14 @@
                       <td>{{ dp.imposto }}</td>
                      <td>{{ dp.valor }}</td>
                      <td>{{ dp.valor_com_juros }}</td>
-                     <td>{{ dp.local_pagamento }}</td>
+                     <td>{{ dp.forma_envio }}</td>
                      <td>{{ dp.data_pagamento }}</td>
+                     <td>{{ dp.confirmacao }}</td>
+                     <td>
+                      <a href="{% url 'editar_dp' empresa_id=empresa.id_empresa dp_id=dp.id %}" class="btn btn-info btn-sm">
+                        <i class="bi bi-pencil-fill"></i>
+                      </a>
+                    </td>
                      <td>
                            <a href="{% url  'deletar_dp' empresa_id=empresa.id_empresa dp_id=dp.id %}" class="btn btn-danger btn-sm">
                                <i class="bi bi-trash-fill"></i>

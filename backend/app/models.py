@@ -114,7 +114,8 @@ class DepartamentoDP(models.Model):
     imposto = models.CharField(max_length=100)
     valor = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     valor_com_juros = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
-    local_pagamento = models.CharField(max_length=100)
+    forma_envio = models.CharField(max_length=100, blank=True, null=True)
+    confirmacao = models.CharField(max_length=100, blank=True, null=True)
     data_pagamento = models.DateField(blank=True, null=True)
 
 class Empresa_DP(models.Model):

@@ -27,17 +27,6 @@
 
   <!-- Template Main CSS File -->
   <link href="{% static "css/style.css" %}" rel="stylesheet">
-  <script>
-    function validateForm() {
-      var password = document.getElementById('inputPassword').value;
-      var confirmPassword = document.getElementById('inputConfirmPassword').value;
-      if (password !== confirmPassword) {
-        alert('As senhas não coincidem.');
-        return false;
-      }
-      return true;
-    }
-  </script>
 
   <!-- =======================================================
   * Template Name: NiceAdmin
@@ -162,14 +151,14 @@
 
   </aside><!-- End Sidebar-->
 
-  <main id="main" class="main" style="background-image: url('{% static "img/graphic-side.svg" %}');">
+  <main id="main" class="main">
 
     <div class="pagetitle">
-      <h1 class="text-white">Dashboard</h1>
+      <h1>Dashboard</h1>
       <nav>
         <ol class="breadcrumb">
-          <li class="breadcrumb-item active text-white"><a href="index">Home</a></li>
-          <li class="breadcrumb-item active text-white">Edição de Usuário</li>
+          <li class="breadcrumb-item"><a href="index">Home</a></li>
+          <li class="breadcrumb-item active">Dashboard</li>
         </ol>
       </nav>
     </div><!-- End Page Title -->
@@ -178,53 +167,12 @@
 
     <div class="card">
         <div class="card-body">
-          <form method="post" onsubmit="return validateForm()">
-                        {% csrf_token %}
-                        <div class="row">
-                            <div class="col-md-6 my-2">
-                                <div class="form-group">
-                                    <label for="nomeColaborador">Nome</label>
-                                    <input type="text" class="form-control" id="nomeColaborador" name="username" required value="{{ user.username }}">
-                                </div>
-                            </div>
-                            <div class="col-md-6 my-2">
-                                <div class="form-group">
-                                    <label for="emailColaborador">E-mail</label>
-                                    <input type="email" class="form-control" id="emailColaborador" name="email" required value="{{ user.email }}">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6 my-2">
-                                <div class="form-group">
-                                    <label for="senhaColaborador" class="my-1">Senha</label>
-                                    <input type="text" class="form-control" id="senhaColaborador" name="senha" placeholder="********" required>
-                                </div>
-                            </div>
-                            <div class="col-md-6 my-2">
-                                <div class="form-group">
-                                    <label for="inputConfirmPassword" class="my-1">Confirmar senha</label>
-                                    <input type="text" class="form-control" id="inputConfirmPassword" required placeholder="********">
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group my-2">
-                                    <label for="cargoColaborador">Cargo</label>
-                                    <select class="form-select" id="cargoColaborador" name="grupo">
-                                        <option value="colaborador" {% if user.groups.first.name == "colaborador" %}selected{% endif %}>Colaborador</option>
-                                        <option value="administrador" {% if user.groups.first.name == "administrador" %}selected{% endif %}>Administrador</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Linha separadora -->
-                        <hr>
-                        <div class="modal-footer">
-                            <button type="reset" class="btn btn-secondary">Resetar</button>
-                            <button type="submit" class="btn btn-primary" value="salvarColaborador">Salvar</button>
-                        </div>
-                    </form>
+            <form method="post"> {% csrf_token %}
+            <h5 class="card-title">Dissociando o anexo: {{ anexo.numero_anexo }}</h5>
+            <p class="card-text">Tem certeza que quer dissociar esse anexo a empresa {{ empresa.nome }}?</p>
+            <p class="card-text"><button type="submit" class="btn btn-danger">Confirmar</button></p>
+            <p class="card-text"><a href="{% url 'exibirempresas' empresa_id=empresa.id_empresa %}" class="btn btn-secondary">Cancelar</a></p>
+            </form>
         </div>
     </div><!-- End Card with titles, buttons, and links -->
     </section>

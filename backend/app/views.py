@@ -1,7 +1,7 @@
+from decimal import Decimal
 import random
 from sqlite3 import IntegrityError
 import random
-
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, HttpResponseForbidden
@@ -16,15 +16,23 @@ from django.urls import reverse_lazy
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import Empresa, Federal, Estadual, Municipal, EmpresaFonteReceita, FonteReceita, EmpresaTributo, Tributo, \
-    EmpresaTransacoes
+    EmpresaTransacoes, EmpresaSimples
 from django.db.models import Sum
 from django.utils.timezone import now
 from django.db.models.functions import TruncMonth
+from datetime import date
+from django.db.models.functions import ExtractMonth, ExtractYear  # Import necessário
+from django.db.models import Sum
+from calendar import monthrange
+from datetime import date, timedelta
 import json
 from .models import Empresa, Federal, Estadual, Municipal, Tributo, FonteReceita, Vencimento, Criterios, \
     EmpresaFonteReceita, EmpresaTributo, CriterioAliquotas, EmpresaTransacoes, Transacoes, Observacoes, \
     EmpresaObservacao, \
     Historico, HistoricoEmpresa, DepartamentoDP, Empresa_DP, EmpresaDespesas, Despesas, SimplesNacional, Anexos, SimplesAnexo
+
+from django.core.exceptions import ValidationError
+from django.utils.dateparse import parse_date
 
 
 @login_required(login_url="/")
@@ -60,6 +68,14 @@ def exibir_empresa(request, empresa_id):
 
     observacoes = [eo.id_observacoes for eo in empresa_observacoes]
 
+    #Anexos de uma empresa -  Simples Nacional
+
+    empresa_anexos = EmpresaSimples.objects.filter(id_empresa=empresa_id).select_related(
+        'id_simples'
+    )
+
+    anexos = [ea.id_simples for ea in empresa_anexos]
+
     #Históricos de uma empresa
     empresa_historicos = HistoricoEmpresa.objects.filter(id_empresa_empresa=empresa_id).select_related(
         'id_historico'
@@ -84,12 +100,11 @@ def exibir_empresa(request, empresa_id):
 
     # Despesas de uma determianda empresa
 
-    empresa_despesas = EmpresaDespesas.objects.filter(id_empresa_empresa=empresa).select_related(
-        'id_despesa_despesa'
-    )
+    empresa_despesas = EmpresaDespesas.objects.filter(id_empresa_empresa=empresa).select_related('id_despesa_despesa')
 
-    despesas = [ed.id_despesa_despesa for ed in empresa_despesas]
-    sum_despesas = sum(despesas)
+    # Acessar o campo correto que contém o valor da despesa e somar
+    despesas = [ed.id_despesa_despesa.despesa for ed in empresa_despesas]  # Supondo que 'valor' seja o campo correto
+    sum_despesas = Decimal(sum(despesas))  # Somar os valores das despesas
 
     # Calculo do Lucro de uma empresa
 
@@ -120,6 +135,27 @@ def exibir_empresa(request, empresa_id):
 
     contextos = calcular_tributo_empresa(empresa_id);
 
+    resultados_das = {}
+    resultados_lucroPressumido = {}
+    resultados_lucroReal = {}
+
+    # Resultados Simples Nacional
+
+    if empresa.regime_apuracao == "Simples Nacional":
+        
+        resultados_das = calcular_das_anual(empresa_id)
+
+    if empresa.regime_apuracao == "Lucro Presumido":
+        
+        resultados_lucroPressumido = calcular_lucro_presumido_empresa(empresa_id)
+
+    if empresa.regime_apuracao == "Lucro Real":
+        
+        resultados_lucroReal = calcular_lucro_real_empresa(empresa_id)
+
+    print(resultados_lucroPressumido)
+    
+
     return render(request, template_name="frontend/Empresa.html", context={
         "empresa": empresa,
         "tributos": tributos,
@@ -135,7 +171,11 @@ def exibir_empresa(request, empresa_id):
         'observacoes': observacoes,
         'historicos': historicos,
         'dps': dps,
-        'lucro': lucro
+        'lucro': lucro,
+        'anexos': anexos,
+        'resultados_das': resultados_das,
+        'resultados_lucroPressumido': resultados_lucroPressumido,
+        'resultados_lucroReal': resultados_lucroReal
     })
 
 
@@ -1058,7 +1098,8 @@ def adicionarDP(request, empresa_id):
             imposto = imposto,
             valor = valor,
             valor_com_juros = valor_juros,
-            local_pagamento = local_pagamento
+            forma_envio = local_pagamento,
+            confirmacao = 'Pendente'
         )
 
         Empresa_DP.objects.create(
@@ -1069,6 +1110,46 @@ def adicionarDP(request, empresa_id):
         return redirect('exibirempresas', empresa_id=empresa.id_empresa)
 
     return render(request, 'frontend/adicionar_dp.html', {'empresa': empresa})
+
+@login_required(login_url='/')
+def editarDP(request, empresa_id, dp_id):
+    empresa = get_object_or_404(Empresa, id_empresa=empresa_id)
+    dp = get_object_or_404(DepartamentoDP, id=dp_id)
+
+    if request.method == 'POST':
+        data = request.POST.get("data")
+        imposto = request.POST.get("imposto")
+        valor = request.POST.get("valor")
+        valor_juros = request.POST.get("valor_juros")
+        local_pagamento = request.POST.get("local_pagamento")
+        confirmacao = request.POST.get("confirmacao")
+
+        # Validação e formatação da data
+        if data:
+            try:
+                dp.data_pagamento = parse_date(data)
+                if dp.data_pagamento is None:
+                    raise ValidationError("Data inválida")
+            except ValidationError as e:
+                return render(request, 'frontend/editar_dp.html', {
+                    'empresa': empresa,
+                    'dp': dp,
+                    'error_message': f"Erro: {e}"
+                })
+        else:
+            dp.data_pagamento = None  # ou defina um valor padrão, se necessário
+
+        dp.imposto = imposto
+        dp.valor = valor
+        dp.valor_com_juros = valor_juros
+        dp.forma_envio = local_pagamento
+        dp.confirmacao = confirmacao
+
+        dp.save()
+
+        return redirect('exibirempresas', empresa_id=empresa.id_empresa)
+
+    return render(request, 'frontend/editar_dp.html', {'empresa': empresa, 'dp': dp})
 
 @login_required(login_url='/')
 def deletarDP(request, empresa_id, dp_id):
@@ -1262,7 +1343,7 @@ def editar_anexoCriterio(request, anexo_id, criterio_id):
         criterio.save()
 
         # Redirecionando para a página de visualização de critérios
-        return redirect('anexos', anexo_id=anexo.id)
+        return redirect('Anexocriterios', anexo_id=anexo.id)
 
     return render(request, 'frontend/editar_anexoCriterio.html', {
         'anexo': anexo,
@@ -1306,3 +1387,447 @@ def deletar_Anexo(request, anexo_id):
         anexo.delete()
         return redirect('simplesNacional')
     return render(request, 'frontend/excluir_anexo.html', {'anexo': anexo});
+
+
+@login_required(login_url='/')
+def detalhes_empresa(request, empresa_id):
+    empresa = get_object_or_404(Empresa, id=empresa_id)
+    anexos = empresa.anexos.all()  # Pega todos os anexos associados à empresa
+    return render(request, 'detalhes_empresa.html', {'empresa': empresa, 'anexos': anexos})
+
+@login_required(login_url='/')
+def AssociarAnexoEmpresa(request, empresa_id):
+    empresa = get_object_or_404(Empresa, id_empresa=empresa_id)
+    anexos = SimplesNacional.objects.all()
+
+    if request.method == 'POST':
+        anexos_id = request.POST.get('anexos')
+        anexo = SimplesNacional.objects.get(id=anexos_id)
+
+        EmpresaSimples.objects.create(
+            id_empresa=empresa,
+            id_simples=anexo,
+        )
+
+        return redirect('exibirempresas', empresa_id=empresa.id_empresa)
+
+    return render(request, 'frontend/associar_empresa_anexo.html', {
+        'anexos': anexos,
+        'empresa': empresa
+    })
+    
+
+
+@login_required(login_url='/')
+def DissociarAnexoEmpresa(request, empresa_id, anexo_id):
+    # Obtendo o tributo pelo id_tributo fornecido
+    empresa = get_object_or_404(Empresa, id_empresa=empresa_id)
+
+    # Obtendo o critério pelo id_aliquotas fornecido
+    anexo = get_object_or_404(SimplesNacional, id=anexo_id)
+
+    # Verificando se o critério está relacionado ao tributo
+    empresa_anexo = get_object_or_404(EmpresaSimples, id_empresa=empresa,
+                                        id_simples=anexo)
+
+    if request.method == 'POST':
+        # Deletando a relação entre o critério e o tributo
+        empresa_anexo.delete()
+
+        # Redirecionando para a página de visualização de critérios
+        return redirect('exibirempresas', empresa_id=empresa.id_empresa)
+
+    return render(request, 'frontend/des_empresa_anexo.html', {
+        'anexo': anexo,
+        'empresa': empresa
+    })
+
+
+def calcular_das_anual(empresa_id):
+    empresa = get_object_or_404(Empresa, id_empresa=empresa_id)
+
+    # Capturar os anexos da empresa
+    empresa_anexos = EmpresaSimples.objects.filter(id_empresa=empresa).select_related('id_simples')
+    anexos_relacionados = SimplesAnexo.objects.filter(
+        id_simples__in=[ea.id_simples for ea in empresa_anexos]
+    ).select_related('id_anexo')
+
+    # Obter o primeiro e último mês com dados de transações
+    meses_disponiveis = EmpresaTransacoes.objects.filter(
+        id_empresa_empresa=empresa
+    ).annotate(
+        ano=ExtractYear('id_transacoes_transacoes__data'),
+        mes=ExtractMonth('id_transacoes_transacoes__data')
+    ).values('ano', 'mes').distinct().order_by('ano', 'mes')
+
+    resultados = []
+
+    # Iterar pelos meses e calcular períodos de 12 meses consecutivos
+    for i in range(len(meses_disponiveis) - 11):  # Garantir 12 meses disponíveis
+        # Obter início e fim do período
+        inicio_periodo = date(
+            year=meses_disponiveis[i]['ano'],  # Corrigido para 'year'
+            month=meses_disponiveis[i]['mes'],
+            day=1
+        )
+        fim_periodo = inicio_periodo + timedelta(days=365)
+
+        # Verificar se há dados de todos os 12 meses no período
+        meses_faturamento = EmpresaTransacoes.objects.filter(
+            id_empresa_empresa=empresa,
+            id_transacoes_transacoes__data__gte=inicio_periodo,
+            id_transacoes_transacoes__data__lt=fim_periodo
+        ).annotate(
+            mes=ExtractMonth('id_transacoes_transacoes__data'),
+            ano=ExtractYear('id_transacoes_transacoes__data')
+        ).values('ano', 'mes').distinct()
+
+        if len(meses_faturamento) < 12:
+            continue  # Ignorar períodos incompletos
+
+        # Calcular o faturamento anual
+        transacoes = EmpresaTransacoes.objects.filter(
+            id_empresa_empresa=empresa,
+            id_transacoes_transacoes__data__gte=inicio_periodo,
+            id_transacoes_transacoes__data__lt=fim_periodo
+        ).aggregate(faturamento_anual=Sum('id_transacoes_transacoes__transacao'))
+
+        faturamento_anual = Decimal(transacoes['faturamento_anual'] or 0)
+        deducao_total = Decimal(0)
+        imposto_total = Decimal(0)
+
+        # Calcular imposto e deduções
+        for relacao in anexos_relacionados:
+            anexo = relacao.id_anexo
+            if anexo.limite_inferior <= faturamento_anual <= anexo.limite_superior:
+                aliquota = Decimal(anexo.aliquota) / Decimal(100)
+                deducao = Decimal(anexo.deducao)
+                valor_calculado = (faturamento_anual * aliquota) - deducao
+
+                imposto_total += max(Decimal(0), valor_calculado)
+                deducao_total += deducao
+
+        # Adicionar resultado do período
+        resultados.append({
+            'periodo': f"{inicio_periodo.strftime('%b/%Y')} - {(fim_periodo - timedelta(days=1)).strftime('%b/%Y')}",
+            'aliquota': anexo.aliquota ,
+            'faturamento_anual': faturamento_anual,
+            'imposto_total': round(imposto_total, 2),
+            'valor_pagamento': round(imposto_total, 2) - round(deducao_total, 2),
+            'deducao_total': round(deducao_total, 2),
+        })
+
+    context = {
+        'empresa': empresa,
+        'resultados': resultados,
+    }
+
+    return context
+def calcular_valor_imposto(base_calculo, aliquota, regime):
+    """
+    Função auxiliar para calcular o valor do imposto com base no regime e na alíquota.
+    """
+    if regime == 'mensal':
+        return base_calculo * aliquota / 3  # Exemplo para dividir por 3 para regime mensal
+    elif regime == 'trimestral':
+        return base_calculo * aliquota  # Trimestral já considera o valor cheio
+    return 0
+
+def obter_percentual_lucro_presumido(area_atuacao):
+    """
+    Retorna o percentual de lucro presumido com base na área de atuação da empresa.
+    """
+    percentual_por_area = {
+        'comercio': 0.08,
+        'industria': 0.08,
+        'prestacao_servicos': 0.32,
+        'transporte_de_carga': 0.16,
+        'serviços_medicos': 0.016,
+        'atividades_hospitalares': 0.016,
+        # Adicione outras áreas conforme necessário
+    }
+    return percentual_por_area.get(area_atuacao, 0.08)  # Default para evitar erro
+
+def calcular_lucro_presumido_empresa(empresa_id, mes=None, ano=None):
+    """
+    Calcula o lucro presumido de uma empresa com base no faturamento mensal ou trimestral,
+    podendo filtrar por mês e ano específicos.
+    """
+    # Recuperar a empresa pelo ID
+    empresa = get_object_or_404(Empresa, id_empresa=empresa_id)
+
+    # Recuperar os tributos vinculados à empresa através do modelo EmpresaTributo
+    empresa_tributos = EmpresaTributo.objects.filter(id_empresa_empresa=empresa).select_related('id_tributo_tributo')
+
+    empresa_tributos = [et.id_tributo_tributo for et in empresa_tributos]
+
+    # Obter o percentual de lucro presumido com base na área de atuação
+    area_atuacao = empresa.atividade
+    percentual_lucro_presumido = obter_percentual_lucro_presumido(area_atuacao)
+
+    print("Percentual de lucro presumido:", percentual_lucro_presumido)
+
+    # Recuperar os anos em que a empresa tem transações (faturamento)
+    transacoes = Transacoes.objects.filter(empresatransacoes__id_empresa_empresa=empresa)
+
+   # Recuperar as transações (faturamento) da empresa
+    transacoes = Transacoes.objects.filter(empresatransacoes__id_empresa_empresa=empresa)
+
+    # Inicializar despesas como queryset vazio ou com dados da empresa
+    despesas = Despesas.objects.filter(empresadespesas__id_empresa_empresa=empresa)
+
+    # Aplicar filtro de ano, se fornecido
+    if ano:
+        transacoes = transacoes.filter(data__year=ano)
+        despesas = despesas.filter(data__year=ano)
+
+    # Aplicar filtro de mês, se fornecido
+    if mes:
+        transacoes = transacoes.filter(data__month=mes)
+        despesas = despesas.filter(data__month=mes)
+
+    
+    anos_com_faturamento = transacoes.annotate(ano=ExtractYear('data')).values_list('ano', flat=True).distinct()
+
+    print("Anos com faturamento:", anos_com_faturamento)
+
+    contextos = []
+    
+    # Loop pelos anos com faturamento ou pelo ano filtrado
+    for ano_faturamento in anos_com_faturamento:
+        # Se um mês for fornecido, fazer o loop apenas por aquele mês
+        meses = [mes] if mes else range(1, 13)  # Loop por todos os meses se não houver filtro de mês
+        
+        for mes_faturamento in meses:
+            # Recuperar o faturamento da empresa para o mês específico
+            faturamento_mensal = transacoes.filter(
+                data__year=ano_faturamento,
+                data__month=mes_faturamento
+            ).aggregate(total=Sum('transacao'))['total'] or 0  # Faturamento mensal
+
+            if faturamento_mensal == 0:
+                continue  # Pular meses sem faturamento
+
+            # Calcular a base de cálculo do lucro presumido para o mês
+            base_calculo_mensal = float(faturamento_mensal) * percentual_lucro_presumido
+            print("Base de cálculo:" , base_calculo_mensal)
+
+            # Processar cada tributo vinculado à empresa
+            for empresa_tributo in empresa_tributos:
+                aliquota = empresa_tributo.aliquota / 100  # Converter para decimal
+                vencimento = empresa_tributo.id_data_vencimento_vencimento.dia  # Acessar o campo de vencimento da ForeignKey
+
+                # Calcular o imposto mensal
+                if empresa_tributo.id_data_vencimento_vencimento.periodo_pagamento == 'mensal':
+                    valor_imposto = calcular_valor_imposto(base_calculo_mensal, aliquota, empresa_tributo.id_data_vencimento_vencimento.periodo_pagamento)
+                    print('Valor do imposto:', valor_imposto)
+                    contexto = {
+                        'empresa': empresa.nome,
+                        'faturamento': faturamento_mensal,
+                        'base_calculo': base_calculo_mensal,
+                        'imposto': empresa_tributo.nome,
+                        'aliquota': empresa_tributo.aliquota,
+                        'valor_imposto': valor_imposto,
+                        'valor_pagamento': valor_imposto,
+                        'vencimento': vencimento,
+                        'regime': empresa_tributo.id_data_vencimento_vencimento.periodo_pagamento,
+                        'mes_ano': f"{int(mes_faturamento):02d}/{int(ano_faturamento)}",
+                        'fonte_receita': empresa_tributo.id_fonte_receita_fonte_receita.nome  # Acessar a fonte de receita
+                    }
+                    contextos.append(contexto)
+
+                # Calcular o imposto trimestral (somar o faturamento a cada três meses)
+                elif empresa_tributo.id_data_vencimento_vencimento.periodo_pagamento == 'trimestral' and int(mes_faturamento) % 3 == 0:
+                    faturamento_trimestral = 0
+                    for m in range(int(mes_faturamento)-2, int(mes_faturamento)+1):  # Somar o faturamento dos três meses
+                        faturamento_trimestral += transacoes.filter(
+                            data__year=ano_faturamento,
+                            data__month=m
+                        ).aggregate(total=Sum('transacao'))['total'] or 0
+                    
+                    base_calculo_trimestral = float(faturamento_trimestral) * percentual_lucro_presumido
+                    valor_imposto = calcular_valor_imposto(base_calculo_trimestral, aliquota, empresa_tributo.id_data_vencimento_vencimento.periodo_pagamento)
+
+                    contexto = {
+                        'empresa': empresa.nome,
+                        'faturamento': faturamento_trimestral,
+                        'base_calculo': base_calculo_trimestral,
+                        'imposto': empresa_tributo.nome,
+                        'aliquota': empresa_tributo.aliquota,
+                        'valor_imposto': valor_imposto,
+                        'valor_pagamento': valor_imposto,
+                        'vencimento': vencimento,
+                        'regime': empresa_tributo.id_data_vencimento_vencimento.periodo_pagamento,
+                        'trimestre_ano': f"{(int(mes_faturamento)-2):02d}-{int(mes_faturamento):02d}/{ano_faturamento}",
+                        'fonte_receita': empresa_tributo.id_fonte_receita_fonte_receita.nome  # Acessar a fonte de receita
+                    }
+                    contextos.append(contexto)
+
+    return contextos
+
+
+def calcular_lucro_real_empresa(empresa_id, mes=None, ano=None):
+    """
+    Calcula o lucro real de uma empresa com base no faturamento e nas despesas mensais ou trimestrais,
+    podendo filtrar por mês e ano específicos.
+    """
+    # Recuperar a empresa pelo ID
+    empresa = get_object_or_404(Empresa, id_empresa=empresa_id)
+
+    # Recuperar os tributos vinculados à empresa através do modelo EmpresaTributo
+    empresa_tributos = EmpresaTributo.objects.filter(id_empresa_empresa=empresa).select_related('id_tributo_tributo')
+    empresa_tributos = [et.id_tributo_tributo for et in empresa_tributos]
+
+    # Recuperar as transações (faturamento) da empresa
+    transacoes = Transacoes.objects.filter(empresatransacoes__id_empresa_empresa=empresa)
+
+    # Inicializar despesas como queryset vazio ou com dados da empresa
+    despesas = Despesas.objects.filter(empresadespesas__id_empresa_empresa=empresa)
+
+    # Aplicar filtro de ano, se fornecido
+    if ano:
+        transacoes = transacoes.filter(data__year=ano)
+        despesas = despesas.filter(data__year=ano)
+
+    # Aplicar filtro de mês, se fornecido
+    if mes:
+        transacoes = transacoes.filter(data__month=mes)
+        despesas = despesas.filter(data__month=mes)
+
+    # Recuperar os anos com faturamento ou o ano específico
+    anos_com_faturamento = transacoes.annotate(ano=ExtractYear('data')).values_list('ano', flat=True).distinct()
+
+    contextos = []
+    
+    # Loop por cada ano com faturamento registrado ou ano filtrado
+    for ano_faturamento in anos_com_faturamento:
+        # Se um mês for fornecido, fazer o loop apenas por aquele mês
+        meses = [mes] if mes else range(1, 13)  # Loop por todos os meses se não houver filtro de mês
+
+        for mes_faturamento in meses:
+            # Recuperar o faturamento da empresa para o mês específico
+            faturamento_mensal = transacoes.filter(
+                data__year=ano_faturamento,
+                data__month=mes_faturamento
+            ).aggregate(total=Sum('transacao'))['total'] or 0  # Faturamento mensal
+
+            # Converter faturamento para Decimal
+            faturamento_mensal = Decimal(faturamento_mensal)
+
+            # Recuperar as despesas da empresa para o mês específico
+            despesas_mensais = despesas.filter(
+                data__year=ano_faturamento,
+                data__month=mes_faturamento
+            ).aggregate(total=Sum('despesa'))['total'] or 0  # Despesas mensais
+
+            # Converter despesas para Decimal
+            despesas_mensais = Decimal(despesas_mensais)
+
+            if faturamento_mensal == 0 and despesas_mensais == 0:
+                continue  # Pular meses sem movimentação
+
+            # Calcular o lucro real para o mês
+            lucro_real_mensal = faturamento_mensal - despesas_mensais
+
+            # Verificar tributos trimestrais
+            for empresa_tributo in empresa_tributos:
+                aliquota = Decimal(empresa_tributo.aliquota) / Decimal(100)  # Converter alíquota para decimal
+
+                # Calcular o imposto mensal com base no lucro real
+                if empresa_tributo.id_data_vencimento_vencimento.periodo_pagamento == 'mensal':
+                    if lucro_real_mensal > 0:
+                        valor_imposto = calcular_valor_imposto(lucro_real_mensal, aliquota, 'mensal')
+                        contexto = {
+                            'empresa': empresa.nome,
+                            'faturamento': faturamento_mensal,
+                            'despesas': despesas_mensais,
+                            'lucro_real': lucro_real_mensal,
+                            'imposto': empresa_tributo.nome,
+                            'aliquota': empresa_tributo.aliquota,
+                            'valor_imposto': valor_imposto,
+                            'valor_pagamento': valor_imposto,
+                            'vencimento': empresa_tributo.id_data_vencimento_vencimento.dia,
+                            'regime': 'mensal',
+                            'mes_ano': f"{int(mes_faturamento):02d}/{int(ano_faturamento)}",
+                            'fonte_receita': empresa_tributo.id_fonte_receita_fonte_receita.nome
+                        }
+                        contextos.append(contexto)
+
+                # Calcular o imposto trimestral
+                elif empresa_tributo.id_data_vencimento_vencimento.periodo_pagamento == 'trimestral' and mes_faturamento % 3 == 0:
+                    # Somar faturamento e despesas dos três meses
+                    faturamento_trimestral = transacoes.filter(
+                        data__year=ano_faturamento,
+                        data__month__in=[mes_faturamento-2, mes_faturamento-1, mes_faturamento]
+                    ).aggregate(total=Sum('transacao'))['total'] or 0
+
+                    despesas_trimestrais = despesas.filter(
+                        data__year=ano_faturamento,
+                        data__month__in=[mes_faturamento-2, mes_faturamento-1, mes_faturamento]
+                    ).aggregate(total=Sum('despesa'))['total'] or 0
+
+                    # Converter para Decimal
+                    faturamento_trimestral = Decimal(faturamento_trimestral)
+                    despesas_trimestrais = Decimal(despesas_trimestrais)
+
+                    # Calcular o lucro real trimestral
+                    lucro_real_trimestral = faturamento_trimestral - despesas_trimestrais
+
+                    if lucro_real_trimestral > 0:
+                        valor_imposto = calcular_valor_imposto(lucro_real_trimestral, aliquota, 'trimestral')
+                        contexto = {
+                            'empresa': empresa.nome,
+                            'faturamento': faturamento_trimestral,
+                            'despesas': despesas_trimestrais,
+                            'lucro_real': lucro_real_trimestral,
+                            'imposto': empresa_tributo.nome,
+                            'aliquota': empresa_tributo.aliquota,
+                            'valor_imposto': valor_imposto,
+                            'valor_pagamento': valor_imposto,
+                            'vencimento': empresa_tributo.id_data_vencimento_vencimento.dia,
+                            'regime': 'trimestral',
+                            'trimestre_ano': f"{mes_faturamento-2:02d}-{mes_faturamento:02d}/{ano_faturamento}",
+                            'fonte_receita': empresa_tributo.id_fonte_receita_fonte_receita.nome
+                        }
+                        contextos.append(contexto)
+
+    return contextos
+
+
+@login_required(login_url='/')
+def resultados_empresa(request, empresa_id):
+    empresa = get_object_or_404(Empresa, id_empresa=empresa_id)
+
+    # Capturar os valores de mês e ano fornecidos pelo usuário
+    mes = request.GET.get('mes')
+    ano = request.GET.get('ano')
+
+    print(mes)
+    print(ano)
+
+    # Inicializar os resultados como vazios
+    resultados_das = {}
+    resultados_lucroPresumido = []
+    resultados_lucroReal = []
+
+    # Resultados Simples Nacional
+    if empresa.regime_apuracao == "Simples Nacional":
+        resultados_das = calcular_das_anual(empresa_id)
+
+    # Resultados Lucro Presumido com filtragem opcional por mês e/ou ano
+    if empresa.regime_apuracao == "Lucro Presumido":
+        resultados_lucroPresumido = calcular_lucro_presumido_empresa(empresa_id, mes, ano)
+
+    # Resultados Lucro Real com filtragem opcional por mês e/ou ano
+    if empresa.regime_apuracao == "Lucro Real":
+        resultados_lucroReal = calcular_lucro_real_empresa(empresa_id, mes, ano)
+
+    # Renderizar os resultados com o template
+    return render(request, 'frontend/resultados_empresa.html', {
+        'empresa': empresa,
+        'resultados_das': resultados_das,
+        'resultados_lucroPresumido': resultados_lucroPresumido,
+        'resultados_lucroReal': resultados_lucroReal,
+        'mes': mes,
+        'ano': ano,
+    })
