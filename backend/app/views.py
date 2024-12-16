@@ -202,10 +202,15 @@ def transacoes(request):
 
 
 @login_required(login_url="/")
-@has_role_decorator('administrador')
+#@has_role_decorator('administrador')
 def colaboradores(request):
+
+    if not request.user.groups.filter(name='administrador').exists() and not request.user.is_superuser:
+        return render(request, 'frontend/not-permission.html')
+
     if request.method == "GET":
         users = User.objects.all()
+
         return render(request, 'frontend/pages-colaboradores.html', {'users': users})
     else:
         username = request.POST.get('username')
@@ -215,7 +220,7 @@ def colaboradores(request):
 
         user = User.objects.filter(username=username).first()
         if user:
-            return HttpResponse("Já existe um usuário com esse nome")
+            return render(request, 'frontend/error-page1.html')
 
         # Cria o novo usuário
         user = User.objects.create_user(username=username, email=email, password=senha)
