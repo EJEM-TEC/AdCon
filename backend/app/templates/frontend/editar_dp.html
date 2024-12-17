@@ -192,7 +192,7 @@
                     <div class="col-md-6">
                       <div class="form-group">
                         <label for="local_pagamento">Forma de Envio</label>
-                        <input type="text" class="form-control" id="local_pagamento" name="local_pagamento" value="{{ dp.local_pagamento }}">
+                        <input type="text" class="form-control" id="local_pagamento" name="local_pagamento" value="{{ dp.forma_envio }}">
                       </div>
                     </div>
                   </div>
@@ -200,16 +200,16 @@
                     <div class="col-md-6">
                       <div class="form-group">
                         <label for="data">Data Pagamento</label>
-                        <input type="date" class="form-control" id="data" name="data">
+                        <input type="date" class="form-control" id="data" name="data" value="{{ dp.data_pagamento|date:'Y-m-d' }}">
                       </div>
                     </div>
                     <div class="col-md-6">
                       <div class="form-group">
                         <label for="confirmacao">Confimação</label>
                         <select class="form-control" id="confirmacao" name="confirmacao">
-                          <option value="Confirmado">Confirmado</option>
-                          <option value="Pendente">Pendente</option>
-                          <option value="Cancelado">Cancelado</option>
+                          <option value="Confirmado" {% if tributo.confirmacao == "Confirmado" %}selected{% endif %}>Confirmado</option>
+                          <option value="Pendente" {% if tributo.confirmacao == "Pendente" %}selected{% endif %}>Pendente</option>
+                          <option value="Cancelado" {% if tributo.confirmacao == "Cancelado" %}selected{% endif %}>Cancelado</option>
                         </select>
                       </div>
                     </div>

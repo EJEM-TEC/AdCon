@@ -193,7 +193,7 @@ def login(request):
         if user:
             login_django(request, user)
             return redirect('index')
-        return HttpResponse("Usuário ou senha inválidos")
+        return render(request, "frontend/login_error.html")
 
 
 @login_required(login_url="/")
@@ -266,13 +266,17 @@ def update_user(request, user_id):
 
         try:
             # Atualiza os campos do usuário
-            user.username = username
-            user.email = email
 
-            # Apenas atualize a senha se for fornecida
+            # Atualiza os campos do usuário
+            if username:
+                user.username = username
+
+            if email:
+                user.email = email
+            
             if senha:
-                user.senha = senha
-
+                user.set_password(senha)
+                
             # Adiciona o usuário ao grupo especificado
             group, created = Group.objects.get_or_create(name=grupo)
             user.groups.add(group)

@@ -217,7 +217,9 @@
                             <h2>Inscrição Municipal</h2>
                             <div class="form-check">
                                 <input type="checkbox" value="true" class="form-check-input" id="comCertificadoMunicipal" name="certificado_digital_municipal">
-                                <label class="form-check-label" for="comCertificadoMunicipal" data-value="{{ municipal.certificado_digital_municipal }}">Com certificado digital?</label>
+                                <input type="checkbox" class="form-check-input" id="comCertificadoMunicipal" value="{{ municipal.certificado_digital_municipal }}" 
+                                name="certificado_digital_municipal" 
+                                {% if municipal.certificado_digital_municipal %}checked{% endif %}>
                             </div>
                             <div class="form-group">
                                 <label for="ccm">CCM</label>
@@ -237,7 +239,9 @@
                         <div class="col-lg-4">
                             <h2>Inscrição Estadual</h2>
                             <div class="form-check">
-                                <input type="checkbox" value="true" class="form-check-input" id="comCertificadoEstadual" name="certificado_digital_estadual">
+                              <input type="checkbox" class="form-check-input" id="comCertificadoEstadual" value="{{ estadual.certificado_digital_estadual }}" 
+                                name="certificado_digital_estadual" 
+                                {% if estadual.certificado_digital_estadual %}checked{% endif %}>
                                 <label class="form-check-label" for="comCertificadoEstadual" data-value="{{ estadual.certificado_digital_estadual }}">Com certificado digital?</label>
                             </div>
                             <div class="form-group">
@@ -258,7 +262,9 @@
                         <div class="col-lg-4">
                             <h2>Inscrição Federal</h2>
                             <div class="form-check">
-                                <input type="checkbox" value="true" class="form-check-input" id="comCertificadoFederal" name="certificado_digital_federal">
+                              <input type="checkbox" class="form-check-input" id="comCertificadoFederal" value="{{ federal.certificado_digital_federal }}" 
+                                name="certificado_digital_federal" 
+                                {% if federal.certificado_digital_federal %}checked{% endif %}>
                                 <label class="form-check-label" for="comCertificadoFederal" data-value="{{ federal.certificado_digital_federal }}">Com certificado digital?</label>
                             </div>
                             <div class="form-group">

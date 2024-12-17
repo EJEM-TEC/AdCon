@@ -173,7 +173,7 @@
                     <div class="col-lg-8">
                       <div class="form-group">
                         <label for="nomeEmpresa">Nome</label>
-                        <input type="text" class="form-control" id="nomeEmpresa" name="nome" required value="{{ tributo.nome }}">
+                        <input type="text" class="form-control" id="nomeEmpresa" name="nome" value="{{ tributo.nome }}">
                       </div>
                     </div>
                   </div>
@@ -181,9 +181,12 @@
                     <div class="col-md-8">
                       <div class="form-group">
                         <label for="regimeApuracao">Fonte de receita</label>
-                        <select class="form-control" id="regimeApuracao" name="fonte_receita" required>
+                        <select class="form-control" id="regimeApuracao" name="fonte_receita">
                           {% for fonte_receita in fontes_receita %}
-                          <option value="{{ tributo.id_fonte_receita_fonte_receita.nome }}">{{ fonte_receita.nome }}</option>
+                            <option value="{{ fonte_receita.id }}" 
+                              {% if fonte_receita.id == tributo.fonte_receita.id %}selected{% endif %}>
+                              {{ fonte_receita.nome }}
+                            </option>
                           {% endfor %}
                         </select>
                       </div>
@@ -193,7 +196,7 @@
                         <div>
                           <label for="inputNumber" class="col-sm-2 col-form-label">Envio Email</label>
                         <div class="col-sm-10">
-                          <input type="date" class="form-control" name="envio_email" value="{{ tributo.envio_email }}">
+                          <input type="date" class="form-control" name="envio_email" value="{{ tributo.envio_email|date:'Y-m-d' }}">
                         </div>
                         </div>
                       </div>
@@ -202,7 +205,7 @@
                         <div>
                           <label for="inputNumber" class="col-sm-2 col-form-label">Confirmação Email</label>
                         <div class="col-sm-10">
-                          <input type="date" class="form-control" name="confirmar_email" value="{{ tributo.confirmacao_email }}">
+                          <input type="date" class="form-control" name="confirmar_email" value="{{ tributo.confirmacao_email|date:'Y-m-d' }}">
                         </div>
                         </div>
                       </div>
@@ -212,12 +215,12 @@
                     <div>
                       <label for="inputNumber" class="col-sm-2 col-form-label">Dia</label>
                     <div class="col-sm-10">
-                      <input type="date" class="form-control" name="dia" required value="{{ tributo.id_data_vencimento_vencimento.dia }}">
+                      <input type="date" class="form-control" name="dia" value="{{ tributo.id_data_vencimento_vencimento.dia|date:'Y-m-d' }}">
                     </div>
                     </div>
                       <div class="form-group my-3">
                         <label for="nomeEmpresa">Período do vencimento</label>
-                        <select class="form-control" id="regimeApuracao" name="periodo_pagamento" required data-value="{{ tributo.id_data_vencimento_vencimento.periodo_pagamento }}">
+                        <select class="form-control" id="regimeApuracao" name="periodo_pagamento" data-value="{{ tributo.id_data_vencimento_vencimento.periodo_pagamento }}">
                           <option value="mensal">Mensal</option>
                           <option value="trimestral">Trimestral</option>
                           <option value="anual">Anual</option>
@@ -228,7 +231,7 @@
                     <div class="col-md-8">
                       <div class="form-group">
                         <label for="nomeEmpresa">Alíquota (%)</label>
-                        <input type="number" class="form-control" name="aliquota">
+                        <input type="number" class="form-control" name="aliquota" value="{{ tributo.aliquota }}">
                       </div>
                     </div>
                   </div>
@@ -237,8 +240,8 @@
                       <div class="form-group">
                         <label for="nomeEmpresa">Regime de Apuração</label>
                         <select class="form-control" id="regime" name="regime">
-                          <option class="Lucro Pressumido"> Lucro Pressumido </option>
-                          <option class="Lucro Real"> Lucro Real </option>
+                          <option value="Lucro Presumido" {% if tributo.regime == "Lucro Presumido" %}selected{% endif %}>Lucro Presumido</option>
+                          <option value="Lucro Real" {% if tributo.regime == "Lucro Real" %}selected{% endif %}>Lucro Real</option>
                         </select>
                       </div>
                     </div>
