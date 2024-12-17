@@ -409,9 +409,9 @@ def delete_empresa(request, empresa_id):
     empresa = get_object_or_404(Empresa, id_empresa=empresa_id)
 
     # Acessando os valores diretamente dos campos
-    cnpj = empresa.cnpj_federal.cnpj
-    ie = empresa.ie_estadual.ie
-    ccm = empresa.ccm_municipal.ccm
+    cnpj = empresa.federal.cnpj
+    ie = empresa.estadual.ie
+    ccm = empresa.municipal.ccm
 
     print(ccm)  # Retorna o valor do ccm
     print(cnpj)  # Retorna o valor do cnpj
