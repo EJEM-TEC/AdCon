@@ -147,7 +147,7 @@ class Anexos(models.Model):
     limite_superior = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     limite_inferior = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     aliquota = models.DecimalField(max_digits=10, decimal_places=2)
-    deducao = models.IntegerField()
+    deducao = models.DecimalField(max_digits=10, decimal_places=2)
 
 class SimplesAnexo(models.Model):
     id = models.AutoField(primary_key=True)

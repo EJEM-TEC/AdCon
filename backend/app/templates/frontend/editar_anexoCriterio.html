@@ -173,7 +173,7 @@
                     <div class="col-md-8">
                       <div class="form-group">
                         <label for="nomeEmpresa">Limite Superior (R$)</label>
-                        <input type="number" class="form-control" name="limite_superior" value="{{ criterio.limite_superior }}">
+                        <input type="number" class="form-control" name="limite_superior" step="0.01" value="{{ criterio.limite_superior }}">
                       </div>
                     </div>
                   </div>
@@ -181,7 +181,7 @@
                     <div class="col-md-8">
                       <div class="form-group">
                         <label for="nomeEmpresa">Limite Inferior (R$)</label>
-                        <input type="number" class="form-control" name="limite_inferior" value="{{ criterio.limite_inferior }}">
+                        <input type="number" class="form-control" name="limite_inferior" step="0.01" value="{{ criterio.limite_inferior }}">
                       </div>
                     </div>
                   </div>
@@ -190,7 +190,7 @@
                     <div class="col-md-8">
                       <div class="form-group">
                         <label for="nomeEmpresa">Alíquota (%)</label>
-                        <input type="number" class="form-control" name="aliquota" value="{{ criterio.aliquota }}">
+                        <input type="number" class="form-control" name="aliquota" step="0.01" value="{{ criterio.aliquota }}">
                       </div>
                     </div>
                   </div>
@@ -198,7 +198,7 @@
                     <div class="col-md-8">
                       <div class="form-group">
                         <label for="deducao">Dedução ( R$ )</label>
-                          <input type="number" class="form-control" value="{{criterio.deducao}}" name="deducao" />
+                          <input type="number" class="form-control" step="0.01" value="{{criterio.deducao}}" name="deducao" />
                       </div>
                     </div>
                   </div><hr>
