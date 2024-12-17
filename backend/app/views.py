@@ -40,9 +40,9 @@ def exibir_empresa(request, empresa_id):
     empresa = get_object_or_404(Empresa, id_empresa=empresa_id)
 
     # Recupera os IDs de CNPJ, IE e CCM da empresa
-    cnpj = empresa.cnpj_federal.cnpj
-    ie = empresa.ie_estadual.ie
-    ccm = empresa.ccm_municipal.ccm
+    cnpj = empresa.federal.cnpj
+    ie = empresa.estadual.ie
+    ccm = empresa.municipal.ccm
 
     # Recupera instâncias de Federal, Estadual e Municipal usando os IDs
     Cnpj = get_object_or_404(Federal, cnpj=cnpj)
@@ -327,9 +327,9 @@ def criacao_empresa(request):
                 responsaveis=request.POST.get('responsaveis_empresa'),
                 atividade=request.POST.get('atividade_empresa'),
                 regime_apuracao=request.POST.get('regime_apuracao'),
-                cnpj_federal=federal,
-                ie_estadual=estadual,
-                ccm_municipal=municipal,
+                federal=federal,
+                estadual=estadual,
+                municipal=municipal,
             )
 
             print("A empresa e as entidades relacionadas foram cadastradas com sucesso")
@@ -347,9 +347,9 @@ def update_empresa(request, empresa_id):
     empresa = get_object_or_404(Empresa, id_empresa=empresa_id)
 
     # Acessando os valores diretamente dos campos
-    cnpj = empresa.cnpj_federal.cnpj
-    ie = empresa.ie_estadual.ie
-    ccm = empresa.ccm_municipal.ccm
+    cnpj = empresa.federal.cnpj
+    ie = empresa.estadual.ie
+    ccm = empresa.municipal.ccm
 
     print(ccm)  # Retorna o valor do ccm
     print(cnpj)  # Retorna o valor do cnpj

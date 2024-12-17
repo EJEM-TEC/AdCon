@@ -178,15 +178,15 @@
                     <div class="col-md-6">
                       <div class="form-group">
                         <label for="valor">Valor - R$ </label>
-                        <input type="number" class="form-control" id="valor" name="valor" value="{{ dp.valor }}">
+                        <input type="number" class="form-control" id="valor" step="0.01" name="valor" value="{{ dp.valor }}">
                       </div>
                     </div>
                   </div>
                   <div class="row">
                     <div class="col-md-6">
                       <div class="form-group">
-                        <label for="valor_juros">Valor com juros - R$ </label>
-                        <input type="number" class="form-control" id="valor_juros" name="valor_juros" value="{{ dp.valor_com_juros }}">
+                        <label for="valor_juros">Valor com juros - R$ </label> 
+                        <input type="number" class="form-control" id="valor_juros" step="0.01" name="valor_juros" value="{{ dp.valor_com_juros }}">
                       </div>
                     </div>
                     <div class="col-md-6">

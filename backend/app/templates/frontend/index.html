@@ -430,7 +430,7 @@
                     <tr>
                       <td>{{ empresa.id_empresa }}</td>
                       <td><a href="{% url 'exibirempresas' empresa_id=empresa.id_empresa %}">{{ empresa.nome }}</a></td>
-                      <td>{{ empresa.cnpj_federal_id }}</td>
+                      <th>{{ empresa.federal.cnpj }}</th>
                       <td>{{ empresa.regime_apuracao }}</td>
                       <td>{{ empresa.atividade }}</td>
                       <td>{{ empresa.responsaveis }}</td>

@@ -2,7 +2,7 @@ from django.db import models
 
 # Create your models here.
 class Question(models.Model):
-    question_text = models.CharField(max_length=200)
+    question_text = models.CharField(max_length=200) 
     pub_date = models.DateTimeField("date published")
 
 class Choice(models.Model):
@@ -18,7 +18,8 @@ class Criterios(models.Model):
     aliquota = models.DecimalField(max_digits=10, decimal_places=2)
 
 class Municipal(models.Model):
-    ccm = models.AutoField(primary_key=True)
+    id = models.AutoField(primary_key=True)
+    ccm = models.CharField(max_length=100, blank=True, null=True)
     login_municipal = models.CharField(max_length=100, blank=True, null=True)
     senha_municipal = models.CharField(max_length=100, blank=True, null=True)
     certificado_digital_municipal = models.BooleanField()
@@ -29,13 +30,15 @@ class Vencimento(models.Model):
     periodo_pagamento = models.CharField(max_length=100, blank=True, null=True)
 
 class Estadual(models.Model):
-    ie = models.AutoField(primary_key=True)
+    id = models.AutoField(primary_key=True)
+    ie = models.CharField(max_length=100, blank=True, null=True)
     login_estadual = models.CharField(max_length=100, blank=True, null=True)
     senha_estadual = models.CharField(max_length=100, blank=True, null=True)
     certificado_digital_estadual = models.BooleanField()
 
 class Federal(models.Model):
-    cnpj = models.AutoField(primary_key=True)
+    id = models.AutoField(primary_key=True)
+    cnpj = models.CharField(max_length=100, blank=True, null=True)
     login_federal = models.CharField(max_length=100, blank=True, null=True)
     senha_federal = models.CharField(max_length=100, blank=True, null=True)
     certificado_digital_federal = models.BooleanField()
@@ -64,7 +67,7 @@ class Tributo(models.Model):
     nome = models.CharField(max_length=100, blank=True, null=True)
     envio_email = models.DateField(blank=True, null=True)
     confirmacao_email = models.DateField(blank=True, null=True)
-    aliquota = models.IntegerField(null=True, blank=True)
+    aliquota = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     regime = models.CharField(max_length=100, null=True, blank=True)
     id_data_vencimento_vencimento = models.ForeignKey(Vencimento, on_delete=models.CASCADE)
     id_fonte_receita_fonte_receita = models.ForeignKey(FonteReceita, on_delete=models.CASCADE)
@@ -79,9 +82,9 @@ class Empresa(models.Model):
     nome = models.CharField(max_length=100, blank=True, null=True)
     responsaveis = models.CharField(max_length=100, blank=True, null=True)
     atividade = models.CharField(max_length=100, blank=True, null=True)
-    cnpj_federal = models.ForeignKey(Federal, on_delete=models.CASCADE)
-    ie_estadual = models.ForeignKey(Estadual, on_delete=models.CASCADE)
-    ccm_municipal = models.ForeignKey(Municipal, on_delete=models.CASCADE)
+    federal = models.ForeignKey(Federal, on_delete=models.CASCADE)
+    estadual = models.ForeignKey(Estadual, on_delete=models.CASCADE)
+    municipal = models.ForeignKey(Municipal, on_delete=models.CASCADE)
     regime_apuracao = models.CharField(max_length=100, blank=True, null=True)
 
 class HistoricoEmpresa(models.Model):
