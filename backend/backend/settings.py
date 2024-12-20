@@ -12,6 +12,9 @@ https://docs.djangoproject.com/en/dev/ref/settings/
 
 from pathlib import Path
 import os
+from urllib.parse import urlparse
+from os import getenv
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -76,20 +79,32 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/dev/ref/settings/#databases
 
+tmpPostgres = urlparse('postgresql://neondb_owner:F6PedKNujBt2@ep-rapid-fire-a54jiccs.us-east-2.aws.neon.tech/neondb?sslmode=require')
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': tmpPostgres.path[1:],  # Remove o primeiro '/' ao acessar a string do path
+        'USER': tmpPostgres.username,
+        'PASSWORD': tmpPostgres.password,
+        'HOST': tmpPostgres.hostname,
+        'PORT': tmpPostgres.port or 5432,  # Pega a porta ou usa 5432 como default
     }
-    #'default': {
-    #    'ENGINE': 'django.db.backends.mysql',
-    #    'NAME': 'my_database_adcon',
-    #    'USER': 'adminBdAdcon',
-    #    'PASSWORD': 'senha001',
-    #    'HOST': 'databaseadcon1.cz6cyeq0avog.sa-east-1.rds.amazonaws.com',
-    #    'PORT': '3306'
-    #}
-}
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+#     #'default': {
+#     #    'ENGINE': 'django.db.backends.mysql',
+#     #    'NAME': 'my_database_adcon',
+#     #    'USER': 'adminBdAdcon',
+#     #    'PASSWORD': 'senha001',
+#     #    'HOST': 'databaseadcon1.cz6cyeq0avog.sa-east-1.rds.amazonaws.com',
+#     #    'PORT': '3306'
+#     #}
+ }
 
 
 # Password validation
