@@ -158,7 +158,7 @@
       <h1 style="color: white;">Dashboard</h1>
       <nav>
         <ol class="breadcrumb" style="margin-bottom: 50px; margin-top: 50px; font-size: xx-large;">
-          <li class="breadcrumb-item" style="color: white;">Anexos</li>
+          <li class="breadcrumb-item" style="color: white;">{{anexo.numero_anexo}}</li>
 
         </ol>
       </nav>
@@ -170,7 +170,7 @@
         <div class="card">
             <div class="card-body">
                 <h5 class="card-title" style="display: flex; justify-content: space-between;"></h5>
-                          <span style="font-size: x-large; color: rgb(0, 0, 0);">Critérios</span>
+                          <span style="font-size: x-large; color: rgb(0, 0, 0);">Faixas</span>
                             <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#adicionarcriterio">
                                 <i style="font-size: 2rem; color: black;" class="bi bi-plus-lg"></i>
                             </button>
@@ -178,7 +178,7 @@
                       <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
                         <div class="modal-content">
                           <div class="modal-header">
-                            <h2 class="modal-title font-weight-bold" id="modalAdicionarEmpresaLabel">Adicionar critério</h2>
+                            <h2 class="modal-title font-weight-bold" id="modalAdicionarEmpresaLabel">Adicionar faixa</h2>
                           </div>
                           <div class="modal-body">
                             <!-- Formulário para informações gerais -->
@@ -187,7 +187,7 @@
                                 <div class="col-md-8">
                                   <div class="form-group">
                                     <label for="nomeEmpresa">Limite Superior (R$)</label>
-                                    <input type="number" class="form-control" name="limite_superior">
+                                    <input type="number" class="form-control" name="limite_superior" step="0.01">
                                   </div>
                                 </div>
                               </div>
@@ -195,7 +195,7 @@
                                 <div class="col-md-8">
                                   <div class="form-group">
                                     <label for="nomeEmpresa">Limite Inferior (R$)</label>
-                                    <input type="number" class="form-control" name="limite_inferior">
+                                    <input type="number" class="form-control" name="limite_inferior" step="0.01">
                                   </div>
                                 </div>
                               </div>
@@ -204,7 +204,7 @@
                                 <div class="col-md-8">
                                   <div class="form-group">
                                     <label for="nomeEmpresa">Alíquota (%)</label>
-                                    <input type="number" class="form-control" name="aliquota">
+                                    <input type="number" class="form-control" name="aliquota" step="0.01">
                                   </div>
                                 </div>
                               </div>
@@ -212,7 +212,7 @@
                                 <div class="col-md-8">
                                   <div class="form-group">
                                     <label for="deducao">Dedução</label>
-                                      <input type="number" class="form-control" name="deducao" />
+                                      <input type="number" class="form-control" name="deducao" step="0.01" />
                                   </div>
                                 </div>
                               </div><hr>

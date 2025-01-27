@@ -1316,7 +1316,7 @@ def anexosCriterios(request, anexo_id):
         )
 
         # Redirecionando para a página de visualização de critérios
-        return redirect('anexos', anexo_id=anexo.id)
+        return redirect('Anexocriterios', anexo_id=anexo.id)
 
     # Obtendo todos os CriterioAliquotas relacionados ao tributo
     simples_anexos = SimplesAnexo.objects.filter(id_simples=anexo).select_related(
@@ -1380,7 +1380,7 @@ def deletar_anexoCriterio(request, anexo_id, criterio_id):
         criterio.delete()
 
         # Redirecionando para a página de visualização de critérios
-        return redirect('criterios', anexo_id=anexo.id)
+        return redirect('Anexocriterios', anexo_id=anexo.id)
 
     return render(request, 'frontend/excluir_anexoCriterio.html', {
         'anexo': anexo,
