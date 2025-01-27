@@ -40,14 +40,14 @@ def exibir_empresa(request, empresa_id):
     empresa = get_object_or_404(Empresa, id_empresa=empresa_id)
 
     # Recupera os IDs de CNPJ, IE e CCM da empresa
-    cnpj = empresa.federal.cnpj
-    ie = empresa.estadual.ie
-    ccm = empresa.municipal.ccm
+    cnpj = empresa.federal.id
+    ie = empresa.estadual.id
+    ccm = empresa.municipal.id
 
     # Recupera instâncias de Federal, Estadual e Municipal usando os IDs
-    Cnpj = get_object_or_404(Federal, cnpj=cnpj)
-    Ie = get_object_or_404(Estadual, ie=ie)
-    Ccm = get_object_or_404(Municipal, ccm=ccm)
+    Cnpj = get_object_or_404(Federal, id=cnpj)
+    Ie = get_object_or_404(Estadual, id=ie)
+    Ccm = get_object_or_404(Municipal, id=ccm)
 
     # Fontes de Receita da Empresa
     empresa_fontesreceitas = EmpresaFonteReceita.objects.filter(id_empresa_empresa=empresa).select_related(
@@ -347,18 +347,18 @@ def update_empresa(request, empresa_id):
     empresa = get_object_or_404(Empresa, id_empresa=empresa_id)
 
     # Acessando os valores diretamente dos campos
-    cnpj = empresa.federal.cnpj
-    ie = empresa.estadual.ie
-    ccm = empresa.municipal.ccm
+    cnpj = empresa.federal.id
+    ie = empresa.estadual.id
+    ccm = empresa.municipal.id
 
     print(ccm)  # Retorna o valor do ccm
     print(cnpj)  # Retorna o valor do cnpj
     print(ie)  # Retorna o valor do ie
 
     # Recuperando as instâncias relacionadas
-    Cnpj = get_object_or_404(Federal, cnpj=cnpj)
-    Ie = get_object_or_404(Estadual, ie=ie)
-    Ccm = get_object_or_404(Municipal, ccm=ccm)
+    Cnpj = get_object_or_404(Federal, id=cnpj)
+    Ie = get_object_or_404(Estadual, id=ie)
+    Ccm = get_object_or_404(Municipal, id=ccm)
 
     if request.method == "POST":
         try:
@@ -409,18 +409,18 @@ def delete_empresa(request, empresa_id):
     empresa = get_object_or_404(Empresa, id_empresa=empresa_id)
 
     # Acessando os valores diretamente dos campos
-    cnpj = empresa.federal.cnpj
-    ie = empresa.estadual.ie
-    ccm = empresa.municipal.ccm
+    cnpj = empresa.federal.id
+    ie = empresa.estadual.id
+    ccm = empresa.municipal.id
 
     print(ccm)  # Retorna o valor do ccm
     print(cnpj)  # Retorna o valor do cnpj
     print(ie)  # Retorna o valor do ie
 
     # Recuperando as instâncias relacionadas
-    Cnpj = get_object_or_404(Federal, cnpj=cnpj)
-    Ie = get_object_or_404(Estadual, ie=ie)
-    Ccm = get_object_or_404(Municipal, ccm=ccm)
+    Cnpj = get_object_or_404(Federal, id=cnpj)
+    Ie = get_object_or_404(Estadual, id=ie)
+    Ccm = get_object_or_404(Municipal, id=ccm)
 
     if request.method == 'POST':
         empresa.delete()
