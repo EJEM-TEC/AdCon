@@ -1461,7 +1461,7 @@ def calcular_das_anual(empresa_id):
         id_simples__in=[ea.id_simples for ea in empresa_anexos]
     ).select_related('id_anexo')
 
-    # Obter o primeiro e último mês com dados de transações
+    # Obter os meses disponíveis com transações
     meses_disponiveis = EmpresaTransacoes.objects.filter(
         id_empresa_empresa=empresa
     ).annotate(
@@ -1472,20 +1472,22 @@ def calcular_das_anual(empresa_id):
     resultados = []
 
     # Iterar pelos meses e calcular períodos de 12 meses consecutivos
-    for i in range(len(meses_disponiveis) - 11):  # Garantir 12 meses disponíveis
-        # Obter início e fim do período
-        inicio_periodo = date(
-            year=meses_disponiveis[i]['ano'],  # Corrigido para 'year'
-            month=meses_disponiveis[i]['mes'],
-            day=1
-        )
-        fim_periodo = inicio_periodo + timedelta(days=365)
+    for i in range(len(meses_disponiveis) - 11):  # Garantir pelo menos 12 meses disponíveis
+        ano_inicio = meses_disponiveis[i]['ano']
+        mes_inicio = meses_disponiveis[i]['mes']
+        inicio_periodo = date(year=ano_inicio, month=mes_inicio, day=1)
+
+        # Definir o final do período corretamente (último dia do mês 12 meses depois)
+        ano_fim = meses_disponiveis[i + 11]['ano']
+        mes_fim = meses_disponiveis[i + 11]['mes']
+        fim_periodo = date(year=ano_fim, month=mes_fim, day=1) + timedelta(days=31)
+        fim_periodo = fim_periodo.replace(day=1) - timedelta(days=1)  # Último dia do mês correto
 
         # Verificar se há dados de todos os 12 meses no período
         meses_faturamento = EmpresaTransacoes.objects.filter(
             id_empresa_empresa=empresa,
             id_transacoes_transacoes__data__gte=inicio_periodo,
-            id_transacoes_transacoes__data__lt=fim_periodo
+            id_transacoes_transacoes__data__lte=fim_periodo
         ).annotate(
             mes=ExtractMonth('id_transacoes_transacoes__data'),
             ano=ExtractYear('id_transacoes_transacoes__data')
@@ -1498,7 +1500,7 @@ def calcular_das_anual(empresa_id):
         transacoes = EmpresaTransacoes.objects.filter(
             id_empresa_empresa=empresa,
             id_transacoes_transacoes__data__gte=inicio_periodo,
-            id_transacoes_transacoes__data__lt=fim_periodo
+            id_transacoes_transacoes__data__lte=fim_periodo
         ).aggregate(faturamento_anual=Sum('id_transacoes_transacoes__transacao'))
 
         faturamento_anual = Decimal(transacoes['faturamento_anual'] or 0)
@@ -1518,11 +1520,11 @@ def calcular_das_anual(empresa_id):
 
         # Adicionar resultado do período
         resultados.append({
-            'periodo': f"{inicio_periodo.strftime('%b/%Y')} - {(fim_periodo - timedelta(days=1)).strftime('%b/%Y')}",
-            'aliquota': anexo.aliquota ,
+            'periodo': f"{inicio_periodo.strftime('%b/%Y')} - {fim_periodo.strftime('%b/%Y')}",
+            'aliquota': anexo.aliquota,
             'faturamento_anual': faturamento_anual,
             'imposto_total': round(imposto_total, 2),
-            'valor_pagamento': round(imposto_total, 2) - round(deducao_total, 2),
+            'valor_pagamento': max(Decimal(0), round(imposto_total, 2) - round(deducao_total, 2)),
             'deducao_total': round(deducao_total, 2),
         })
 
@@ -1530,6 +1532,8 @@ def calcular_das_anual(empresa_id):
         'empresa': empresa,
         'resultados': resultados,
     }
+
+    return context
 
     return context
 def calcular_valor_imposto(base_calculo, aliquota, regime):
