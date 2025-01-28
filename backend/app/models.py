@@ -162,6 +162,17 @@ class EmpresaSimples(models.Model):
     id_simples = models.ForeignKey(SimplesNacional, on_delete=models.CASCADE)
 
 
+class ObrigacaoExtra(models.Model):
+    id = models.AutoField(primary_key=True)
+    obrigacao = models.CharField(max_length=100, blank=True, null=True)
+    data_envio = models.DateField(blank=True, null=True)
+    data_limite = models.DateField(blank=True, null=True)
+
+class EmpresaObrigacao(models.Model):
+    id = models.AutoField(primary_key=True)
+    id_empresa_empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE)
+    id_obrigacao = models.ForeignKey(ObrigacaoExtra, on_delete=models.CASCADE)
+
 
 
     

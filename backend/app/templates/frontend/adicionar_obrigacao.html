@@ -169,54 +169,29 @@
 
     <div class="card">
         <div class="card-body p-4">
-            <form action="{% url 'adicionar_dp' empresa_id=empresa.id_empresa %}" method="POST"> {% csrf_token %}
+            <form action="{% url 'adicionar_obrigacao' empresa_id=empresa.id_empresa %}" method="POST"> {% csrf_token %}
                   <div class="row">
                     <div class="col-md-6">
                       <div class="form-group">
-                        <label for="imposto">Imposto</label>
-                        <input type="text" class="form-control" id="imposto" name="imposto" required>
+                        <label for="obrigacao">Obrigação</label>
+                        <input type="text" class="form-control" id="obrigacao" name="obrigacao" required>
                       </div>
                     </div>
+
                     <div class="col-md-6">
                       <div class="form-group">
-                        <label for="valor">Valor - R$ </label>
-                        <input type="number" class="form-control" step="0.01" id="valor" name="valor" required>
+                        <label for="data_envio">Data envio</label>
+                        <input type="date" class="form-control" id="data_envio" name="data_envio">
                       </div>
                     </div>
-                  </div>
-                  <div class="row">
+
                     <div class="col-md-6">
                       <div class="form-group">
-                        <label for="valor_juros">Valor com juros - R$ </label>
-                        <input type="number" class="form-control" step="0.01" id="valor_juros" name="valor_juros" required>
+                        <label for="data_limite">Data Limite</label>
+                        <input type="date" class="form-control" id="data_limite" name="data_limite" required>
                       </div>
                     </div>
-                    <div class="col-md-6">
-                      <div class="form-group">
-                        <label for="local_pagamento">Forma de Envio</label>
-                        <input type="text" class="form-control" id="local_pagamento" name="local_pagamento" required>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-md-6">
-                      <div class="form-group">
-                        <label for="data">Data Pagamento</label>
-                        <input type="date" class="form-control" id="data" name="data" required>
-                      </div>
-                    </div>
-                    <div class="col-md-6">
-                      <div class="form-group">
-                        <label for="data_vencimento">Data Vencimento</label>
-                        <input type="date" class="form-control" id="data_vencimento" name="data_vencimento">
-                      </div>
-                    </div>
-                    <div class="col-md-6">
-                      <div class="form-group">
-                        <label for="competencia">Competência</label>
-                        <input type="text" class="form-control" id="competencia" name="competencia" required>
-                      </div>
-                    </div>
+                    
                   </div>
                   <hr>
                     <div class="modal-footer">

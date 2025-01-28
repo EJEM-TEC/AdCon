@@ -325,6 +325,7 @@
                           <th scope="col">Faturamento (12 meses) (R$)</th>
                           <th scope="col">Imposto Total (R$)</th>
                           <th scope="col">Deduções Totais (R$)</th>
+                          <th scope="col">Faturamento Mês (R$)</th>
                           <th scope="col">Aliquota Real (%)</th>
                           <th scope="col">Pagamento Total (R$)</th>
                       </tr>
@@ -335,10 +336,11 @@
                       <tr>
                           <td>{{ resultado.mes }}</td>
                           <td> {{ resultado.periodo  }}</td>
-                          <td>{{ resultado.faturamento_anual|floatformat:2 }}</td>
+                          <td>R$ {{ resultado.faturamento_anual|floatformat:2 }}</td>
                           <td>R$ {{ resultado.imposto_total|floatformat:2}}</td>
                           <td>R$ {{ resultado.deducao_total|floatformat:2 }}</td>
-                          <td>{{ resultado.aliquota_real|floatformat:2  }}</td>
+                          <td>R$ {{ resultado.receita_mes|floatformat:2 }}</td>
+                          <td>{{ resultado.aliquota_real|floatformat:2  }} %</td>
                           <td>R$ {{ resultado.valor_pagamento|floatformat:2 }}</td>
                       </tr>
                     {% endfor %}

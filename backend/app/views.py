@@ -16,7 +16,7 @@ from django.urls import reverse_lazy
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import Empresa, Federal, Estadual, Municipal, EmpresaFonteReceita, FonteReceita, EmpresaTributo, Tributo, \
-    EmpresaTransacoes, EmpresaSimples
+    EmpresaTransacoes, EmpresaSimples, ObrigacaoExtra, EmpresaObrigacao
 from django.db.models import Sum
 from django.utils.timezone import now
 from django.db.models.functions import TruncMonth
@@ -90,6 +90,13 @@ def exibir_empresa(request, empresa_id):
     )
 
     dps = [ed.id_dp_dp for ed in empresa_dp]
+
+    #Obrigações de uma empresa
+    empresa_obrigacoes = EmpresaObrigacao.objects.filter(id_empresa_empresa=empresa_id).select_related(
+        'id_obrigacao'
+    )
+
+    obrigacoes = [eo.id_obrigacao for eo in empresa_obrigacoes]
 
     # Transações de uma empresa
     empresa_transacoes = EmpresaTransacoes.objects.filter(id_empresa_empresa=empresa).select_related(
@@ -176,7 +183,8 @@ def exibir_empresa(request, empresa_id):
         'anexos': anexos,
         'resultados_das': resultados_das,
         'resultados_lucroPressumido': resultados_lucroPressumido,
-        'resultados_lucroReal': resultados_lucroReal
+        'resultados_lucroReal': resultados_lucroReal,
+        'obrigacoes': obrigacoes,
     })
 
 
@@ -1896,3 +1904,78 @@ def calcular_receita_bruta_mes(empresa_id):
         'mes_atual': hoje.strftime('%b/%Y'),
         'receita_mes': round(receita_mes, 2),
     }
+
+
+@login_required(login_url='/')
+def adicionarObrigacao(request, empresa_id):
+    empresa = get_object_or_404(Empresa, id_empresa=empresa_id)
+
+    if request.method == 'POST':
+        obrigacao = request.POST.get("obrigacao")
+        data_limite = request.POST.get("data_limite")
+        data_envio = request.POST.get("data_envio")
+
+        # Criando um novo critério
+        nova_obrigacao = ObrigacaoExtra.objects.create(
+            data_limite=data_limite,
+            data_envio=data_envio,
+            obrigacao = obrigacao
+        )
+
+        # Relacionando o critério ao tributo
+        EmpresaObrigacao.objects.create(
+            id_obrigacao=nova_obrigacao,  # Passando a instância de Criterios
+            id_empresa_empresa=empresa  # Passando a instância de Tributo
+        )
+
+        return redirect('exibirempresas', empresa_id=empresa.id_empresa)
+
+    return render(request, 'frontend/adicionar_obrigacao.html', {'empresa': empresa})
+
+@login_required(login_url='/')
+def deletarObrigacao(request, empresa_id, obrigacao_id):
+    # Obtendo o tributo pelo id_tributo fornecido
+    empresa = get_object_or_404(Empresa, id_empresa=empresa_id)
+
+    # Obtendo o critério pelo id_aliquotas fornecido
+    obrigacao = get_object_or_404(ObrigacaoExtra, id=obrigacao_id)
+
+    # Verificando se o critério está relacionado ao tributo
+    empresa_obrigacao = get_object_or_404(EmpresaObrigacao, id_obrigacao=obrigacao,
+                                           id_empresa_empresa=empresa)
+
+    if request.method == 'POST':
+        # Deletando a relação entre o critério e o tributo
+        empresa_obrigacao.delete()
+
+        # Opcional: Deletar o critério completamente se não estiver relacionado a outro tributo
+        obrigacao.delete()
+
+        # Redirecionando para a página de visualização de critérios
+        return redirect('exibirempresas', empresa_id=empresa.id_empresa)
+
+    return render(request, 'frontend/deletar_obrigacao.html', {
+        'empresa': empresa,
+        'obrigacao': obrigacao
+    })
+
+
+@login_required(login_url='/')
+def editarObrigacao(request, empresa_id, obrigacao_id):
+    empresa = get_object_or_404(Empresa, id_empresa=empresa_id)
+    obrigacao = get_object_or_404(ObrigacaoExtra, id=obrigacao_id)
+
+    if request.method == 'POST':
+        obrigacao_form = request.POST.get("obrigacao")
+        data_limite = request.POST.get("data_limite")
+        data_envio = request.POST.get("data_envio")
+
+        obrigacao.obrigacao = obrigacao_form
+        obrigacao.data_limite = data_limite
+        obrigacao.data_envio = data_envio
+
+        obrigacao.save()
+
+        return redirect('exibirempresas', empresa_id=empresa.id_empresa)
+
+    return render(request, 'frontend/editar_obrigacao.html', {'empresa': empresa, 'obrigacao': obrigacao})

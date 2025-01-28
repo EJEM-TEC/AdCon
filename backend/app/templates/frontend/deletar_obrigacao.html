@@ -109,7 +109,7 @@
     <ul class="sidebar-nav" id="sidebar-nav">
 
       <li class="nav-item">
-        <a class="nav-link " href="index">
+        <a class="nav-link " href="{% url 'index' %}">
           <i class="bi bi-grid"></i>
           <span>Dashboard</span>
         </a>
@@ -132,12 +132,11 @@
       </li><!-- End F.A.Q Page Nav -->
 
       <li class="nav-item">
-        <a class="nav-link collapsed" href="{% url 'colaboradores' %}">
+        <a class="nav-link collapsed" href={% url 'colaboradores' %}>
           <i class="bi bi-people-fill"></i>
           <span>Colaboradores</span>
         </a>
       </li>
-      
       
       <li class="nav-item">
         <a class="nav-link collapsed" href="{% url 'simplesNacional' %}">
@@ -145,7 +144,6 @@
           <span>Simples Nacional</span>
         </a>
       </li><!-- End Contact Page Nav -->
-      <!-- End Contact Page Nav -->
 
       <!-- AQUI ACABA A AREA PADRÃO DE TODAS AS PAGINAS -->
 
@@ -153,14 +151,14 @@
 
   </aside><!-- End Sidebar-->
 
-  <main id="main" class="main" style="background-image: url('{% static "img/graphic-side.svg" %}')">
+  <main id="main" class="main">
 
     <div class="pagetitle">
-      <h1 class="text-white">Dashboard</h1>
+      <h1>Dashboard</h1>
       <nav>
         <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="{% url 'index' %}">Home</a></li>
-          <li class="breadcrumb-item active text-white">Histórico de uma empresa</li>
+          <li class="breadcrumb-item"><a href="{% url 'exibirempresas' empresa_id=empresa.id_empresa %}">{{ empresa.nome }}</a></li>
+          <li class="breadcrumb-item active">Dashboard</li>
         </ol>
       </nav>
     </div><!-- End Page Title -->
@@ -168,62 +166,13 @@
     <section class="section dashboard">
 
     <div class="card">
-        <div class="card-body p-4">
-            <form action="{% url 'adicionar_dp' empresa_id=empresa.id_empresa %}" method="POST"> {% csrf_token %}
-                  <div class="row">
-                    <div class="col-md-6">
-                      <div class="form-group">
-                        <label for="imposto">Imposto</label>
-                        <input type="text" class="form-control" id="imposto" name="imposto" required>
-                      </div>
-                    </div>
-                    <div class="col-md-6">
-                      <div class="form-group">
-                        <label for="valor">Valor - R$ </label>
-                        <input type="number" class="form-control" step="0.01" id="valor" name="valor" required>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-md-6">
-                      <div class="form-group">
-                        <label for="valor_juros">Valor com juros - R$ </label>
-                        <input type="number" class="form-control" step="0.01" id="valor_juros" name="valor_juros" required>
-                      </div>
-                    </div>
-                    <div class="col-md-6">
-                      <div class="form-group">
-                        <label for="local_pagamento">Forma de Envio</label>
-                        <input type="text" class="form-control" id="local_pagamento" name="local_pagamento" required>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-md-6">
-                      <div class="form-group">
-                        <label for="data">Data Pagamento</label>
-                        <input type="date" class="form-control" id="data" name="data" required>
-                      </div>
-                    </div>
-                    <div class="col-md-6">
-                      <div class="form-group">
-                        <label for="data_vencimento">Data Vencimento</label>
-                        <input type="date" class="form-control" id="data_vencimento" name="data_vencimento">
-                      </div>
-                    </div>
-                    <div class="col-md-6">
-                      <div class="form-group">
-                        <label for="competencia">Competência</label>
-                        <input type="text" class="form-control" id="competencia" name="competencia" required>
-                      </div>
-                    </div>
-                  </div>
-                  <hr>
-                    <div class="modal-footer">
-                     <button type="reset" class="btn btn-secondary mx-3">Resetar</button>
-                     <button type="submit" class="btn btn-primary" id="salvarEmpresa">Salvar</button>
-                    </div>
-                </form>
+        <div class="card-body">
+            <form method="post"> {% csrf_token %}
+            <h5 class="card-title">Deletando uma obrigação</h5>
+            <p class="card-text">Tem certeza que quer deletar essa obrigação?</p>
+            <p class="card-text"><button type="submit" class="btn btn-danger">Confirmar</button></p>
+            <p class="card-text"><a href="{% url 'exibirempresas' empresa_id=empresa.id_empresa %}" class="btn btn-secondary">Cancelar</a></p>
+            </form>
         </div>
     </div><!-- End Card with titles, buttons, and links -->
     </section>

@@ -587,6 +587,7 @@
                                     <th scope="col">Faturamento (12 meses) (R$)</th>
                                     <th scope="col">Imposto Total (R$)</th>
                                     <th scope="col">Deduções Totais (R$)</th>
+                                    <th scope="col">Faturamento Mês (R$)</th>
                                     <th scope="col">Aliquota Real (%)</th>
                                     <th scope="col">Pagamento Total (R$)</th>
                                 </tr>
@@ -597,10 +598,11 @@
                                 <tr>
                                     <td>{{ resultado.mes }}</td>
                                     <td> {{ resultado.periodo  }}</td>
-                                    <td>{{ resultado.faturamento_anual|floatformat:2 }}</td>
+                                    <td>R$ {{ resultado.faturamento_anual|floatformat:2 }}</td>
                                     <td>R$ {{ resultado.imposto_total|floatformat:2}}</td>
                                     <td>R$ {{ resultado.deducao_total|floatformat:2 }}</td>
-                                    <td>{{ resultado.aliquota_real|floatformat:2  }}</td>
+                                    <td>R$ {{ resultado.receita_mes|floatformat:2 }}</td>
+                                    <td>{{ resultado.aliquota_real|floatformat:2  }} %</td>
                                     <td>R$ {{ resultado.valor_pagamento|floatformat:2 }}</td>
                                 </tr>
                               {% endfor %}
@@ -675,6 +677,50 @@
             </div>
           </div>
         {% endif %}
+
+                <div class="row">
+                  <div class="card recent-sales overflow-auto">
+                      <div class="card-body">
+                      <h5 class="card-title" style="display: flex; justify-content: space-between;">
+                      <span><h5 class="card-title">Obrigaçãoes Extras</h5></span>
+                      <a href="{% url 'adicionar_obrigacao' empresa_id=empresa.id_empresa %}">
+                        <i style="font-size: 2rem; color: black;" class="bi bi-plus-lg"></i>
+                      </a>
+                  </h5>
+                    <table class="table table-borderless datatable">
+                      <thead>
+                        <tr>
+                          <th scope="col">Id</th>
+                          <th scope="col">Obrigação</th>
+                          <th scope="col">Data Limite</th>
+                          <th scope="col">Data Envio</th>
+                          <th>Ações</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% for obrigacao in obrigacoes %}
+                        <tr>
+                          <th scope="row">{{ obrigacao.id }}</th>
+                            <td>{{ obrigacao.obrigacao }}</td>
+                          <td>{{ obrigacao.data_limite }}</td>
+                          <td>{{ obrigacao.data_envio }}</td>
+                          <td>
+                                <a href="{% url 'editarObrigacao' empresa_id=empresa.id_empresa obrigacao_id=obrigacao.id %}" class="btn btn-info btn-sm">
+                                  <i class="bi bi-pencil-fill"></i>
+                                </a>
+                                <a href="{% url 'deletar_obrigacao' empresa_id=empresa.id_empresa obrigacao_id=obrigacao.id %}" class="btn btn-danger btn-sm">
+                                    <i class="bi bi-trash-fill"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                      </tbody>
+                    </table>
+
+                  </div>
+
+                </div>
+              </div>
 
             <div class="row">
              <div class="card recent-sales overflow-auto">
