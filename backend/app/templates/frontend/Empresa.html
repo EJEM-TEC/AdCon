@@ -582,10 +582,12 @@
                         <table class="table table-borderless datatable">
                             <thead>
                                 <tr>
-                                    <th scope="col">Período</th>
-                                    <th scope="col">Faturamento Anual (R$)</th>
+                                    <th scope="col">Mês</th>
+                                    <th scope="col">Período de Apuração</th>
+                                    <th scope="col">Faturamento (12 meses) (R$)</th>
                                     <th scope="col">Imposto Total (R$)</th>
                                     <th scope="col">Deduções Totais (R$)</th>
+                                    <th scope="col">Aliquota Real (%)</th>
                                     <th scope="col">Pagamento Total (R$)</th>
                                 </tr>
                             </thead>
@@ -593,10 +595,12 @@
                             {% if resultados_das.resultados %}
                               {% for resultado in resultados_das.resultados %}
                                 <tr>
+                                    <td>{{ resultado.mes }}</td>
                                     <td> {{ resultado.periodo  }}</td>
                                     <td>{{ resultado.faturamento_anual|floatformat:2 }}</td>
                                     <td>R$ {{ resultado.imposto_total|floatformat:2}}</td>
                                     <td>R$ {{ resultado.deducao_total|floatformat:2 }}</td>
+                                    <td>{{ resultado.aliquota_real|floatformat:2  }}</td>
                                     <td>R$ {{ resultado.valor_pagamento|floatformat:2 }}</td>
                                 </tr>
                               {% endfor %}
@@ -766,6 +770,8 @@
                        <th scope="col">Valor com Juros ( R$ )</th>
                        <th scope="col">Forma de envio</th>
                        <th scope="col">Data de Pagamento</th>
+                       <th scope="col">Data de Vencimento</th>
+                       <th scope="col">Competência</th>
                        <th scope="col">Confirmação</th>
                        <th>Editar</th>
                      <th>Deletar</th>
@@ -780,6 +786,8 @@
                      <td>{{ dp.valor_com_juros }}</td>
                      <td>{{ dp.forma_envio }}</td>
                      <td>{{ dp.data_pagamento }}</td>
+                      <td>{{ dp.data_vencimento }}</td>
+                      <td>{{ dp.competencia }}</td>
                      <td>{{ dp.confirmacao }}</td>
                      <td>
                       <a href="{% url 'editar_dp' empresa_id=empresa.id_empresa dp_id=dp.id %}" class="btn btn-info btn-sm">

@@ -119,6 +119,8 @@ class DepartamentoDP(models.Model):
     valor_com_juros = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     forma_envio = models.CharField(max_length=100, blank=True, null=True)
     confirmacao = models.CharField(max_length=100, blank=True, null=True)
+    competencia = models.CharField(max_length=100, blank=True, null=True)
+    data_vencimento = models.DateField(blank=True, null=True)
     data_pagamento = models.DateField(blank=True, null=True)
 
 class Empresa_DP(models.Model):

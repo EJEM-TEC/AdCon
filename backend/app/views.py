@@ -25,6 +25,7 @@ from django.db.models.functions import ExtractMonth, ExtractYear  # Import neces
 from django.db.models import Sum
 from calendar import monthrange
 from datetime import date, timedelta
+import datetime
 import json
 from .models import Empresa, Federal, Estadual, Municipal, Tributo, FonteReceita, Vencimento, Criterios, \
     EmpresaFonteReceita, EmpresaTributo, CriterioAliquotas, EmpresaTransacoes, Transacoes, Observacoes, \
@@ -1101,6 +1102,8 @@ def adicionarDP(request, empresa_id):
         valor = request.POST.get("valor")
         valor_juros = request.POST.get("valor_juros")
         local_pagamento = request.POST.get("local_pagamento")
+        competencia =  request.POST.get("competencia")
+        data_vencimento = request.POST.get("data_vencimento")
 
         novo_dp = DepartamentoDP.objects.create(
             data_pagamento=data,
@@ -1108,7 +1111,9 @@ def adicionarDP(request, empresa_id):
             valor = valor,
             valor_com_juros = valor_juros,
             forma_envio = local_pagamento,
-            confirmacao = 'Pendente'
+            confirmacao = 'Pendente',
+            competencia = competencia,
+            data_vencimento = data_vencimento
         )
 
         Empresa_DP.objects.create(
@@ -1483,6 +1488,19 @@ def calcular_das_anual(empresa_id):
         fim_periodo = date(year=ano_fim, month=mes_fim, day=1) + timedelta(days=31)
         fim_periodo = fim_periodo.replace(day=1) - timedelta(days=1)  # Último dia do mês correto
 
+
+        # Para obter o próximo mês após o `fim_periodo`
+        proximo_mes = fim_periodo.month + 1
+        ano_proximo = fim_periodo.year
+
+        # Se for dezembro, devemos ajustar para janeiro do próximo ano
+        if proximo_mes > 12:
+            proximo_mes = 1
+            ano_proximo += 1
+
+        print(f"Próximo mês: {proximo_mes}/{ano_proximo}")
+
+
         # Verificar se há dados de todos os 12 meses no período
         meses_faturamento = EmpresaTransacoes.objects.filter(
             id_empresa_empresa=empresa,
@@ -1518,22 +1536,35 @@ def calcular_das_anual(empresa_id):
                 imposto_total += max(Decimal(0), valor_calculado)
                 deducao_total += deducao
 
-        # Adicionar resultado do período
-        resultados.append({
-            'periodo': f"{inicio_periodo.strftime('%b/%Y')} - {fim_periodo.strftime('%b/%Y')}",
-            'aliquota': anexo.aliquota,
-            'faturamento_anual': faturamento_anual,
-            'imposto_total': round(imposto_total, 2),
-            'valor_pagamento': max(Decimal(0), round(imposto_total, 2) - round(deducao_total, 2)),
-            'deducao_total': round(deducao_total, 2),
-        })
+        
+        resultados_mes = calcular_receita_bruta_mes(empresa_id)
+        receita_mes = resultados_mes['receita_mes']
+        aliquota_real = round((((faturamento_anual * anexo.aliquota / 100) - deducao_total) / faturamento_anual), 4) * 100
+
+        # Obter o mês atual
+        hoje = date.today()
+        mes_atual = hoje.month
+        ano_atual = hoje.year
+
+        if mes_atual == proximo_mes and ano_atual == ano_proximo:
+
+            # Adicionar resultado do período
+            resultados.append({
+                'periodo': f"{inicio_periodo.strftime('%b/%Y')} - {fim_periodo.strftime('%b/%Y')}",
+                'aliquota': anexo.aliquota,
+                'faturamento_anual': faturamento_anual,
+                'imposto_total': round(imposto_total, 2),
+                'aliquota_real': aliquota_real,
+                'receita_mes' : receita_mes,
+                'mes' : resultados_mes['mes_atual'],
+                'deducao_total': round(deducao_total, 2),
+                'valor_pagamento': receita_mes * (aliquota_real / 100),
+            })
 
     context = {
         'empresa': empresa,
         'resultados': resultados,
     }
-
-    return context
 
     return context
 def calcular_valor_imposto(base_calculo, aliquota, regime):
@@ -1844,3 +1875,24 @@ def resultados_empresa(request, empresa_id):
         'mes': mes,
         'ano': ano,
     })
+
+
+def calcular_receita_bruta_mes(empresa_id):
+    empresa = get_object_or_404(Empresa, id_empresa=empresa_id)
+
+    # Data atual (ano e mês)
+    hoje = date.today()
+    ano_atual = hoje.year
+    mes_atual = hoje.month
+
+    # Receita bruta do mês atual
+    receita_mes = EmpresaTransacoes.objects.filter(
+        id_empresa_empresa=empresa,
+        id_transacoes_transacoes__data__year=ano_atual,
+        id_transacoes_transacoes__data__month=mes_atual
+    ).aggregate(total=Sum('id_transacoes_transacoes__transacao'))['total'] or 0
+
+    return {
+        'mes_atual': hoje.strftime('%b/%Y'),
+        'receita_mes': round(receita_mes, 2),
+    }

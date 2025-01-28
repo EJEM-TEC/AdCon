@@ -205,6 +205,18 @@
                     </div>
                     <div class="col-md-6">
                       <div class="form-group">
+                        <label for="data_vencimento">Data Vencimento</label>
+                        <input type="date" class="form-control" id="data_vencimento" name="data_vencimento" value="{{ dp.data_vencimento|date:'Y-m-d' }}">
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label for="competencia">Competência</label>
+                        <input type="text" class="form-control" id="competencia" name="competencia" value="{{ dp.competencia' }}">
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group">
                         <label for="confirmacao">Confimação</label>
                         <select class="form-control" id="confirmacao" name="confirmacao">
                           <option value="Confirmado" {% if tributo.confirmacao == "Confirmado" %}selected{% endif %}>Confirmado</option>
