@@ -317,34 +317,38 @@
                     <span><h5 class="card-title">DAS ( Documento de Arrecadação do Simples Nacional )</h5></span>
                 </h5>
             
-                    <table class="table table-borderless datatable">
-                        <thead>
-                            <tr>
-                                <th scope="col">Período</th>
-                                <th scope="col">Faturamento Anual (R$)</th>
-                                <th scope="col">Imposto Total (R$)</th>
-                                <th scope="col">Deduções Totais (R$)</th>
-                                <th scope="col">Pagamento Total (R$)</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        {% if resultados_das.resultados %}
-                          {% for resultado in resultados_das.resultados %}
-                            <tr>
-                                <td> {{ resultado.periodo  }}</td>
-                                <td>{{ resultado.faturamento_anual|floatformat:2 }}</td>
-                                <td>R$ {{ resultado.imposto_total|floatformat:2}}</td>
-                                <td>R$ {{ resultado.deducao_total|floatformat:2 }}</td>
-                                <td>R$ {{ resultado.valor_pagamento|floatformat:2 }}</td>
-                            </tr>
-                          {% endfor %}
-                          {% else %}
-                            <div class="alert alert-danger">
-                                Nenhum resultado encontrado para os cálculos.
-                            </div>
-                        {% endif %}
-                        </tbody>
-                      </table>
+                <table class="table table-borderless datatable">
+                  <thead>
+                      <tr>
+                          <th scope="col">Mês</th>
+                          <th scope="col">Período de Apuração</th>
+                          <th scope="col">Faturamento (12 meses) (R$)</th>
+                          <th scope="col">Imposto Total (R$)</th>
+                          <th scope="col">Deduções Totais (R$)</th>
+                          <th scope="col">Aliquota Real (%)</th>
+                          <th scope="col">Pagamento Total (R$)</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                  {% if resultados_das.resultados %}
+                    {% for resultado in resultados_das.resultados %}
+                      <tr>
+                          <td>{{ resultado.mes }}</td>
+                          <td> {{ resultado.periodo  }}</td>
+                          <td>{{ resultado.faturamento_anual|floatformat:2 }}</td>
+                          <td>R$ {{ resultado.imposto_total|floatformat:2}}</td>
+                          <td>R$ {{ resultado.deducao_total|floatformat:2 }}</td>
+                          <td>{{ resultado.aliquota_real|floatformat:2  }}</td>
+                          <td>R$ {{ resultado.valor_pagamento|floatformat:2 }}</td>
+                      </tr>
+                    {% endfor %}
+                    {% else %}
+                      <div class="alert alert-danger">
+                          Nenhum resultado encontrado para os cálculos.
+                      </div>
+                  {% endif %}
+                  </tbody>
+                </table>
                 {% endif %}
               
             </div><!-- End Reports -->
