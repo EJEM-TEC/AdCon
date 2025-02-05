@@ -134,6 +134,17 @@ class Despesas(models.Model):
     data = models.DateField(blank=True, null=True)
     motivo = models.CharField(max_length=100, blank=True, null=True)
 
+class AliquotaSimples(models.Model):
+    id = models.AutoField(primary_key=True)
+    aliquota = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    mes = models.CharField(max_length=100, blank=True, null=True)
+    ano = models.CharField(max_length=100, blank=True, null=True)
+
+class EmpresaAliquota(models.Model):
+    id = models.AutoField(primary_key=True)
+    id_empresa_empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE)
+    id_aliquota_simples = models.ForeignKey(AliquotaSimples, on_delete=models.CASCADE)
+
 class EmpresaDespesas(models.Model):
     id = models.AutoField(primary_key=True)
     id_empresa_empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE)

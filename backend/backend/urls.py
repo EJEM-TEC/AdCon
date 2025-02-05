@@ -71,5 +71,7 @@ urlpatterns = [
     path('anexoempresas/<int:empresa_id>', views.AssociarAnexoEmpresa, name='associar_Empresaanexo'),
     path('dissociarAnexoEmpresa/<int:empresa_id>/<int:anexo_id>', views.DissociarAnexoEmpresa, name='dissociar_EmpresaAnexo'),
     path('resultados_empresa/<int:empresa_id>', views.resultados_empresa, name='resultados_empresa'),
+    path("aliquota_simples/<int:empresa_id>", views.aliquotaSimples, name="adicionar_aliquota_simples"),
+    path("aliquota_simples/<int:empresa_id>/delete/<int:aliquota_id>", views.deletar_aliquotaSimples, name="delete_aliquota_simples"),
 
 ]

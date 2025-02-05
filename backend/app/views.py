@@ -16,7 +16,7 @@ from django.urls import reverse_lazy
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import Empresa, Federal, Estadual, Municipal, EmpresaFonteReceita, FonteReceita, EmpresaTributo, Tributo, \
-    EmpresaTransacoes, EmpresaSimples, ObrigacaoExtra, EmpresaObrigacao
+    EmpresaTransacoes, EmpresaSimples, ObrigacaoExtra, EmpresaObrigacao, AliquotaSimples, EmpresaAliquota
 from django.db.models import Sum
 from django.utils.timezone import now
 from django.db.models.functions import TruncMonth
@@ -114,6 +114,14 @@ def exibir_empresa(request, empresa_id):
     despesas = [ed.id_despesa_despesa.despesa for ed in empresa_despesas]  # Supondo que 'valor' seja o campo correto
     sum_despesas = Decimal(sum(despesas))  # Somar os valores das despesas
 
+    # Aliquotas_Simples de uma empresa
+
+    empresa_aliquotas = EmpresaAliquota.objects.filter(id_empresa_empresa=empresa).select_related(
+        'id_aliquota_simples'
+    )
+
+    aliquotas_simples = [ea.id_aliquota_simples for ea in empresa_aliquotas]
+
     # Calculo do Lucro de uma empresa
 
     lucro = sum_transacoes - sum_despesas
@@ -185,6 +193,7 @@ def exibir_empresa(request, empresa_id):
         'resultados_lucroPressumido': resultados_lucroPressumido,
         'resultados_lucroReal': resultados_lucroReal,
         'obrigacoes': obrigacoes,
+        'aliquotas_simples': aliquotas_simples
     })
 
 
@@ -1464,7 +1473,6 @@ def DissociarAnexoEmpresa(request, empresa_id, anexo_id):
         'empresa': empresa
     })
 
-
 def calcular_das_anual(empresa_id):
     empresa = get_object_or_404(Empresa, id_empresa=empresa_id)
 
@@ -1474,42 +1482,24 @@ def calcular_das_anual(empresa_id):
         id_simples__in=[ea.id_simples for ea in empresa_anexos]
     ).select_related('id_anexo')
 
-    # Obter os meses disponíveis com transações
-    meses_disponiveis = EmpresaTransacoes.objects.filter(
-        id_empresa_empresa=empresa
-    ).annotate(
-        ano=ExtractYear('id_transacoes_transacoes__data'),
-        mes=ExtractMonth('id_transacoes_transacoes__data')
-    ).values('ano', 'mes').distinct().order_by('ano', 'mes')
-
     resultados = []
 
-    # Iterar pelos meses e calcular períodos de 12 meses consecutivos
-    for i in range(len(meses_disponiveis) - 11):  # Garantir pelo menos 12 meses disponíveis
-        ano_inicio = meses_disponiveis[i]['ano']
-        mes_inicio = meses_disponiveis[i]['mes']
+    # Definir o ano de início do cálculo (Janeiro de 2025)
+    ano_atual = 2025
+    mes_atual = 1
+
+    while True:
+        # Determinar o período de apuração de 12 meses anteriores
+        ano_inicio = ano_atual - 1 if mes_atual != 1 else ano_atual - 1
+        mes_inicio = mes_atual
         inicio_periodo = date(year=ano_inicio, month=mes_inicio, day=1)
 
-        # Definir o final do período corretamente (último dia do mês 12 meses depois)
-        ano_fim = meses_disponiveis[i + 11]['ano']
-        mes_fim = meses_disponiveis[i + 11]['mes']
+        ano_fim = ano_atual if mes_atual != 1 else ano_atual - 1
+        mes_fim = mes_atual - 1 if mes_atual != 1 else 12
         fim_periodo = date(year=ano_fim, month=mes_fim, day=1) + timedelta(days=31)
         fim_periodo = fim_periodo.replace(day=1) - timedelta(days=1)  # Último dia do mês correto
 
-
-        # Para obter o próximo mês após o `fim_periodo`
-        proximo_mes = fim_periodo.month + 1
-        ano_proximo = fim_periodo.year
-
-        # Se for dezembro, devemos ajustar para janeiro do próximo ano
-        if proximo_mes > 12:
-            proximo_mes = 1
-            ano_proximo += 1
-
-        print(f"Próximo mês: {proximo_mes}/{ano_proximo}")
-
-
-        # Verificar se há dados de todos os 12 meses no período
+        # Verificar se há dados suficientes para calcular
         meses_faturamento = EmpresaTransacoes.objects.filter(
             id_empresa_empresa=empresa,
             id_transacoes_transacoes__data__gte=inicio_periodo,
@@ -1520,9 +1510,9 @@ def calcular_das_anual(empresa_id):
         ).values('ano', 'mes').distinct()
 
         if len(meses_faturamento) < 12:
-            continue  # Ignorar períodos incompletos
+            break  # Para a iteração se não houver dados suficientes
 
-        # Calcular o faturamento anual
+        # Calcular faturamento anual
         transacoes = EmpresaTransacoes.objects.filter(
             id_empresa_empresa=empresa,
             id_transacoes_transacoes__data__gte=inicio_periodo,
@@ -1544,21 +1534,17 @@ def calcular_das_anual(empresa_id):
                 imposto_total += max(Decimal(0), valor_calculado)
                 deducao_total += deducao
 
-        
-        resultados_mes = calcular_receita_bruta_mes(empresa_id)
+        resultados_mes = calcular_receita_bruta_mes(empresa_id, mes_atual, ano_atual)
         receita_mes = resultados_mes['receita_mes']
-        aliquota_real = round((((faturamento_anual * anexo.aliquota / 100) - deducao_total) / faturamento_anual), 4) * 100
+        #aliquota_real = round((((faturamento_anual * anexo.aliquota / 100) - deducao_total) / faturamento_anual), 4) * 100
+        aliquota_real = get_aliquota_real(empresa.id_empresa, mes_atual, ano_atual)
 
-        # Obter o mês atual
-        hoje = date.today()
-        mes_atual = hoje.month
-        ano_atual = hoje.year
-
-        if mes_atual == proximo_mes and ano_atual == ano_proximo:
+        if receita_mes != 0:
 
             # Adicionar resultado do período
             resultados.append({
-                'periodo': f"{inicio_periodo.strftime('%b/%Y')} - {fim_periodo.strftime('%b/%Y')}",
+                'mes_referencia': f"{date(year=ano_atual, month=mes_atual, day=1).strftime('%b/%Y')}",
+                'periodo_apuracao': f"{inicio_periodo.strftime('%b/%Y')} - {fim_periodo.strftime('%b/%Y')}",
                 'aliquota': anexo.aliquota,
                 'faturamento_anual': faturamento_anual,
                 'imposto_total': round(imposto_total, 2),
@@ -1569,12 +1555,23 @@ def calcular_das_anual(empresa_id):
                 'valor_pagamento': receita_mes * (aliquota_real / 100),
             })
 
+        # Avançar para o próximo mês
+        mes_atual += 1
+        if mes_atual > 12:
+            mes_atual = 1
+            ano_atual += 1
+
+        # Definir limite para evitar loops infinitos
+        if ano_atual > 2030:
+            break
+
     context = {
         'empresa': empresa,
         'resultados': resultados,
     }
 
     return context
+
 def calcular_valor_imposto(base_calculo, aliquota, regime):
     """
     Função auxiliar para calcular o valor do imposto com base no regime e na alíquota.
@@ -1885,23 +1882,23 @@ def resultados_empresa(request, empresa_id):
     })
 
 
-def calcular_receita_bruta_mes(empresa_id):
+def calcular_receita_bruta_mes(empresa_id, mes_referencia=None, ano_referencia=None):
     empresa = get_object_or_404(Empresa, id_empresa=empresa_id)
 
-    # Data atual (ano e mês)
+    # Se o usuário não fornecer valores, usa o mês e ano atuais
     hoje = date.today()
-    ano_atual = hoje.year
-    mes_atual = hoje.month
+    ano = ano_referencia if ano_referencia else hoje.year
+    mes = mes_referencia if mes_referencia else hoje.month
 
-    # Receita bruta do mês atual
+    # Receita bruta do mês de referência
     receita_mes = EmpresaTransacoes.objects.filter(
         id_empresa_empresa=empresa,
-        id_transacoes_transacoes__data__year=ano_atual,
-        id_transacoes_transacoes__data__month=mes_atual
+        id_transacoes_transacoes__data__year=ano,
+        id_transacoes_transacoes__data__month=mes
     ).aggregate(total=Sum('id_transacoes_transacoes__transacao'))['total'] or 0
 
     return {
-        'mes_atual': hoje.strftime('%b/%Y'),
+        'mes_atual': date(year=ano, month=mes, day=1).strftime('%b/%Y'),
         'receita_mes': round(receita_mes, 2),
     }
 
@@ -1958,6 +1955,75 @@ def deletarObrigacao(request, empresa_id, obrigacao_id):
         'empresa': empresa,
         'obrigacao': obrigacao
     })
+
+@login_required(login_url='/')
+def aliquotaSimples(request, empresa_id):
+    empresa = get_object_or_404(Empresa, id_empresa=empresa_id)
+
+    if request.method == 'POST':
+        aliquota = request.POST.get("aliquota")
+        mes = request.POST.get("mes")
+        ano = request.POST.get("ano")
+
+        # Criando um novo critério
+        nova_aliquota = AliquotaSimples.objects.create(
+            aliquota=aliquota,
+            mes=mes,
+            ano=ano
+        )
+
+        # Relacionando o critério ao tributo
+        EmpresaAliquota.objects.create(
+            id_aliquota_simples=nova_aliquota,  # Passando a instância de Criterios
+            id_empresa_empresa=empresa  # Passando a instância de Tributo
+        )
+
+        return redirect('exibirempresas', empresa_id=empresa.id_empresa)
+    
+    return render(request, 'frontend/aliquota_simples.html', {'empresa': empresa})
+
+@login_required(login_url='/')
+def deletar_aliquotaSimples(request, empresa_id, aliquota_id):
+    # Obtendo o tributo pelo id_tributo fornecido
+    empresa = get_object_or_404(Empresa, id_empresa=empresa_id)
+
+    # Obtendo o critério pelo id_aliquotas fornecido
+    aliquota = get_object_or_404(AliquotaSimples, id=aliquota_id)
+
+    # Verificando se o critério está relacionado ao tributo
+    empresa_aliquota = get_object_or_404(EmpresaAliquota, id_aliquota_simples=aliquota,
+                                           id_empresa_empresa=empresa)
+
+    if request.method == 'POST':
+        # Deletando a relação entre o critério e o tributo
+        empresa_aliquota.delete()
+
+        # Opcional: Deletar o critério completamente se não estiver relacionado a outro tributo
+        aliquota.delete()
+
+        # Redirecionando para a página de visualização de critérios
+        return redirect('exibirempresas', empresa_id=empresa.id_empresa)
+
+    return render(request, 'frontend/deletar_aliquotaSimples.html', {
+        'empresa': empresa,
+        'aliquota': aliquota
+    })
+
+def get_aliquota_real(empresa_id, mes, ano):
+    empresa = get_object_or_404(Empresa, id_empresa=empresa_id)
+
+    empresa_aliquotas = EmpresaAliquota.objects.filter(id_empresa_empresa=empresa).select_related(
+        'id_aliquota_simples'
+    )
+
+    aliquotas_simples = [ea.id_aliquota_simples for ea in empresa_aliquotas]
+
+    aliquota = AliquotaSimples.objects.filter(
+        id__in=[ea.id for ea in aliquotas_simples],
+        mes=mes,
+        ano=ano
+    ).first()
+    return aliquota.aliquota if aliquota else 0
 
 
 @login_required(login_url='/')

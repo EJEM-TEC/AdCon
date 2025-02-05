@@ -596,8 +596,8 @@
                             {% if resultados_das.resultados %}
                               {% for resultado in resultados_das.resultados %}
                                 <tr>
-                                    <td>{{ resultado.mes }}</td>
-                                    <td> {{ resultado.periodo  }}</td>
+                                    <td>{{ resultado.mes_referencia }}</td>
+                                    <td> {{ resultado.periodo_apuracao  }}</td>
                                     <td>R$ {{ resultado.faturamento_anual|floatformat:2 }}</td>
                                     <td>R$ {{ resultado.imposto_total|floatformat:2}}</td>
                                     <td>R$ {{ resultado.deducao_total|floatformat:2 }}</td>
@@ -676,6 +676,52 @@
 
             </div>
           </div>
+        {% endif %}
+
+        {% if empresa.regime_apuracao == 'Simples Nacional' %}
+              <div class="row">
+                <div class="card recent-sales overflow-auto">
+                    <div class="card-body">
+                    <h5 class="card-title" style="display: flex; justify-content: space-between;">
+                    <span><h5 class="card-title">Alíquotas Simples</h5></span>
+                    <a href="{% url 'adicionar_aliquota_simples' empresa_id=empresa.id_empresa %}">
+                      <i style="font-size: 2rem; color: black;" class="bi bi-plus-lg"></i>
+                    </a>
+                </h5>
+                  <table class="table table-borderless datatable">
+                    <thead>
+                      <tr>
+                        <th scope="col">Id</th>
+                        <th scope="col">Mês</th>
+                        <th scope="col">Ano</th>
+                        <th scope="col">Alíquota (%)</th>
+                        <th>Ações</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for aliquota in aliquotas_simples %}
+                      <tr>
+                        <th scope="row">{{ aliquota.id }}</th>
+                          <td>{% if aliquota.mes == "1" %} Janeiro {% elif aliquota.mes == "2" %} Fevereiro {% elif aliquota.mes == "3" %} Março {% elif aliquota.mes == "4" %} Abril {% elif aliquota.mes == "5" %} Maio {% elif aliquota.mes == "6" %} Junho {% elif aliquota.mes == "7" %} Julho {% elif aliquota.mes == "8" %} Agosto {% elif aliquota.mes == "9" %} Setembro {% elif aliquota.mes == "10" %} Outubro {% elif aliquota.mes == "11" %} Novembro {% elif aliquota.mes == "12" %} Dezembro {% endif %}</td>
+                            
+                        <td>{{ aliquota.ano }}</td>
+                        <td>{{ aliquota.aliquota }}</td>
+                        <td>
+                    
+                              <a href="{% url 'delete_aliquota_simples' empresa_id=empresa.id_empresa aliquota_id=aliquota.id %}" class="btn btn-danger btn-sm">
+                                  <i class="bi bi-trash-fill"></i>
+                              </a>
+                          </td>
+                      </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+
+                </div>
+
+              </div>
+            </div>
+
         {% endif %}
 
                 <div class="row">
