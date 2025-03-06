@@ -43,6 +43,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rolepermissions',
     'app',
+    'backend.settings',
+    'whitenoise.runserver_nostatic',
 ]
 
 MIDDLEWARE = [
