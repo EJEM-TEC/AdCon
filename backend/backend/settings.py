@@ -42,8 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rolepermissions',
-    'app',
-    'backend.settings',
+    'backend.app',
     'whitenoise.runserver_nostatic',
 ]
 
