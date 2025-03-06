@@ -34,7 +34,7 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
-    "app",  # Se "app" estiver dentro de "backend"
+    "backend.app",  # Se "app" estiver dentro de "backend"
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
